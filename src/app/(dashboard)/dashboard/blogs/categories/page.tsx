@@ -1,0 +1,2 @@
+"use client"; import { LookupManagement } from "@/components/dashboard/lookup-management"; import { BlogService } from "@/src/services/blog.service";
+export default function BlogCategoriesPage() { return <LookupManagement title="Blog Categories" description="Manage blog category classifications." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Blogs" }, { label: "Categories" }]} fetchItems={BlogService.getCategories} createItem={BlogService.createCategory} updateItem={BlogService.updateCategory} deleteItem={BlogService.deleteCategory} />; }
