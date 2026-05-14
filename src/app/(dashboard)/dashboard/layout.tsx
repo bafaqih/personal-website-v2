@@ -44,6 +44,7 @@ export default function DashboardLayout({
       >
         <DashboardHeader
           sidebarCollapsed={collapsed}
+          onToggleSidebar={() => setCollapsed(!collapsed)}
           onMobileMenuToggle={() => setMobileOpen(true)}
         />
 

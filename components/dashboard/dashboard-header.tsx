@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, User } from "lucide-react";
+import { LogOut, Menu, User, PanelLeft, PanelLeftClose } from "lucide-react";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { AuthService } from "@/src/services/auth.service";
 import type { Profile } from "@/src/types/database";
@@ -26,6 +26,7 @@ import {
 
 interface DashboardHeaderProps {
   sidebarCollapsed: boolean;
+  onToggleSidebar?: () => void;
   onMobileMenuToggle?: () => void;
 }
 
@@ -35,6 +36,7 @@ interface DashboardHeaderProps {
  */
 export function DashboardHeader({
   sidebarCollapsed,
+  onToggleSidebar,
   onMobileMenuToggle,
 }: DashboardHeaderProps) {
   const router = useRouter();
@@ -68,23 +70,43 @@ export function DashboardHeader({
   return (
     <TooltipProvider>
       <header
-        className={cn(
-          "sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-6 backdrop-blur-xl transition-all duration-300",
-          "dark:border-white/10 dark:bg-neutral-950/70",
-          sidebarCollapsed ? "lg:pl-[96px]" : "lg:pl-[284px]"
-        )}
+        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-8 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
-        {/* Mobile menu button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onMobileMenuToggle}
-          className="lg:hidden"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
+        {/* Left Side: Toggle Button */}
+        <div className="flex items-center">
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMobileMenuToggle}
+            className="lg:hidden mr-2"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
-        <div className="hidden lg:block" />
+          {/* Desktop Sidebar Toggle */}
+          <div className="hidden lg:block">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onToggleSidebar}
+                  className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg"
+                >
+                  {sidebarCollapsed ? (
+                    <PanelLeft className="h-4 w-4" />
+                  ) : (
+                    <PanelLeftClose className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{sidebarCollapsed ? "Expand" : "Collapse"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
 
         {/* Right side */}
         <div className="flex items-center gap-3">
