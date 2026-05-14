@@ -52,4 +52,18 @@ export const AuthService = {
     if (error) throw error;
     return data as Profile;
   },
+
+  /** Update the profile of the currently authenticated user */
+  async updateProfile(id: string, updates: Partial<Profile>): Promise<Profile> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(updates)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Profile;
+  },
 };

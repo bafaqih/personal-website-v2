@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu } from "lucide-react";
+import { LogOut, Menu, User } from "lucide-react";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { AuthService } from "@/src/services/auth.service";
 import type { Profile } from "@/src/types/database";
@@ -110,8 +110,16 @@ export function DashboardHeader({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
+              onClick={() => router.push("/dashboard/profile")}
+              className="cursor-pointer"
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
               onClick={handleLogout}
-              className="cursor-pointer text-red-600 focus:text-red-600"
+              className="cursor-pointer"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
