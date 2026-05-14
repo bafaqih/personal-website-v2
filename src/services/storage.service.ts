@@ -73,7 +73,7 @@ async function upload(folder: string, file: File, fileName?: string) {
     .from(STORAGE_BUCKETS.ASSETS)
     .upload(path, file, {
       cacheControl: "3600",
-      upsert: false,
+      upsert: true,
     });
 
   if (error) throw error;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Upload, X, FileText, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 import {
@@ -34,6 +34,15 @@ export function ImageUpload({
   const [fileName, setFileName] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRemoved, setIsRemoved] = useState(false);
+
+  // Sync with value prop if it changes (e.g. after save)
+  useEffect(() => {
+    if (value) {
+      setPreview(value);
+      setIsRemoved(false);
+    }
+  }, [value]);
 
   const acceptedTypes =
     accept === "pdf" ? ACCEPTED_PDF_TYPES : ACCEPTED_IMAGE_TYPES;
@@ -45,6 +54,7 @@ export function ImageUpload({
   const handleFile = useCallback(
     (file: File) => {
       setError(null);
+      setIsRemoved(false);
 
       // Validate type
       if (!acceptedTypes.includes(file.type)) {
@@ -73,8 +83,9 @@ export function ImageUpload({
         };
         reader.readAsDataURL(file);
       } else {
-        setPreview(null);
-        onChange(file, null);
+        const url = URL.createObjectURL(file);
+        setPreview(url);
+        onChange(file, url);
       }
     },
     [accept, acceptedTypes, onChange]
@@ -94,14 +105,17 @@ export function ImageUpload({
     setPreview(null);
     setFileName(null);
     setError(null);
+    setIsRemoved(true);
     onChange(null, null);
   };
+
+  const showPreview = (preview || fileName || (accept === "pdf" && value)) && !isRemoved;
 
   return (
     <div className={cn("space-y-2", className)}>
       {/* Preview */}
-      {(preview || fileName) && (
-        <div className="relative inline-block">
+      {showPreview && (
+        <div className="relative inline-block group">
           {accept === "image" && preview ? (
             <div className="relative h-32 w-32 overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10">
               <Image
@@ -113,11 +127,22 @@ export function ImageUpload({
               />
             </div>
           ) : (
-            <div className="flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 dark:border-white/10">
+            <div className="flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 transition-colors hover:bg-neutral-50 dark:border-white/10 dark:hover:bg-white/5">
               <FileText className="h-4 w-4 text-neutral-500" />
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">
-                {fileName}
-              </span>
+              {accept === "pdf" && (value || preview) ? (
+                <a
+                  href={preview || value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-neutral-900 underline-offset-4 hover:underline dark:text-white"
+                >
+                  {fileName || (value ? value.split("/").pop()?.split("?")[0] : "Document.pdf")}
+                </a>
+              ) : (
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                  {fileName || "File uploaded"}
+                </span>
+              )}
             </div>
           )}
           {!disabled && (
@@ -133,7 +158,7 @@ export function ImageUpload({
       )}
 
       {/* Drop zone */}
-      {!preview && !fileName && (
+      {!showPreview && (
         <label
           onDragOver={(e) => {
             e.preventDefault();

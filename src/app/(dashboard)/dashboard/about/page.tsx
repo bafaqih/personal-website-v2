@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save, User, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { About } from "@/src/types/database";
 
 const aboutSchema = z.object({
-  description_id: z.string().optional(),
-  description_en: z.string().optional(),
-  badge_id: z.string().optional(),
-  badge_en: z.string().optional(),
-  bio_id: z.string().optional(),
-  bio_en: z.string().optional(),
-  quotes_id: z.string().optional(),
-  quotes_en: z.string().optional(),
-  years_of_experience: z.number().min(0).optional(),
+  description_id: z.string().nullable().optional(),
+  description_en: z.string().nullable().optional(),
+  badge_id: z.string().nullable().optional(),
+  badge_en: z.string().nullable().optional(),
+  bio_id: z.string().nullable().optional(),
+  bio_en: z.string().nullable().optional(),
+  quotes_id: z.string().nullable().optional(),
+  quotes_en: z.string().nullable().optional(),
+  years_of_experience: z.coerce.number().min(0).optional(),
 });
 
 type AboutForm = z.infer<typeof aboutSchema>;
@@ -45,9 +45,9 @@ export default function AboutPage() {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = useForm<AboutForm>({
-    resolver: zodResolver(aboutSchema),
+    resolver: zodResolver(aboutSchema) as any,
   });
 
   useEffect(() => {
@@ -65,15 +65,24 @@ export default function AboutPage() {
     try {
       let cv_url = about.cv_url;
       if (cvFile) {
-        const result = await StorageService.uploadPdf(STORAGE_PATHS.DOCUMENTS, cvFile, "cv");
+        const result = await StorageService.uploadPdf(STORAGE_PATHS.DOCUMENTS, cvFile, "CV-Hasan-Fadlullah");
         cv_url = result.publicUrl;
       }
       await AboutService.update(about.id, { ...data, cv_url });
       toast.success("About updated successfully");
+      reset(data); // Mark as not dirty after successful save
+      setCvFile(null);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to update";
       toast.error("Update Failed", { description: message });
     }
+  };
+
+  const onInvalid = (errors: any) => {
+    console.error("Form Validation Errors:", errors);
+    toast.error("Validation Error", {
+      description: "Please check all fields and try again.",
+    });
   };
 
   if (loading) {
@@ -94,6 +103,7 @@ export default function AboutPage() {
       <PageHeader
         title="About"
         description="Edit your personal information and bio."
+        icon={User}
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
           { label: "About" },
@@ -102,7 +112,7 @@ export default function AboutPage() {
 
       <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
         <CardContent className="p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Badge (ID)</Label>
@@ -165,16 +175,26 @@ export default function AboutPage() {
             <div className="flex justify-end">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (!isDirty && !cvFile)}
                 className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
               >
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-1.5 h-4 w-4" />
+                    Save
+                  </>
+                )}
               </Button>
             </div>
           </form>
         </CardContent>
       </Card>
+
     </>
   );
 }
