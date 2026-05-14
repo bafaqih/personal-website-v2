@@ -41,7 +41,7 @@ export default function DashboardRootLayout({
             closeButton
             richColors
             toastOptions={{
-              className: "border border-neutral-200 dark:border-white/10",
+              className: "font-sans",
             }}
           />
         </ThemeProvider>

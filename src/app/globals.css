@@ -128,3 +128,36 @@
     @apply font-sans;
   }
 }
+
+/* Sonner Toast Customization */
+[data-sonner-toast] {
+  --normal-bg: var(--background) !important;
+  --normal-border: var(--border) !important;
+  --normal-text: var(--foreground) !important;
+
+  --success-bg: var(--background) !important;
+  --success-border: var(--border) !important;
+  --success-text: #22c55e !important;
+
+  --error-bg: var(--background) !important;
+  --error-border: var(--border) !important;
+  --error-text: #ef4444 !important;
+
+  --info-bg: var(--background) !important;
+  --info-border: var(--border) !important;
+  --info-text: #3b82f6 !important;
+
+  --warning-bg: var(--background) !important;
+  --warning-border: var(--border) !important;
+  --warning-text: #f59e0b !important;
+}
+
+[data-sonner-toast] [data-close-button] {
+  left: auto !important;
+  right: 0 !important;
+  top: 0 !important;
+  transform: translate(35%, -35%) !important;
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
+}
