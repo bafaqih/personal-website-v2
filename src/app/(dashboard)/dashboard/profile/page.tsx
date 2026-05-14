@@ -152,9 +152,9 @@ export default function ProfilePage() {
           <CardContent className="p-8 space-y-8">
             <div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
               <div className="relative group">
-                <Avatar className="h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md">
-                  <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover" />
-                  <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800">
+                <Avatar className="h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl">
+                  <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover rounded-2xl" />
+                  <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                 <button
                   onClick={handleImageClick}
                   disabled={isUploading}
-                  className="absolute bottom-0 right-0 rounded-full bg-emerald-500 p-2 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 disabled:bg-neutral-400"
+                  className="absolute bottom-0 right-0 rounded-lg bg-emerald-500 p-2 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 disabled:bg-neutral-400"
                 >
                   {isUploading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

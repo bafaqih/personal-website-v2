@@ -85,7 +85,7 @@ export function DashboardHeader({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center gap-2 rounded-full px-2 py-1.5"
+              className="flex items-center gap-2 rounded-lg px-2 py-1.5"
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage
