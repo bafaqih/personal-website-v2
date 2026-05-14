@@ -150,7 +150,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="space-y-4 pt-2">
+              <div className="space-y-6 pt-2">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -170,15 +170,12 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="flex justify-center">
-                  <Link href="/">
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      className="text-neutral-500 hover:bg-transparent hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                    >
-                      <ArrowLeft className="mr-1 h-4 w-4" />
-                      Back to Home
-                    </Button>
+                  <Link
+                    href="/"
+                    className="flex items-center text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                  >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Back to Home
                   </Link>
                 </div>
               </div>
