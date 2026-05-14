@@ -54,12 +54,11 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Admin route protection
-  if (isAdminHost) {
-    const isDashboardRoute =
-      normalizedPath.startsWith("/dashboard") ||
-      normalizedPath === "/dashboard";
-    const isLoginRoute = normalizedPath === "/login" || normalizedPath === "/";
+  // Protection should apply if it's an admin host OR if the path is /dashboard or /login
+  const isDashboardRoute = normalizedPath.startsWith("/dashboard");
+  const isLoginRoute = normalizedPath === "/login" || normalizedPath === "/";
 
+  if (isAdminHost || isDashboardRoute || (user && isLoginRoute)) {
     // If user is not authenticated and trying to access dashboard
     if (!user && isDashboardRoute) {
       const loginUrl = new URL("/login", request.url);
