@@ -9,6 +9,7 @@ import {
   GraduationCap,
   Users,
   FileText,
+  LayoutDashboard,
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { PageHeader } from "@/components/dashboard/page-header";
@@ -44,6 +45,7 @@ export default function DashboardPage() {
       <PageHeader
         title="Dashboard"
         description="Overview of your website content."
+        icon={LayoutDashboard}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
