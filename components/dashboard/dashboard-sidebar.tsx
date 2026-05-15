@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import {
   ChevronDown,
   PanelLeftClose,
@@ -35,12 +34,8 @@ interface DashboardSidebarProps {
  */
 export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const { resolvedTheme } = useTheme();
-  
   // Track only ONE open menu at a time
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-
-  const logo = resolvedTheme === "dark" ? logoWhite : logoBlack;
 
   const toggleSubmenu = (title: string) => {
     setOpenMenu((prev) => (prev === title ? null : title));
@@ -75,11 +70,19 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
         <div className={cn("flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 justify-center")}>
           <Link href="/dashboard" className="flex items-center">
             <Image
-              src={logo}
+              src={logoBlack}
               alt="Fadil Bafagih"
               width={collapsed ? 32 : 120}
               height={32}
-              className="transition-all duration-300"
+              className="transition-all duration-300 dark:hidden"
+              priority
+            />
+            <Image
+              src={logoWhite}
+              alt="Fadil Bafagih"
+              width={collapsed ? 32 : 120}
+              height={32}
+              className="hidden transition-all duration-300 dark:block"
               priority
             />
           </Link>
