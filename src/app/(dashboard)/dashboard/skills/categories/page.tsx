@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Code2, Loader2, Save } from "lucide-react";
+import { Plus, Pencil, Trash2, Code2, Loader2, Save, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable, type Column } from "@/components/dashboard/data-table";
@@ -137,7 +137,7 @@ export default function SkillCategoriesPage() {
         ]}
         actions={
           <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-            <Plus className="mr-2 h-4 w-4" /> Add Category
+            <Plus className="mr-1.5 h-4 w-4" /> Add Category
           </Button>
         }
       />
@@ -201,7 +201,7 @@ export default function SkillCategoriesPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
+              <X className="mr-1.5 h-4 w-4" /> Cancel
             </Button>
             <Button
               onClick={handleModalSubmit}
@@ -209,11 +209,11 @@ export default function SkillCategoriesPage() {
               className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
             >
               {isSubmitting ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
+                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
               ) : editingCategory ? (
-                <><Save className="mr-2 h-4 w-4" /> Save Changes</>
+                <><Save className="mr-1.5 h-4 w-4" /> Save Changes</>
               ) : (
-                <><Plus className="mr-2 h-4 w-4" /> Create Category</>
+                <><Plus className="mr-1.5 h-4 w-4" /> Create Category</>
               )}
             </Button>
           </DialogFooter>

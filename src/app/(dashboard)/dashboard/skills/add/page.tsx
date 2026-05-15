@@ -97,16 +97,16 @@ export default function SkillAddPage() {
             </div>
             <div className="flex justify-end gap-3">
               <Button type="button" variant="outline" onClick={() => router.back()}>
-                <X className="mr-2 h-4 w-4" /> Cancel
+                <X className="mr-1.5 h-4 w-4" /> Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting || !isValid} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Creating...
                   </>
                 ) : (
                   <>
-                    <Plus className="mr-2 h-4 w-4" /> Create Skill
+                    <Plus className="mr-1.5 h-4 w-4" /> Create Skill
                   </>
                 )}
               </Button>

@@ -110,16 +110,16 @@ export default function SkillEditPage() {
             </div>
             <div className="flex justify-end gap-3">
               <Button type="button" variant="outline" onClick={() => router.back()}>
-                <X className="mr-2 h-4 w-4" /> Cancel
+                <X className="mr-1.5 h-4 w-4" /> Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                    <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving...
                   </>
                 ) : (
                   <>
-                    <Save className="mr-2 h-4 w-4" /> Save Changes
+                    <Save className="mr-1.5 h-4 w-4" /> Save Changes
                   </>
                 )}
               </Button>
