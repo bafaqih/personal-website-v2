@@ -154,10 +154,15 @@
 
 [data-sonner-toast] [data-close-button] {
   left: auto !important;
-  right: 0 !important;
-  top: 0 !important;
-  transform: translate(35%, -35%) !important;
-  background: var(--background) !important;
-  border: 1px solid var(--border) !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--muted-foreground) !important;
+  transition: color 0.2s !important;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
   color: var(--foreground) !important;
 }

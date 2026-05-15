@@ -41,7 +41,7 @@ export default function DashboardRootLayout({
             closeButton
             richColors
             toastOptions={{
-              className: "font-sans",
+              className: "font-sans pr-10",
             }}
           />
         </ThemeProvider>
