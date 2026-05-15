@@ -89,16 +89,22 @@ export interface Career {
   role_id: string;
   role_en: string;
   company: string;
+  url: string | null;
   logo_url: string | null;
   location: string | null;
-  type: string | null;
-  model: string | null;
+  type_id: string | null;
+  type_en: string | null;
+  model_id: string | null;
+  model_en: string | null;
   start_date: string;
   end_date: string | null;
-  detail_points: string[];
+  detail_points_id: string[];
+  detail_points_en: string[];
   is_published: boolean;
   created_at: string;
   updated_at: string;
+  // Joined fields
+  career_skills?: { skill_id: string; skill?: Skill }[];
 }
 
 export interface CareerSkill {

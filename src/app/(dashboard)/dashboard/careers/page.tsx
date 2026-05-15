@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable, type Column } from "@/components/dashboard/data-table";
@@ -33,17 +33,30 @@ export default function CareersPage() {
   };
 
   const columns: Column<Career>[] = [
+    { key: "company", header: "Company", className: "font-medium" },
     { key: "role_en", header: "Role" },
-    { key: "company", header: "Company" },
-    { key: "type", header: "Type", render: (c) => <Badge variant="secondary">{c.type || "-"}</Badge> },
-    { key: "start_date", header: "Period", render: (c) => <span className="text-sm">{c.start_date} — {c.end_date || "Present"}</span> },
+    { key: "type_en", header: "Type", render: (c) => <Badge variant="secondary">{c.type_en || "-"}</Badge> },
+    { 
+      key: "start_date", 
+      header: "Period", 
+      render: (c) => {
+        const formatDate = (dateStr: string) => 
+          new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+          
+        const isPresent = !c.end_date || new Date(c.end_date) > new Date();
+        const start = formatDate(c.start_date);
+        const end = isPresent ? "Present" : formatDate(c.end_date as string);
+        
+        return <span className="text-sm">{start} - {end}</span>;
+      } 
+    },
     { key: "is_published", header: "Status", render: (c) => <Badge variant={c.is_published ? "default" : "secondary"}>{c.is_published ? "Published" : "Draft"}</Badge> },
   ];
 
   return (
     <>
-      <PageHeader title="Careers" description="Manage work experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Careers" }]}
-        actions={<Link href="/dashboard/careers/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"><Plus className="mr-2 h-4 w-4" /> Add Career</Button></Link>} />
+      <PageHeader title="Careers" icon={Briefcase} description="Manage work experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Careers" }]}
+        actions={<Link href="/dashboard/careers/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"><Plus className="mr-1.5 h-4 w-4" /> Add Career</Button></Link>} />
       <DataTable data={careers} columns={columns} searchPlaceholder="Search careers..."
         actions={(c) => (
           <div className="flex items-center gap-1">
