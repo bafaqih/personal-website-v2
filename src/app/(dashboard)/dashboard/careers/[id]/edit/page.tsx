@@ -34,10 +34,10 @@ const schema = z.object({
   model_en: z.string().optional(),
   start_date: z.string().min(1, "Start Date is required"),
   end_date: z.string().optional(),
-  detail_points_id: z.array(z.string()).default([]),
-  detail_points_en: z.array(z.string()).default([]),
-  skill_ids: z.array(z.string()).default([]),
-  is_published: z.boolean().default(true),
+  detail_points_id: z.array(z.string()).optional(),
+  detail_points_en: z.array(z.string()).optional(),
+  skill_ids: z.array(z.string()).optional(),
+  is_published: z.boolean(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -51,7 +51,7 @@ export default function CareerEditPage() {
   const [loading, setLoading] = useState(true);
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
 
-  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({ 
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onChange"
   });
@@ -61,25 +61,25 @@ export default function CareerEditPage() {
       .then(([c, skills]) => {
         setActiveSkills(skills.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
         setCurrentLogoUrl(c.logo_url);
-        
+
         const skillIds = c.career_skills?.map(cs => cs.skill_id) || [];
-        
-        reset({ 
-          role_id: c.role_id, 
-          role_en: c.role_en, 
-          company: c.company, 
+
+        reset({
+          role_id: c.role_id,
+          role_en: c.role_en,
+          company: c.company,
           url: c.url || "",
-          location: c.location || "", 
-          type_id: c.type_id || "", 
-          type_en: c.type_en || "", 
-          model_id: c.model_id || "", 
-          model_en: c.model_en || "", 
-          start_date: c.start_date, 
-          end_date: c.end_date || "", 
+          location: c.location || "",
+          type_id: c.type_id || "",
+          type_en: c.type_en || "",
+          model_id: c.model_id || "",
+          model_en: c.model_en || "",
+          start_date: c.start_date,
+          end_date: c.end_date || "",
           detail_points_id: c.detail_points_id || [],
           detail_points_en: c.detail_points_en || [],
           skill_ids: skillIds,
-          is_published: c.is_published 
+          is_published: c.is_published
         });
       })
       .catch(() => toast.error("Failed to load"))
@@ -89,16 +89,23 @@ export default function CareerEditPage() {
   const onSubmit = async (data: FormData) => {
     try {
       let logo_url = currentLogoUrl;
-      if (logoFile) { 
-        const r = await StorageService.uploadImage(STORAGE_PATHS.EXPERIENCES, logoFile); 
-        logo_url = r.publicUrl; 
+      if (logoFile) {
+        const r = await StorageService.uploadImage(STORAGE_PATHS.EXPERIENCES, logoFile);
+        logo_url = r.publicUrl;
       }
-      const { skill_ids, ...careerData } = data;
-      await CareerService.update(id, { ...careerData, logo_url }, skill_ids);
-      toast.success("Career updated successfully"); 
+      const { skill_ids, ...restData } = data;
+      const careerData = {
+        ...restData,
+        detail_points_id: data.detail_points_id || [],
+        detail_points_en: data.detail_points_en || [],
+        logo_url
+      };
+
+      await CareerService.update(id, careerData, skill_ids || []);
+      toast.success("Career updated successfully");
       router.push("/dashboard/careers");
-    } catch (e: unknown) { 
-      toast.error("Failed to update", { description: e instanceof Error ? e.message : undefined }); 
+    } catch (e: unknown) {
+      toast.error("Failed to update", { description: e instanceof Error ? e.message : undefined });
     }
   };
 
@@ -106,14 +113,14 @@ export default function CareerEditPage() {
 
   return (
     <>
-      <PageHeader 
-        title="Edit Career" 
+      <PageHeader
+        title="Edit Career"
         icon={Briefcase}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Careers", href: "/dashboard/careers" }, 
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Careers", href: "/dashboard/careers" },
           { label: "Edit" }
-        ]} 
+        ]}
       />
       <Card className="w-full border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
         <CardContent className="p-6">
@@ -152,7 +159,7 @@ export default function CareerEditPage() {
                 <Label>Skills Used</Label>
                 <MultiSelectSkill
                   options={activeSkills}
-                  selected={watch("skill_ids")}
+                  selected={watch("skill_ids") || []}
                   onChange={(val) => setValue("skill_ids", val, { shouldValidate: true, shouldDirty: true })}
                   placeholder="Select technical skills..."
                 />
@@ -188,7 +195,7 @@ export default function CareerEditPage() {
                 {errors.start_date && <p className="text-xs text-red-500">{errors.start_date.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>End Date (leave empty if current)</Label>
+                <Label>End Date</Label>
                 <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
               </div>
             </div>
@@ -216,10 +223,10 @@ export default function CareerEditPage() {
 
             <div className="space-y-2">
               <Label>Company Logo</Label>
-              <ImageUpload 
-                accept="image" 
-                value={currentLogoUrl || undefined} 
-                onChange={(f) => { setLogoFile(f); setIsImageChanged(true); if (!f) setCurrentLogoUrl(null); }} 
+              <ImageUpload
+                accept="image"
+                value={currentLogoUrl || undefined}
+                onChange={(f) => { setLogoFile(f); setIsImageChanged(true); if (!f) setCurrentLogoUrl(null); }}
               />
             </div>
 

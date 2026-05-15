@@ -61,7 +61,7 @@ export default function CareersPage() {
         actions={(c) => (
           <div className="flex items-center gap-1">
             <Link href={`/dashboard/careers/${c.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Pencil className="h-4 w-4" /></Button></Link>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500" onClick={() => setDeleteId(c.id)}><Trash2 className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={() => setDeleteId(c.id)}><Trash2 className="h-4 w-4" /></Button>
           </div>
         )} />
       <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} />

@@ -33,10 +33,10 @@ const schema = z.object({
   model_en: z.string().optional(),
   start_date: z.string().min(1, "Start Date is required"),
   end_date: z.string().optional(),
-  detail_points_id: z.array(z.string()).default([]),
-  detail_points_en: z.array(z.string()).default([]),
-  skill_ids: z.array(z.string()).default([]),
-  is_published: z.boolean().default(true),
+  detail_points_id: z.array(z.string()).optional(),
+  detail_points_en: z.array(z.string()).optional(),
+  skill_ids: z.array(z.string()).optional(),
+  is_published: z.boolean(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -65,10 +65,17 @@ export default function CareerAddPage() {
         const r = await StorageService.uploadImage(STORAGE_PATHS.EXPERIENCES, logoFile);
         logo_url = r.publicUrl;
       }
-      
-      const { skill_ids, ...careerData } = data;
-      await CareerService.create({ ...careerData, logo_url }, skill_ids);
-      
+
+      const { skill_ids, ...restData } = data;
+      const careerData = {
+        ...restData,
+        detail_points_id: data.detail_points_id || [],
+        detail_points_en: data.detail_points_en || [],
+        logo_url
+      };
+
+      await CareerService.create(careerData, skill_ids || []);
+
       toast.success("Career created successfully");
       router.push("/dashboard/careers");
     } catch (e: unknown) {
@@ -124,7 +131,7 @@ export default function CareerAddPage() {
                 <Label>Skills Used</Label>
                 <MultiSelectSkill
                   options={activeSkills}
-                  selected={watch("skill_ids")}
+                  selected={watch("skill_ids") || []}
                   onChange={(val) => setValue("skill_ids", val, { shouldValidate: true, shouldDirty: true })}
                   placeholder="Select technical skills..."
                 />
@@ -160,7 +167,7 @@ export default function CareerAddPage() {
                 {errors.start_date && <p className="text-xs text-red-500">{errors.start_date.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>End Date (leave empty if current)</Label>
+                <Label>End Date</Label>
                 <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
               </div>
             </div>

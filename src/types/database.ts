@@ -115,6 +115,8 @@ export interface CareerSkill {
 export interface Education {
   id: string;
   school: string;
+  url: string | null;
+  location: string | null;
   level_major_id: string;
   level_major_en: string;
   logo_url: string | null;
@@ -122,7 +124,8 @@ export interface Education {
   max_gpa: number | null;
   start_date: string;
   end_date: string | null;
-  detail_points: string[];
+  detail_points_id: string[];
+  detail_points_en: string[];
   is_published: boolean;
   created_at: string;
   updated_at: string;
