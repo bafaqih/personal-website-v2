@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Code2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable, type Column } from "@/components/dashboard/data-table";
@@ -76,6 +76,7 @@ export default function SkillsListPage() {
     <>
       <PageHeader
         title="Skills"
+        icon={Code2}
         description="Manage your technical skills."
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Code2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -33,9 +33,10 @@ export default function SkillAddPage() {
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [iconFile, setIconFile] = useState<File | null>(null);
 
-  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting, isValid } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { is_active: true },
+    mode: "onChange",
   });
 
   useEffect(() => { SkillService.getCategories().then(setCategories).catch(() => {}); }, []);
@@ -59,13 +60,14 @@ export default function SkillAddPage() {
     <>
       <PageHeader
         title="Add Skill"
+        icon={Code2}
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
           { label: "Skills", href: "/dashboard/skills/list" },
           { label: "Add" },
         ]}
       />
-      <Card className="max-w-2xl border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+      <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
@@ -94,9 +96,19 @@ export default function SkillAddPage() {
               <Label>Active</Label>
             </div>
             <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create
+              <Button type="button" variant="outline" onClick={() => router.back()}>
+                <X className="mr-2 h-4 w-4" /> Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting || !isValid} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" /> Create Skill
+                  </>
+                )}
               </Button>
             </div>
           </form>

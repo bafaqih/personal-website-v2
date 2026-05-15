@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Code2, Save, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -36,10 +36,12 @@ export default function SkillEditPage() {
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [currentIconUrl, setCurrentIconUrl] = useState<string | null>(null);
+  const [isImageChanged, setIsImageChanged] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
     resolver: zodResolver(schema),
+    mode: "onChange",
   });
 
   useEffect(() => {
@@ -68,19 +70,20 @@ export default function SkillEditPage() {
     }
   };
 
-  if (loading) return <><PageHeader title="Edit Skill" /><Skeleton className="h-64 max-w-2xl rounded-xl" /></>;
+  if (loading) return <><PageHeader title="Edit Skill" icon={Code2} /><Skeleton className="h-64 w-full rounded-xl" /></>;
 
   return (
     <>
       <PageHeader
         title="Edit Skill"
+        icon={Code2}
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
           { label: "Skills", href: "/dashboard/skills/list" },
           { label: "Edit" },
         ]}
       />
-      <Card className="max-w-2xl border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+      <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
@@ -99,16 +102,26 @@ export default function SkillEditPage() {
             </div>
             <div className="space-y-2">
               <Label>Icon</Label>
-              <ImageUpload accept="image" value={currentIconUrl || undefined} onChange={(file) => { setIconFile(file); if (!file) setCurrentIconUrl(null); }} />
+              <ImageUpload accept="image" value={currentIconUrl || undefined} onChange={(file) => { setIconFile(file); setIsImageChanged(true); if (!file) setCurrentIconUrl(null); }} />
             </div>
             <div className="flex items-center gap-3">
               <Switch checked={watch("is_active")} onCheckedChange={(v) => setValue("is_active", v)} />
               <Label>Active</Label>
             </div>
             <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save Changes
+              <Button type="button" variant="outline" onClick={() => router.back()}>
+                <X className="mr-2 h-4 w-4" /> Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" /> Save Changes
+                  </>
+                )}
               </Button>
             </div>
           </form>

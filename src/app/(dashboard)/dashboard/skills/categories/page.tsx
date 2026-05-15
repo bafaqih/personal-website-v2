@@ -1,34 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Check, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Code2, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { DataTable, type Column } from "@/components/dashboard/data-table";
 import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { SkillService } from "@/src/services/skill.service";
 import type { SkillCategory } from "@/src/types/database";
 
-/**
- * Skill categories management — inline add/edit with toggle.
- */
 export default function SkillCategoriesPage() {
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editId, setEditId] = useState<string | null>(null);
-  const [editNameId, setEditNameId] = useState("");
-  const [editNameEn, setEditNameEn] = useState("");
-  const [addMode, setAddMode] = useState(false);
-  const [newNameId, setNewNameId] = useState("");
-  const [newNameEn, setNewNameEn] = useState("");
+  
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<SkillCategory | null>(null);
+  
+  // Form states
+  const [formData, setFormData] = useState({ name_id: "", name_en: "", is_active: true });
+
+  // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetch = () => {
+  const fetchCategories = () => {
     setLoading(true);
     SkillService.getCategories()
       .then(setCategories)
@@ -36,32 +45,46 @@ export default function SkillCategoriesPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { fetchCategories(); }, []);
 
-  const handleAdd = async () => {
-    if (!newNameId.trim() || !newNameEn.trim()) return;
-    try {
-      await SkillService.createCategory({ name_id: newNameId, name_en: newNameEn, is_active: true });
-      toast.success("Category created");
-      setAddMode(false); setNewNameId(""); setNewNameEn("");
-      fetch();
-    } catch { toast.error("Failed to create"); }
+  const openAddModal = () => {
+    setEditingCategory(null);
+    setFormData({ name_id: "", name_en: "", is_active: true });
+    setIsModalOpen(true);
   };
 
-  const handleEdit = async (id: string) => {
-    try {
-      await SkillService.updateCategory(id, { name_id: editNameId, name_en: editNameEn });
-      toast.success("Category updated");
-      setEditId(null);
-      fetch();
-    } catch { toast.error("Failed to update"); }
+  const openEditModal = (category: SkillCategory) => {
+    setEditingCategory(category);
+    setFormData({
+      name_id: category.name_id,
+      name_en: category.name_en,
+      is_active: category.is_active,
+    });
+    setIsModalOpen(true);
   };
 
-  const handleToggle = async (id: string, is_active: boolean) => {
+  const handleModalSubmit = async () => {
+    if (!formData.name_id.trim() || !formData.name_en.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
+    setIsSubmitting(true);
     try {
-      await SkillService.updateCategory(id, { is_active });
-      fetch();
-    } catch { toast.error("Failed to update status"); }
+      if (editingCategory) {
+        await SkillService.updateCategory(editingCategory.id, formData);
+        toast.success("Category updated");
+      } else {
+        await SkillService.createCategory(formData);
+        toast.success("Category created");
+      }
+      setIsModalOpen(false);
+      fetchCategories();
+    } catch {
+      toast.error(editingCategory ? "Failed to update category" : "Failed to create category");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -70,15 +93,42 @@ export default function SkillCategoriesPage() {
     try {
       await SkillService.deleteCategory(deleteId);
       toast.success("Category deleted");
-      fetch();
-    } catch { toast.error("Failed to delete"); }
-    finally { setDeleting(false); setDeleteId(null); }
+      fetchCategories();
+    } catch {
+      toast.error("Failed to delete category");
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
   };
+
+  const columns: Column<SkillCategory>[] = [
+    {
+      key: "name_en",
+      header: "Name (EN)",
+      className: "font-medium",
+    },
+    {
+      key: "name_id",
+      header: "Name (ID)",
+      render: (cat) => <Badge variant="secondary">{cat.name_id}</Badge>,
+    },
+    {
+      key: "is_active",
+      header: "Status",
+      render: (cat) => (
+        <Badge variant={cat.is_active ? "default" : "secondary"}>
+          {cat.is_active ? "Active" : "Inactive"}
+        </Badge>
+      ),
+    },
+  ];
 
   return (
     <>
       <PageHeader
         title="Skill Categories"
+        icon={Code2}
         description="Manage skill category classifications."
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
@@ -86,64 +136,96 @@ export default function SkillCategoriesPage() {
           { label: "Categories" },
         ]}
         actions={
-          !addMode ? (
-            <Button onClick={() => setAddMode(true)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-              <Plus className="mr-2 h-4 w-4" /> Add Category
-            </Button>
-          ) : undefined
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+            <Plus className="mr-2 h-4 w-4" /> Add Category
+          </Button>
         }
       />
 
-      <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
-        <CardContent className="p-4">
-          {/* Add new row */}
-          {addMode && (
-            <div className="mb-4 flex items-center gap-3 rounded-lg border border-dashed border-neutral-300 p-3 dark:border-white/20">
-              <Input placeholder="Name (ID)" value={newNameId} onChange={(e) => setNewNameId(e.target.value)} className="max-w-[200px]" />
-              <Input placeholder="Name (EN)" value={newNameEn} onChange={(e) => setNewNameEn(e.target.value)} className="max-w-[200px]" />
-              <Button size="icon" variant="ghost" onClick={handleAdd} className="h-8 w-8 text-green-600"><Check className="h-4 w-4" /></Button>
-              <Button size="icon" variant="ghost" onClick={() => { setAddMode(false); setNewNameId(""); setNewNameEn(""); }} className="h-8 w-8"><X className="h-4 w-4" /></Button>
-            </div>
-          )}
-
-          {/* Category list */}
-          <div className="space-y-2">
-            {categories.map((cat) => (
-              <div key={cat.id} className="flex items-center justify-between rounded-lg px-4 py-3 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5">
-                {editId === cat.id ? (
-                  <div className="flex flex-1 items-center gap-3">
-                    <Input value={editNameId} onChange={(e) => setEditNameId(e.target.value)} className="max-w-[200px]" />
-                    <Input value={editNameEn} onChange={(e) => setEditNameEn(e.target.value)} className="max-w-[200px]" />
-                    <Button size="icon" variant="ghost" onClick={() => handleEdit(cat.id)} className="h-8 w-8 text-green-600"><Check className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => setEditId(null)} className="h-8 w-8"><X className="h-4 w-4" /></Button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium">{cat.name_en}</span>
-                      <Badge variant="secondary" className="text-xs">{cat.name_id}</Badge>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Switch checked={cat.is_active} onCheckedChange={(v) => handleToggle(cat.id, v)} />
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setEditId(cat.id); setEditNameId(cat.name_id); setEditNameEn(cat.name_en); }}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500" onClick={() => setDeleteId(cat.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-            {!loading && categories.length === 0 && (
-              <p className="py-8 text-center text-sm text-neutral-500">No categories yet.</p>
-            )}
+      <DataTable
+        data={categories}
+        columns={columns}
+        searchPlaceholder="Search categories..."
+        emptyMessage={loading ? "Loading categories..." : "No categories found."}
+        actions={(cat) => (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => openEditModal(cat)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-red-500 hover:text-red-600"
+              onClick={() => setDeleteId(cat.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      />
 
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} />
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Name (EN)</Label>
+              <Input
+                placeholder="e.g., Programming Languages"
+                value={formData.name_en}
+                onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name (ID)</Label>
+              <Input
+                placeholder="e.g., Bahasa Pemrograman"
+                value={formData.name_id}
+                onChange={(e) => setFormData({ ...formData, name_id: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <Switch
+                checked={formData.is_active}
+                onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
+              />
+              <Label>Active</Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleModalSubmit}
+              disabled={isSubmitting}
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+            >
+              {isSubmitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
+              ) : editingCategory ? (
+                <><Save className="mr-2 h-4 w-4" /> Save Changes</>
+              ) : (
+                <><Plus className="mr-2 h-4 w-4" /> Create Category</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <DeleteDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+      />
     </>
   );
 }
