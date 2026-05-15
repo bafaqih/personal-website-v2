@@ -186,7 +186,7 @@ export default function AboutPage() {
                 ) : (
                   <>
                     <Save className="mr-1.5 h-4 w-4" />
-                    Save
+                    Save Changes
                   </>
                 )}
               </Button>
