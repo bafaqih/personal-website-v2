@@ -84,6 +84,7 @@ export default function EducationEditPage() {
 
       const payload = {
         ...data,
+        end_date: data.end_date || null,
         detail_points_id: data.detail_points_id || [],
         detail_points_en: data.detail_points_en || [],
         gpa: data.gpa ? Number(data.gpa) : null,

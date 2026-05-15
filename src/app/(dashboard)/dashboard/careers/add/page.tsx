@@ -69,6 +69,7 @@ export default function CareerAddPage() {
       const { skill_ids, ...restData } = data;
       const careerData = {
         ...restData,
+        end_date: data.end_date || null,
         detail_points_id: data.detail_points_id || [],
         detail_points_en: data.detail_points_en || [],
         logo_url

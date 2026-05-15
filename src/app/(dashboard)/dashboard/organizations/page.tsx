@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react"; import Link from "next/link"; import { Plus, Pencil, Trash2 } from "lucide-react"; import { toast } from "sonner";
+import { useEffect, useState } from "react"; import Link from "next/link"; import { Plus, Pencil, Trash2, Users } from "lucide-react"; import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header"; import { DataTable, type Column } from "@/components/dashboard/data-table"; import { DeleteDialog } from "@/components/dashboard/delete-dialog"; import { Button } from "@/components/ui/button"; import { Badge } from "@/components/ui/badge";
 import { OrganizationService } from "@/src/services/organization.service"; import type { Organization } from "@/src/types/database";
 
@@ -9,15 +9,28 @@ export default function OrganizationsPage() {
   useEffect(() => { fetchData(); }, []);
   const handleDelete = async () => { if (!deleteId) return; setDeleting(true); try { await OrganizationService.delete(deleteId); toast.success("Deleted"); fetchData(); } catch { toast.error("Failed"); } finally { setDeleting(false); setDeleteId(null); } };
   const columns: Column<Organization>[] = [
-    { key: "organization", header: "Organization" }, { key: "role_en", header: "Role" },
-    { key: "start_date", header: "Period", render: (o) => <span className="text-sm">{o.start_date} — {o.end_date || "Present"}</span> },
+    { key: "organization", header: "Organization", className: "font-medium" }, { key: "role_en", header: "Role" },
+    { 
+      key: "start_date", 
+      header: "Period", 
+      render: (o) => {
+        const formatDate = (dateStr: string) => 
+          new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+          
+        const isPresent = !o.end_date || new Date(o.end_date) > new Date();
+        const start = formatDate(o.start_date);
+        const end = isPresent ? "Present" : formatDate(o.end_date as string);
+        
+        return <span className="text-sm">{start} - {end}</span>;
+      } 
+    },
     { key: "is_published", header: "Status", render: (o) => <Badge variant={o.is_published ? "default" : "secondary"}>{o.is_published ? "Published" : "Draft"}</Badge> },
   ];
   return (
-    <><PageHeader title="Organizations" description="Manage organization experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Organizations" }]}
-        actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"><Plus className="mr-2 h-4 w-4" /> Add Organization</Button></Link>} />
+    <><PageHeader title="Organizations" icon={Users} description="Manage organization experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Organizations" }]}
+        actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"><Plus className="mr-1.5 h-4 w-4" /> Add Organization</Button></Link>} />
       <DataTable data={items} columns={columns} searchPlaceholder="Search organizations..."
-        actions={(o) => (<div className="flex items-center gap-1"><Link href={`/dashboard/organizations/${o.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Pencil className="h-4 w-4" /></Button></Link><Button variant="ghost" size="icon" className="h-8 w-8 text-red-500" onClick={() => setDeleteId(o.id)}><Trash2 className="h-4 w-4" /></Button></div>)} />
+        actions={(o) => (<div className="flex items-center gap-1"><Link href={`/dashboard/organizations/${o.id}/edit`}><Button variant="ghost" size="icon" className="h-8 w-8"><Pencil className="h-4 w-4" /></Button></Link><Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={() => setDeleteId(o.id)}><Trash2 className="h-4 w-4" /></Button></div>)} />
       <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} /></>
   );
 }

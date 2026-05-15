@@ -134,12 +134,15 @@ export interface Education {
 export interface Organization {
   id: string;
   organization: string;
+  url: string | null;
+  location: string | null;
   role_id: string;
   role_en: string;
   logo_url: string | null;
   start_date: string;
   end_date: string | null;
-  detail_points: string[];
+  detail_points_id: string[];
+  detail_points_en: string[];
   is_published: boolean;
   created_at: string;
   updated_at: string;
