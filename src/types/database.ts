@@ -158,7 +158,6 @@ export interface Project {
   bio_en: string | null;
   type_id: string | null;
   category_id: string | null;
-  thumbnail_url: string | null;
   project_date: string | null;
   github_url: string | null;
   live_url: string | null;
@@ -167,15 +166,26 @@ export interface Project {
   overview_en: string | null;
   challenge_intro_id: string | null;
   challenge_intro_en: string | null;
-  challenge_points: string[];
-  result_points: string[];
-  lesson_points: string[];
+  challenge_points_id: string[];
+  challenge_points_en: string[];
+  result_intro_id: string | null;
+  result_intro_en: string | null;
+  result_points_id: string[];
+  result_points_en: string[];
+  lesson_intro_id: string | null;
+  lesson_intro_en: string | null;
+  lesson_points_id: string[];
+  lesson_points_en: string[];
   is_published: boolean;
   created_at: string;
   updated_at: string;
   // Joined fields
   type?: ProjectType;
   category?: ProjectCategory;
+  project_images?: ProjectImage[];
+  project_skills?: { skill_id: string; skill?: Skill }[];
+  project_responsibilities?: ProjectResponsibility[];
+  project_features?: ProjectFeature[];
 }
 
 export interface ProjectImage {

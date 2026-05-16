@@ -30,6 +30,7 @@ interface DataTableProps<T> {
   actions?: (item: T) => React.ReactNode;
   emptyMessage?: string;
   className?: string;
+  loading?: boolean;
 }
 
 /**
@@ -44,6 +45,7 @@ export function DataTable<T>({
   actions,
   emptyMessage = "No data found.",
   className,
+  loading = false,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -113,7 +115,22 @@ export function DataTable<T>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedData.length === 0 ? (
+            {loading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <TableRow key={i}>
+                  {columns.map((col) => (
+                    <TableCell key={col.key}>
+                      <div className="h-4 w-full animate-pulse rounded bg-neutral-100 dark:bg-white/10" />
+                    </TableCell>
+                  ))}
+                  {actions && (
+                    <TableCell>
+                      <div className="h-8 w-8 animate-pulse rounded bg-neutral-100 dark:bg-white/10" />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            ) : paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length + (actions ? 1 : 0)}

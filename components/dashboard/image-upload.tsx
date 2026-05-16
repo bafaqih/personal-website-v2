@@ -15,6 +15,7 @@ interface ImageUploadProps {
   onChange: (file: File | null, previewUrl: string | null) => void;
   accept?: "image" | "pdf";
   className?: string;
+  previewClassName?: string;
   disabled?: boolean;
 }
 
@@ -28,6 +29,7 @@ export function ImageUpload({
   onChange,
   accept = "image",
   className,
+  previewClassName,
   disabled = false,
 }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(value || null);
@@ -115,9 +117,9 @@ export function ImageUpload({
     <div className={cn("space-y-2", className)}>
       {/* Preview */}
       {showPreview && (
-        <div className="relative inline-block group">
+        <div className={cn("relative inline-block group", previewClassName ? "w-full" : "")}>
           {accept === "image" && preview ? (
-            <div className="relative h-32 w-32 overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10">
+            <div className={cn("relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", previewClassName || "h-32 w-32")}>
               <Image
                 src={preview}
                 alt="Preview"
@@ -167,11 +169,12 @@ export function ImageUpload({
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           className={cn(
-            "flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-8 transition-all",
+            "flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 transition-all",
             dragOver
               ? "border-neutral-900 bg-neutral-50 dark:border-white dark:bg-white/5"
               : "border-neutral-300 hover:border-neutral-400 dark:border-white/20 dark:hover:border-white/40",
-            disabled && "pointer-events-none opacity-50"
+            disabled && "pointer-events-none opacity-50",
+            previewClassName
           )}
         >
           <input

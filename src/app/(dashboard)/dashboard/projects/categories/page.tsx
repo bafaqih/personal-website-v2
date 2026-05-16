@@ -1,7 +1,231 @@
 "use client";
-import { LookupManagement } from "@/components/dashboard/lookup-management";
+
+import { useEffect, useState } from "react";
+import { Plus, Pencil, Trash2, FolderTree, Loader2, Save, X } from "lucide-react";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/dashboard/page-header";
+import { DataTable, type Column } from "@/components/dashboard/data-table";
+import { DeleteDialog } from "@/components/dashboard/delete-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { ProjectService } from "@/src/services/project.service";
+import type { ProjectCategory } from "@/src/types/database";
 
 export default function ProjectCategoriesPage() {
-  return <LookupManagement title="Project Categories" description="Manage project category classifications." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Projects" }, { label: "Categories" }]} fetchItems={ProjectService.getCategories} createItem={ProjectService.createCategory} updateItem={ProjectService.updateCategory} deleteItem={ProjectService.deleteCategory} />;
+  const [categories, setCategories] = useState<ProjectCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<ProjectCategory | null>(null);
+  
+  // Form states
+  const [formData, setFormData] = useState({ name_id: "", name_en: "", is_active: true });
+
+  // Delete state
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const fetchCategories = () => {
+    setLoading(true);
+    ProjectService.getCategories()
+      .then(setCategories)
+      .catch(() => toast.error("Failed to load categories"))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { fetchCategories(); }, []);
+
+  const openAddModal = () => {
+    setEditingCategory(null);
+    setFormData({ name_id: "", name_en: "", is_active: true });
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (category: ProjectCategory) => {
+    setEditingCategory(category);
+    setFormData({
+      name_id: category.name_id,
+      name_en: category.name_en,
+      is_active: category.is_active,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleModalSubmit = async () => {
+    if (!formData.name_id.trim() || !formData.name_en.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      if (editingCategory) {
+        await ProjectService.updateCategory(editingCategory.id, formData);
+        toast.success("Category updated");
+      } else {
+        await ProjectService.createCategory(formData);
+        toast.success("Category created");
+      }
+      setIsModalOpen(false);
+      fetchCategories();
+    } catch {
+      toast.error(editingCategory ? "Failed to update category" : "Failed to create category");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      await ProjectService.deleteCategory(deleteId);
+      toast.success("Category deleted");
+      fetchCategories();
+    } catch {
+      toast.error("Failed to delete category");
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
+  };
+
+  const columns: Column<ProjectCategory>[] = [
+    {
+      key: "name_en",
+      header: "Name (EN)",
+      className: "font-medium",
+    },
+    {
+      key: "name_id",
+      header: "Name (ID)",
+      render: (cat) => <Badge variant="secondary">{cat.name_id}</Badge>,
+    },
+    {
+      key: "is_active",
+      header: "Status",
+      render: (cat) => (
+        <Badge variant={cat.is_active ? "default" : "secondary"}>
+          {cat.is_active ? "Active" : "Inactive"}
+        </Badge>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <PageHeader
+        title="Project Categories"
+        icon={FolderTree}
+        description="Manage project category classifications."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Projects" },
+          { label: "Categories" },
+        ]}
+        actions={
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+            <Plus className="mr-1.5 h-4 w-4" /> Add Category
+          </Button>
+        }
+      />
+
+      <DataTable
+        data={categories}
+        columns={columns}
+        searchPlaceholder="Search categories..."
+        emptyMessage={loading ? "Loading categories..." : "No categories found."}
+        actions={(cat) => (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => openEditModal(cat)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50"
+              onClick={() => setDeleteId(cat.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      />
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Name (EN)</Label>
+              <Input
+                placeholder="e.g., Web Development"
+                value={formData.name_en}
+                onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Name (ID)</Label>
+              <Input
+                placeholder="e.g., Pengembangan Web"
+                value={formData.name_id}
+                onChange={(e) => setFormData({ ...formData, name_id: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <Switch
+                checked={formData.is_active}
+                onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
+              />
+              <Label>Active</Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              <X className="mr-1.5 h-4 w-4" /> Cancel
+            </Button>
+            <Button
+              onClick={handleModalSubmit}
+              disabled={isSubmitting}
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+            >
+              {isSubmitting ? (
+                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
+              ) : editingCategory ? (
+                <><Save className="mr-1.5 h-4 w-4" /> Save Changes</>
+              ) : (
+                <><Plus className="mr-1.5 h-4 w-4" /> Create Category</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <DeleteDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+      />
+    </>
+  );
 }

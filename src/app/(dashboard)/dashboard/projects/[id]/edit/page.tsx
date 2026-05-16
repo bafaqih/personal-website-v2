@@ -1,50 +1,605 @@
 "use client";
-import { useEffect, useState } from "react"; import { useRouter, useParams } from "next/navigation"; import { useForm } from "react-hook-form"; import { zodResolver } from "@hookform/resolvers/zod"; import { z } from "zod"; import { Loader2 } from "lucide-react"; import { toast } from "sonner";
-import { PageHeader } from "@/components/dashboard/page-header"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input"; import { Label } from "@/components/ui/label"; import { Textarea } from "@/components/ui/textarea"; import { Switch } from "@/components/ui/switch"; import { Card, CardContent } from "@/components/ui/card"; import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; import { ImageUpload } from "@/components/dashboard/image-upload"; import { RichTextEditor } from "@/components/dashboard/rich-text-editor"; import { Skeleton } from "@/components/ui/skeleton";
-import { ProjectService } from "@/src/services/project.service"; import { StorageService } from "@/src/services/storage.service"; import { STORAGE_PATHS } from "@/src/lib/constants"; import type { ProjectType, ProjectCategory } from "@/src/types/database";
 
-const schema = z.object({ slug: z.string().min(1), title_id: z.string().min(1), title_en: z.string().min(1), bio_id: z.string().optional(), bio_en: z.string().optional(), type_id: z.string().optional(), category_id: z.string().optional(), project_date: z.string().optional(), github_url: z.string().optional(), live_url: z.string().optional(), video_url: z.string().optional(), is_published: z.boolean() });
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Loader2, Plus, X, FolderKanban, Trash2, ArrowUp, ArrowDown, Save } from "lucide-react";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/dashboard/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BulletListInput } from "@/components/dashboard/bullet-list-input";
+import { MultiSelectSkill } from "@/components/dashboard/multi-select-skill";
+import { ImageUpload } from "@/components/dashboard/image-upload";
+import { ProjectService } from "@/src/services/project.service";
+import { SkillService } from "@/src/services/skill.service";
+import { StorageService } from "@/src/services/storage.service";
+import { STORAGE_PATHS } from "@/src/lib/constants";
+import type { ProjectType, ProjectCategory } from "@/src/types/database";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const schema = z.object({
+  slug: z.string().min(1, "Slug is required"),
+  title_id: z.string().min(1, "Title (ID) is required"),
+  title_en: z.string().min(1, "Title (EN) is required"),
+  bio_id: z.string().optional(),
+  bio_en: z.string().optional(),
+  type_id: z.string().optional(),
+  category_id: z.string().optional(),
+  project_date: z.string().optional(),
+  github_url: z.string().optional(),
+  live_url: z.string().optional(),
+  video_url: z.string().optional(),
+  overview_id: z.string().optional(),
+  overview_en: z.string().optional(),
+  challenge_intro_id: z.string().optional(),
+  challenge_intro_en: z.string().optional(),
+  challenge_points_id: z.array(z.string()).optional(),
+  challenge_points_en: z.array(z.string()).optional(),
+  result_intro_id: z.string().optional(),
+  result_intro_en: z.string().optional(),
+  result_points_id: z.array(z.string()).optional(),
+  result_points_en: z.array(z.string()).optional(),
+  lesson_intro_id: z.string().optional(),
+  lesson_intro_en: z.string().optional(),
+  lesson_points_id: z.array(z.string()).optional(),
+  lesson_points_en: z.array(z.string()).optional(),
+  responsibilities_id: z.array(z.string()).optional(),
+  responsibilities_en: z.array(z.string()).optional(),
+  features_id: z.array(z.string()).optional(),
+  features_en: z.array(z.string()).optional(),
+  skill_ids: z.array(z.string()).optional(),
+  is_published: z.boolean(),
+});
+
 type FormData = z.infer<typeof schema>;
 
 export default function ProjectEditPage() {
-  const router = useRouter(); const { id } = useParams() as { id: string }; const [types, setTypes] = useState<ProjectType[]>([]); const [categories, setCategories] = useState<ProjectCategory[]>([]);
-  const [thumbFile, setThumbFile] = useState<File | null>(null); const [currentThumbUrl, setCurrentThumbUrl] = useState<string | null>(null);
-  const [overviewId, setOverviewId] = useState(""); const [overviewEn, setOverviewEn] = useState(""); const [loading, setLoading] = useState(true);
-  const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const router = useRouter();
+  const { id } = useParams() as { id: string };
+  const [loading, setLoading] = useState(true);
+  const [types, setTypes] = useState<ProjectType[]>([]);
+  const [categories, setCategories] = useState<ProjectCategory[]>([]);
+  const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
+  
+  // Image states
+  const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null; existingUrl?: string }[]>([]);
+  const [hasImageChanges, setHasImageChanges] = useState(false);
+
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { 
+      is_published: true,
+      challenge_points_id: [], challenge_points_en: [],
+      result_points_id: [], result_points_en: [],
+      lesson_points_id: [], lesson_points_en: [],
+      responsibilities_id: [], responsibilities_en: [],
+      features_id: [], features_en: [],
+      skill_ids: []
+    },
+    mode: "onChange",
+  });
 
   useEffect(() => {
-    Promise.all([ProjectService.getById(id), ProjectService.getTypes(), ProjectService.getCategories()])
-      .then(([p, t, c]) => { setTypes(t); setCategories(c); setCurrentThumbUrl(p.thumbnail_url); setOverviewId(p.overview_id || ""); setOverviewEn(p.overview_en || "");
-        reset({ slug: p.slug, title_id: p.title_id, title_en: p.title_en, bio_id: p.bio_id || "", bio_en: p.bio_en || "", type_id: p.type_id || "", category_id: p.category_id || "", project_date: p.project_date || "", github_url: p.github_url || "", live_url: p.live_url || "", video_url: p.video_url || "", is_published: p.is_published });
-      }).catch(() => toast.error("Failed")).finally(() => setLoading(false));
+    const fetchData = async () => {
+      try {
+        const [project, typesData, categoriesData, skillsData] = await Promise.all([
+          ProjectService.getById(id),
+          ProjectService.getTypes(),
+          ProjectService.getCategories(),
+          SkillService.getAll()
+        ]);
+
+        setTypes(typesData);
+        setCategories(categoriesData);
+        setActiveSkills(skillsData.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
+
+        // Pre-fill image slots
+        if (project.project_images && project.project_images.length > 0) {
+          setImageSlots(project.project_images.map(img => ({
+            id: img.id,
+            file: null,
+            existingUrl: img.image_url
+          })));
+        } else {
+          setImageSlots([{ id: Date.now().toString(), file: null }]);
+        }
+
+        // Map features and responsibilities back to input format
+        const features_id = (project.project_features || []).map(f => `${f.title_id}: ${f.description_id}`);
+        const features_en = (project.project_features || []).map(f => `${f.title_en}: ${f.description_en}`);
+        const responsibilities_id = (project.project_responsibilities || []).map(r => r.content_id);
+        const responsibilities_en = (project.project_responsibilities || []).map(r => r.content_en);
+
+        reset({
+          slug: project.slug,
+          title_id: project.title_id,
+          title_en: project.title_en,
+          bio_id: project.bio_id || "",
+          bio_en: project.bio_en || "",
+          type_id: project.type_id || "",
+          category_id: project.category_id || "",
+          project_date: project.project_date || "",
+          github_url: project.github_url || "",
+          live_url: project.live_url || "",
+          video_url: project.video_url || "",
+          overview_id: project.overview_id || "",
+          overview_en: project.overview_en || "",
+          challenge_intro_id: project.challenge_intro_id || "",
+          challenge_intro_en: project.challenge_intro_en || "",
+          challenge_points_id: project.challenge_points_id || [],
+          challenge_points_en: project.challenge_points_en || [],
+          result_intro_id: project.result_intro_id || "",
+          result_intro_en: project.result_intro_en || "",
+          result_points_id: project.result_points_id || [],
+          result_points_en: project.result_points_en || [],
+          lesson_intro_id: project.lesson_intro_id || "",
+          lesson_intro_en: project.lesson_intro_en || "",
+          lesson_points_id: project.lesson_points_id || [],
+          lesson_points_en: project.lesson_points_en || [],
+          is_published: project.is_published,
+          skill_ids: (project.project_skills || []).map(s => s.skill_id),
+          features_id,
+          features_en,
+          responsibilities_id,
+          responsibilities_en
+        });
+      } catch (err) {
+        toast.error("Failed to load project data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [id, reset]);
 
-  const onSubmit = async (data: FormData) => {
-    try { let thumbnail_url = currentThumbUrl; if (thumbFile) { const r = await StorageService.uploadImage(STORAGE_PATHS.PROJECTS, thumbFile); thumbnail_url = r.publicUrl; }
-      await ProjectService.update(id, { ...data, thumbnail_url, overview_id: overviewId || null, overview_en: overviewEn || null });
-      toast.success("Updated"); router.push("/dashboard/projects/list");
-    } catch (e: unknown) { toast.error("Failed", { description: e instanceof Error ? e.message : undefined }); }
+  const moveImage = (index: number, dir: 'up' | 'down') => {
+    const newSlots = [...imageSlots];
+    if (dir === 'up' && index > 0) {
+      [newSlots[index - 1], newSlots[index]] = [newSlots[index], newSlots[index - 1]];
+    } else if (dir === 'down' && index < newSlots.length - 1) {
+      [newSlots[index + 1], newSlots[index]] = [newSlots[index], newSlots[index + 1]];
+    }
+    setHasImageChanges(true);
+    setImageSlots(newSlots);
   };
 
-  if (loading) return <><PageHeader title="Edit Project" /><Skeleton className="h-96 rounded-xl" /></>;
+  const removeImage = (slotId: string) => {
+    setHasImageChanges(true);
+    setImageSlots(imageSlots.filter(s => s.id !== slotId));
+  };
+
+  const updateImageSlot = (slotId: string, file: File | null) => {
+    setHasImageChanges(true);
+    setImageSlots(imageSlots.map(s => s.id === slotId ? { ...s, file, existingUrl: file ? undefined : s.existingUrl } : s));
+  };
+
+  const addImageSlot = () => {
+    setHasImageChanges(true);
+    setImageSlots([...imageSlots, { id: Date.now().toString(), file: null }]);
+  };
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      // 1. Process Images
+      const imagesPayload: { url: string; sort_order: number }[] = [];
+      let sortOrder = 0;
+      for (const slot of imageSlots) {
+        if (slot.file) {
+          const r = await StorageService.uploadImage(STORAGE_PATHS.PROJECTS, slot.file);
+          imagesPayload.push({ url: r.publicUrl, sort_order: sortOrder++ });
+        } else if (slot.existingUrl) {
+          imagesPayload.push({ url: slot.existingUrl, sort_order: sortOrder++ });
+        }
+      }
+
+      // 2. Parse Features
+      const parsedFeatures = [];
+      const f_id = data.features_id || [];
+      const f_en = data.features_en || [];
+      const maxFeatLen = Math.max(f_id.length, f_en.length);
+      for(let i=0; i<maxFeatLen; i++) {
+         const idStr = f_id[i] || "";
+         const enStr = f_en[i] || "";
+         const idParts = idStr.split(":");
+         const enParts = enStr.split(":");
+         
+         const title_id = idParts[0]?.trim() || "";
+         const desc_id = idParts.slice(1).join(":").trim() || "";
+         const title_en = enParts[0]?.trim() || title_id; // fallback
+         const desc_en = enParts.slice(1).join(":").trim() || desc_id; // fallback
+         
+         if(title_id || desc_id || title_en || desc_en) {
+             parsedFeatures.push({
+                 title_id, description_id: desc_id,
+                 title_en, description_en: desc_en,
+                 sort_order: i
+             });
+         }
+      }
+
+      // 3. Parse Responsibilities
+      const parsedResponsibilities = [];
+      const r_id = data.responsibilities_id || [];
+      const r_en = data.responsibilities_en || [];
+      const rMaxLen = Math.max(r_id.length, r_en.length);
+      for(let i=0; i<rMaxLen; i++) {
+          if(r_id[i] || r_en[i]) {
+              parsedResponsibilities.push({
+                  content_id: r_id[i] || "",
+                  content_en: r_en[i] || "",
+                  sort_order: i
+              })
+          }
+      }
+
+      // 4. Prepare Core Data
+      const coreData = {
+        slug: data.slug,
+        title_id: data.title_id,
+        title_en: data.title_en,
+        bio_id: data.bio_id || null,
+        bio_en: data.bio_en || null,
+        type_id: data.type_id || null,
+        category_id: data.category_id || null,
+        project_date: data.project_date || null,
+        github_url: data.github_url || null,
+        live_url: data.live_url || null,
+        video_url: data.video_url || null,
+        overview_id: data.overview_id || null,
+        overview_en: data.overview_en || null,
+        challenge_intro_id: data.challenge_intro_id || null,
+        challenge_intro_en: data.challenge_intro_en || null,
+        challenge_points_id: data.challenge_points_id || [],
+        challenge_points_en: data.challenge_points_en || [],
+        result_intro_id: data.result_intro_id || null,
+        result_intro_en: data.result_intro_en || null,
+        result_points_id: data.result_points_id || [],
+        result_points_en: data.result_points_en || [],
+        lesson_intro_id: data.lesson_intro_id || null,
+        lesson_intro_en: data.lesson_intro_en || null,
+        lesson_points_id: data.lesson_points_id || [],
+        lesson_points_en: data.lesson_points_en || [],
+        is_published: data.is_published,
+      };
+
+      await ProjectService.update(id, coreData, imagesPayload, data.skill_ids, parsedResponsibilities, parsedFeatures);
+
+      toast.success("Project updated successfully");
+      router.push("/dashboard/projects/list");
+    } catch (e: unknown) {
+      toast.error("Failed to update project", { description: e instanceof Error ? e.message : undefined });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-12 w-1/3" />
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
   return (
-    <><PageHeader title="Edit Project" breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Projects", href: "/dashboard/projects/list" }, { label: "Edit" }]} />
-    <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80"><CardContent className="p-6">
+    <>
+      <PageHeader
+        title="Edit Project"
+        icon={FolderKanban}
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Projects", href: "/dashboard/projects/list" },
+          { label: "Edit" },
+        ]}
+      />
+      
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2"><div className="space-y-2"><Label>Slug</Label><Input {...register("slug")} /></div><div className="space-y-2"><Label>Project Date</Label><Input type="date" {...register("project_date")} /></div></div>
-        <div className="grid gap-4 md:grid-cols-2"><div className="space-y-2"><Label>Title (ID)</Label><Input {...register("title_id")} /></div><div className="space-y-2"><Label>Title (EN)</Label><Input {...register("title_en")} /></div></div>
-        <div className="grid gap-4 md:grid-cols-2"><div className="space-y-2"><Label>Bio (ID)</Label><Textarea {...register("bio_id")} rows={2} /></div><div className="space-y-2"><Label>Bio (EN)</Label><Textarea {...register("bio_en")} rows={2} /></div></div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2"><Label>Type</Label><Select onValueChange={(v) => setValue("type_id", v)} value={watch("type_id")}><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger><SelectContent>{types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>)}</SelectContent></Select></div>
-          <div className="space-y-2"><Label>Category</Label><Select onValueChange={(v) => setValue("category_id", v)} value={watch("category_id")}><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger><SelectContent>{categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>)}</SelectContent></Select></div>
+        
+        {/* Basic Information */}
+        <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+          <CardContent className="p-6 space-y-6">
+            <h3 className="font-semibold text-lg border-b pb-2">Basic Information</h3>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Slug</Label>
+                <Input {...register("slug")} placeholder="e.g., my-awesome-project" />
+                {errors.slug && <p className="text-xs text-red-500">{errors.slug.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Project Date</Label>
+                <Input type="date" {...register("project_date")} onClick={(e) => e.currentTarget.showPicker()} />
+              </div>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Project Title (ID)</Label>
+                <Input {...register("title_id")} placeholder="Project title (ID)" />
+                {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Project Title (EN)</Label>
+                <Input {...register("title_en")} placeholder="Project title (EN)" />
+                {errors.title_en && <p className="text-xs text-red-500">{errors.title_en.message}</p>}
+              </div>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Short bio (ID)</Label>
+                <Textarea {...register("bio_id")} rows={2} placeholder="Short bio (ID)..." />
+              </div>
+              <div className="space-y-2">
+                <Label>Short bio (EN)</Label>
+                <Textarea {...register("bio_en")} rows={2} placeholder="Short bio (EN)..." />
+              </div>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Project overview (ID)</Label>
+                <Textarea {...register("overview_id")} rows={4} placeholder="Project overview (ID)..." />
+              </div>
+              <div className="space-y-2">
+                <Label>Project overview (EN)</Label>
+                <Textarea {...register("overview_en")} rows={4} placeholder="Project overview (EN)..." />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Classification & Links */}
+        <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+          <CardContent className="p-6 space-y-6">
+            <h3 className="font-semibold text-lg border-b pb-2">Classification & Links</h3>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label>Type</Label>
+                <Select onValueChange={(v) => setValue("type_id", v, { shouldDirty: true })} value={watch("type_id")}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>
+                    {types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select onValueChange={(v) => setValue("category_id", v, { shouldDirty: true })} value={watch("category_id")}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Skills / Tech Stack</Label>
+                <MultiSelectSkill
+                  options={activeSkills}
+                  selected={watch("skill_ids") || []}
+                  onChange={(val) => setValue("skill_ids", val, { shouldValidate: true, shouldDirty: true })}
+                  placeholder="Select technologies..."
+                />
+              </div>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label>GitHub URL</Label>
+                <Input {...register("github_url")} placeholder="https://github.com/..." />
+              </div>
+              <div className="space-y-2">
+                <Label>Live URL</Label>
+                <Input {...register("live_url")} placeholder="https://..." />
+              </div>
+              <div className="space-y-2">
+                <Label>Video URL</Label>
+                <Input {...register("video_url")} placeholder="https://youtube.com/..." />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Gallery */}
+        <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex justify-between items-center border-b pb-2">
+              <h3 className="font-semibold text-lg">Project Gallery</h3>
+              <Button type="button" variant="outline" size="sm" onClick={addImageSlot}>
+                <Plus className="h-4 w-4 mr-1" /> Add Image
+              </Button>
+            </div>
+            <p className="text-sm text-neutral-500">The first image in the list will automatically become the project thumbnail.</p>
+            
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {imageSlots.map((slot, index) => (
+                <div key={slot.id} className="relative group border rounded-xl p-3 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col gap-3">
+                  <div className="absolute -top-3 -left-3 bg-neutral-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 border-2 border-white dark:border-neutral-900 shadow-sm">
+                    {index + 1}
+                  </div>
+                  <ImageUpload 
+                    accept="image" 
+                    value={slot.existingUrl}
+                    onChange={(f) => updateImageSlot(slot.id, f)} 
+                    previewClassName="w-full aspect-video"
+                  />
+                  <div className="flex justify-between items-center gap-1">
+                    <div className="flex gap-1">
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
+                        <ArrowUp className="h-4 w-4" />
+                      </Button>
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
+                        <ArrowDown className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Roles & Features */}
+        <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+          <CardContent className="p-6 space-y-6">
+            <h3 className="font-semibold text-lg border-b pb-2">Responsibilities & Key Features</h3>
+            
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Responsibilities (ID)</Label>
+                <BulletListInput
+                  id="resp_id"
+                  value={watch("responsibilities_id")}
+                  onChange={(val) => setValue("responsibilities_id", val, { shouldValidate: true, shouldDirty: true })}
+                  placeholder="Responsibilities (ID)..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Responsibilities (EN)</Label>
+                <BulletListInput
+                  id="resp_en"
+                  value={watch("responsibilities_en")}
+                  onChange={(val) => setValue("responsibilities_en", val, { shouldValidate: true, shouldDirty: true })}
+                  placeholder="Responsibilities (EN)..."
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Key Features (ID) <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
+                <BulletListInput
+                  id="feat_id"
+                  value={watch("features_id")}
+                  onChange={(val) => setValue("features_id", val, { shouldValidate: true, shouldDirty: true })}
+                  placeholder="Login: Authentication feature (ID)..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Key Features (EN) <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
+                <BulletListInput
+                  id="feat_en"
+                  value={watch("features_en")}
+                  onChange={(val) => setValue("features_en", val, { shouldValidate: true, shouldDirty: true })}
+                  placeholder="Login: Authentication feature (EN)..."
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Deep Dives (Challenge, Result, Lesson) */}
+        <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+          <CardContent className="p-6 space-y-8">
+            <h3 className="font-semibold text-lg border-b pb-2">Deep Dive Sections</h3>
+            
+            {/* Challenge */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-primary">Challenge</h4>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Challenge Intro (ID)</Label>
+                  <Textarea {...register("challenge_intro_id")} rows={2} placeholder="Challenge intro (ID)..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Challenge Intro (EN)</Label>
+                  <Textarea {...register("challenge_intro_en")} rows={2} placeholder="Challenge intro (EN)..." />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Challenge Points (ID)</Label>
+                  <BulletListInput id="ch_pts_id" value={watch("challenge_points_id")} onChange={(v) => setValue("challenge_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (ID)..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Challenge Points (EN)</Label>
+                  <BulletListInput id="ch_pts_en" value={watch("challenge_points_en")} onChange={(v) => setValue("challenge_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (EN)..." />
+                </div>
+              </div>
+            </div>
+
+            {/* Result */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-primary">Result</h4>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Result Intro (ID)</Label>
+                  <Textarea {...register("result_intro_id")} rows={2} placeholder="Result intro (ID)..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Result Intro (EN)</Label>
+                  <Textarea {...register("result_intro_en")} rows={2} placeholder="Result intro (EN)..." />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Result Points (ID)</Label>
+                  <BulletListInput id="rs_pts_id" value={watch("result_points_id")} onChange={(v) => setValue("result_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (ID)..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Result Points (EN)</Label>
+                  <BulletListInput id="rs_pts_en" value={watch("result_points_en")} onChange={(v) => setValue("result_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (EN)..." />
+                </div>
+              </div>
+            </div>
+
+            {/* Lesson */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-primary">Lesson Learned</h4>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Lesson Intro (ID)</Label>
+                  <Textarea {...register("lesson_intro_id")} rows={2} placeholder="Lesson intro (ID)..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Lesson Intro (EN)</Label>
+                  <Textarea {...register("lesson_intro_en")} rows={2} placeholder="Lesson intro (EN)..." />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Lesson Points (ID)</Label>
+                  <BulletListInput id="ls_pts_id" value={watch("lesson_points_id")} onChange={(v) => setValue("lesson_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (ID)..." />
+                </div>
+                <div className="space-y-2">
+                  <Label>Lesson Points (EN)</Label>
+                  <BulletListInput id="ls_pts_en" value={watch("lesson_points_en")} onChange={(v) => setValue("lesson_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (EN)..." />
+                </div>
+              </div>
+            </div>
+
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
+            <Label>Published</Label>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              <X className="mr-1.5 h-4 w-4" /> Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+              {isSubmitting ? (
+                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving...</>
+              ) : (
+                <><Save className="mr-1.5 h-4 w-4" /> Save Changes</>
+              )}
+            </Button>
+          </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-3"><div className="space-y-2"><Label>GitHub URL</Label><Input {...register("github_url")} /></div><div className="space-y-2"><Label>Live URL</Label><Input {...register("live_url")} /></div><div className="space-y-2"><Label>Video URL</Label><Input {...register("video_url")} /></div></div>
-        <div className="space-y-2"><Label>Thumbnail</Label><ImageUpload accept="image" value={currentThumbUrl || undefined} onChange={(f) => { setThumbFile(f); if (!f) setCurrentThumbUrl(null); }} /></div>
-        <div className="space-y-2"><Label>Overview (ID)</Label><RichTextEditor content={overviewId} onChange={setOverviewId} /></div>
-        <div className="space-y-2"><Label>Overview (EN)</Label><RichTextEditor content={overviewEn} onChange={setOverviewEn} /></div>
-        <div className="flex items-center gap-3"><Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v)} /><Label>Published</Label></div>
-        <div className="flex justify-end gap-3"><Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button><Button type="submit" disabled={isSubmitting} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Save Changes</Button></div>
+
       </form>
-    </CardContent></Card></>
+    </>
   );
 }
