@@ -39,6 +39,7 @@ export default function DashboardRootLayout({
             position="top-right"
             duration={5000}
             closeButton
+            expand={true}
             richColors
             toastOptions={{
               className: "font-sans pr-10",
