@@ -27,4 +27,15 @@ export const ContactService = {
     if (error) throw error;
     return data as Contact;
   },
+
+  async create(payload: Partial<Contact>) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("contacts")
+      .insert(payload)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Contact;
+  },
 };

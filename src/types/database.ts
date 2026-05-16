@@ -65,8 +65,7 @@ export interface Contact {
   linkedin_url: string | null;
   github_url: string | null;
   whatsapp_url: string | null;
-  location_id: string | null;
-  location_en: string | null;
+  location: string | null;
   created_at: string;
   updated_at: string;
 }
