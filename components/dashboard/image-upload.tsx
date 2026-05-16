@@ -117,9 +117,12 @@ export function ImageUpload({
     <div className={cn("space-y-2", className)}>
       {/* Preview */}
       {showPreview && (
-        <div className={cn("relative inline-block group", previewClassName ? "w-full" : "")}>
+        <div className={cn("relative group", previewClassName ? "w-full" : "w-fit")}>
           {accept === "image" && preview ? (
-            <div className={cn("relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", previewClassName || "h-32 w-32")}>
+            <div className={cn(
+              "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", 
+              previewClassName || "h-32 w-32"
+            )}>
               <Image
                 src={preview}
                 alt="Preview"

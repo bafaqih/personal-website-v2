@@ -243,7 +243,7 @@ export interface Blog {
   author_id: string;
   title_id: string;
   title_en: string;
-  thumbnail_url: string | null;
+  image_url: string | null;
   content_id: string | null;
   content_en: string | null;
   type_id: string | null;
@@ -254,6 +254,7 @@ export interface Blog {
   created_at: string;
   updated_at: string;
   // Joined fields
+  tags?: string[];
   type?: BlogType;
   category?: BlogCategory;
   author?: Profile;

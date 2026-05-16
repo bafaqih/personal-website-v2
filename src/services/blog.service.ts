@@ -137,4 +137,55 @@ export const BlogService = {
       .eq("id", id);
     if (error) throw error;
   },
+
+  // --- Tags ---
+  async getUniqueTags(): Promise<string[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("blog_tags")
+      .select("tag");
+    
+    if (error) throw error;
+    
+    // Extract unique tags and sort alphabetically
+    const tags = data.map((t) => t.tag);
+    return Array.from(new Set(tags)).sort();
+  },
+
+  async syncTags(blogId: string, tags: string[]) {
+    const supabase = createClient();
+    
+    // 1. Delete old tags
+    const { error: deleteError } = await supabase
+      .from("blog_tags")
+      .delete()
+      .eq("blog_id", blogId);
+    
+    if (deleteError) throw deleteError;
+
+    // 2. Insert new tags
+    if (tags.length > 0) {
+      const tagRows = tags.map((tag) => ({
+        blog_id: blogId,
+        tag: tag.trim(),
+      }));
+      
+      const { error: insertError } = await supabase
+        .from("blog_tags")
+        .insert(tagRows);
+      
+      if (insertError) throw insertError;
+    }
+  },
+
+  async getTagsByBlogId(blogId: string): Promise<string[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("blog_tags")
+      .select("tag")
+      .eq("blog_id", blogId);
+    
+    if (error) throw error;
+    return data.map((t) => t.tag);
+  },
 };
