@@ -182,6 +182,11 @@ export default function LoginPage() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Copyright */}
+        <p className="mt-6 text-center text-xs text-neutral-400 dark:text-neutral-500">
+          © {new Date().getFullYear()} Fadil Bafagih. All Rights Reserved.
+        </p>
       </motion.div>
     </div>
   );
