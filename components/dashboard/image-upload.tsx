@@ -121,18 +121,28 @@ export function ImageUpload({
       {showPreview && (
         <div className={cn("relative group", previewClassName ? "w-full" : "w-fit")}>
           {accept === "image" && preview ? (
-            <div className={cn(
-              "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", 
-              previewClassName || "h-32 w-32"
-            )}>
-              <Image
-                src={preview}
-                alt="Preview"
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            </div>
+            previewClassName ? (
+              <div className={cn(
+                "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", 
+                previewClassName
+              )}>
+                <Image
+                  src={preview}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className="relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10 w-fit">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="h-32 w-auto max-w-full object-contain rounded-lg"
+                />
+              </div>
+            )
           ) : (
             <div className="flex items-center gap-2 rounded-lg border border-neutral-200/80 bg-neutral-50 px-3 py-2 transition-colors hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-800/80 dark:hover:bg-neutral-800">
               <FileText className="h-4 w-4 text-neutral-500" />
