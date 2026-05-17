@@ -410,8 +410,8 @@ export default function ProjectEditPage() {
           <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center border-b pb-2">
               <h3 className="font-semibold text-lg">Project Gallery</h3>
-              <Button type="button" variant="outline" size="sm" onClick={addImageSlot}>
-                <Plus className="h-4 w-4 mr-1" /> Add Image
+              <Button type="button" variant="outline" size="sm" onClick={addImageSlot} className="gap-1.5">
+                <Plus className="h-4 w-4" /> Add Image
               </Button>
             </div>
             <p className="text-sm text-neutral-500">The first image in the list will automatically become the project thumbnail.</p>
@@ -586,14 +586,14 @@ export default function ProjectEditPage() {
             <Label>Published</Label>
           </div>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              <X className="mr-1.5 h-4 w-4" /> Cancel
+            <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
+              <X className="h-4 w-4" /> Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+            <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
               {isSubmitting ? (
-                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving...</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
               ) : (
-                <><Save className="mr-1.5 h-4 w-4" /> Save Changes</>
+                <><Save className="h-4 w-4" /> Save Changes</>
               )}
             </Button>
           </div>

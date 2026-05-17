@@ -197,15 +197,13 @@ export default function ContactPage() {
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button 
-                  type="submit" 
+                <Button type="submit" 
                   disabled={isSubmitting || !isDirty} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                >
+                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
                   {isSubmitting ? (
-                    <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving...</>
+                    <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
                   ) : (
-                    <><Save className="mr-1.5 h-4 w-4" /> Save Changes</>
+                    <><Save className="h-4 w-4" /> Save Changes</>
                   )}
                 </Button>
               </div>

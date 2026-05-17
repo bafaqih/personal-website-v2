@@ -91,8 +91,8 @@ export default function SkillsListPage() {
         ]}
         actions={
           <Link href="/dashboard/skills/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-              <Plus className="mr-1.5 h-4 w-4" /> Add Skill
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              <Plus className="h-4 w-4" /> Add Skill
             </Button>
           </Link>
         }

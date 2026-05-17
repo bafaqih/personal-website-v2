@@ -34,7 +34,7 @@ export default function OrganizationsPage() {
   ];
   return (
     <><PageHeader title="Organizations" icon={Users} description="Manage organization experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Organizations" }]}
-        actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"><Plus className="mr-1.5 h-4 w-4" /> Add Organization</Button></Link>} />
+        actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Organization</Button></Link>} />
       <DataTable data={items} columns={columns} searchPlaceholder="Search organizations..."
         actions={(o) => (
           <DropdownMenu>

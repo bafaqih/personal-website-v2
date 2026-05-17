@@ -142,8 +142,8 @@ export default function BlogCategoriesPage() {
           { label: "Categories" },
         ]}
         actions={
-          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-            <Plus className="mr-1.5 h-4 w-4" /> Add Category
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+            <Plus className="h-4 w-4" /> Add Category
           </Button>
         }
       />
@@ -211,20 +211,18 @@ export default function BlogCategoriesPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              <X className="mr-1.5 h-4 w-4" /> Cancel
+            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5">
+              <X className="h-4 w-4" /> Cancel
             </Button>
-            <Button
-              onClick={handleModalSubmit}
+            <Button onClick={handleModalSubmit}
               disabled={isSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-            >
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
               {isSubmitting ? (
-                <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
               ) : editingCategory ? (
-                <><Save className="mr-1.5 h-4 w-4" /> Save Changes</>
+                <><Save className="h-4 w-4" /> Save Changes</>
               ) : (
-                <><Plus className="mr-1.5 h-4 w-4" /> Create Category</>
+                <><Plus className="h-4 w-4" /> Create Category</>
               )}
             </Button>
           </DialogFooter>

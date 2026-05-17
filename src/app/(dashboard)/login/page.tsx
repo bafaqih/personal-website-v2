@@ -151,19 +151,17 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-6 pt-2">
-                <Button
-                  type="submit"
+                <Button type="submit"
                   disabled={isSubmitting}
-                  className="h-12 w-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-                >
+                  className="h-12 w-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5">
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Signing in...
                     </>
                   ) : (
                     <>
-                      <LogIn className="mr-1 h-4 w-4" />
+                      <LogIn className="h-4 w-4" />
                       <span className="font-semibold">Sign In</span>
                     </>
                   )}

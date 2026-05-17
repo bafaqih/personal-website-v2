@@ -99,8 +99,8 @@ export default function AchievementsListPage() {
         ]}
         actions={
           <Link href="/dashboard/achievements/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-              <Plus className="mr-1.5 h-4 w-4" /> Add Achievement
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              <Plus className="h-4 w-4" /> Add Achievement
             </Button>
           </Link>
         } 

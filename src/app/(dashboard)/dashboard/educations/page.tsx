@@ -50,7 +50,7 @@ export default function EducationsPage() {
   return (
     <>
       <PageHeader title="Educations" icon={GraduationCap} description="Manage education records." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Educations" }]}
-        actions={<Link href="/dashboard/educations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"><Plus className="mr-1.5 h-4 w-4" /> Add Education</Button></Link>} />
+        actions={<Link href="/dashboard/educations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Education</Button></Link>} />
       <DataTable data={items} columns={columns} searchPlaceholder="Search educations..."
         actions={(e) => (
           <DropdownMenu>
