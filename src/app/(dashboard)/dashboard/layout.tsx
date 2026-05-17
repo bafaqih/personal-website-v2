@@ -5,6 +5,7 @@ import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { cn } from "@/src/app/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { ScrollToTop } from "@/components/scroll-to-top";
 
 /**
  * Inner dashboard layout — provides sidebar + header shell.
@@ -52,6 +53,8 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+
+      <ScrollToTop />
     </div>
   );
 }
