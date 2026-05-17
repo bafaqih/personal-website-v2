@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { cn } from "@/src/app/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,33 +17,6 @@ interface StatCardProps {
  * Displays a metric count with icon and label.
  */
 export function StatCard({ title, value, icon: Icon, className, loading }: StatCardProps) {
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = value;
-    if (start === end) {
-      setDisplayValue(end);
-      return;
-    }
-
-    // Animation duration in ms
-    const duration = 1000;
-    const increment = end / (duration / 16); // 16ms per frame (60fps)
-
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= end) {
-        setDisplayValue(end);
-        clearInterval(timer);
-      } else {
-        setDisplayValue(Math.floor(start));
-      }
-    }, 16);
-
-    return () => clearInterval(timer);
-  }, [value]);
-
   return (
     <Card
       className={cn(
@@ -63,7 +35,7 @@ export function StatCard({ title, value, icon: Icon, className, loading }: StatC
               {loading ? (
                 <Skeleton className="h-9 w-12 mt-1" />
               ) : (
-                displayValue
+                value
               )}
             </div>
           </div>
