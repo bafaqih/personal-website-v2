@@ -151,6 +151,8 @@
   --warning-bg: var(--background) !important;
   --warning-border: var(--border) !important;
   --warning-text: #f59e0b !important;
+  
+  padding-right: 40px !important;
 }
 
 [data-sonner-toast] [data-close-button] {
