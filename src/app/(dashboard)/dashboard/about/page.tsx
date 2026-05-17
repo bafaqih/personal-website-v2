@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImageUpload } from "@/components/dashboard/image-upload";
+import { PdfViewerModal } from "@/components/dashboard/pdf-viewer-modal";
 import { AboutService } from "@/src/services/about.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
@@ -40,6 +41,7 @@ export default function AboutPage() {
   const [about, setAbout] = useState<About | null>(null);
   const [loading, setLoading] = useState(true);
   const [cvFile, setCvFile] = useState<File | null>(null);
+  const [viewPdfUrl, setViewPdfUrl] = useState<string | null>(null);
 
   const {
     register,
@@ -168,6 +170,7 @@ export default function AboutPage() {
                   accept="pdf"
                   value={about?.cv_url || undefined}
                   onChange={(file) => setCvFile(file)}
+                  onViewPdf={(url) => setViewPdfUrl(url)}
                 />
               </div>
             </div>
@@ -193,6 +196,14 @@ export default function AboutPage() {
         </CardContent>
       </Card>
 
+      {viewPdfUrl && (
+        <PdfViewerModal
+          isOpen={!!viewPdfUrl}
+          onClose={() => setViewPdfUrl(null)}
+          pdfUrl={viewPdfUrl}
+          fileName="CV-Hasan-Fadlullah.pdf"
+        />
+      )}
     </>
   );
 }

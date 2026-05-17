@@ -13,6 +13,7 @@ import Image from "next/image";
 interface ImageUploadProps {
   value?: string;
   onChange: (file: File | null, previewUrl: string | null) => void;
+  onViewPdf?: (url: string) => void;
   accept?: "image" | "pdf";
   className?: string;
   previewClassName?: string;
@@ -27,6 +28,7 @@ interface ImageUploadProps {
 export function ImageUpload({
   value,
   onChange,
+  onViewPdf,
   accept = "image",
   className,
   previewClassName,
@@ -132,17 +134,27 @@ export function ImageUpload({
               />
             </div>
           ) : (
-            <div className="flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 transition-colors hover:bg-neutral-50 dark:border-white/10 dark:hover:bg-white/5">
+            <div className="flex items-center gap-2 rounded-lg border border-neutral-200/80 bg-neutral-50 px-3 py-2 transition-colors hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-800/80 dark:hover:bg-neutral-800">
               <FileText className="h-4 w-4 text-neutral-500" />
               {accept === "pdf" && (value || preview) ? (
-                <a
-                  href={preview || value}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-neutral-900 underline-offset-4 hover:underline dark:text-white"
-                >
-                  {fileName || (value ? value.split("/").pop()?.split("?")[0] : "Document.pdf")}
-                </a>
+                onViewPdf ? (
+                  <button
+                    type="button"
+                    onClick={() => onViewPdf(preview || value || "")}
+                    className="text-sm font-medium text-neutral-900 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300 cursor-pointer text-left underline-offset-4 hover:underline"
+                  >
+                    {fileName || (value ? value.split("/").pop()?.split("?")[0] : "Document.pdf")}
+                  </button>
+                ) : (
+                  <a
+                    href={preview || value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-neutral-900 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300 cursor-pointer text-left underline-offset-4 hover:underline"
+                  >
+                    {fileName || (value ? value.split("/").pop()?.split("?")[0] : "Document.pdf")}
+                  </a>
+                )
               ) : (
                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
                   {fileName || "File uploaded"}

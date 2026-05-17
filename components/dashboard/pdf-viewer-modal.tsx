@@ -1,0 +1,145 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { X, ExternalLink, FileText, Loader2 } from "lucide-react";
+import { cn } from "@/src/app/lib/utils";
+
+interface PdfViewerModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  pdfUrl: string;
+  fileName?: string;
+}
+
+/**
+ * A professional PDF Viewer Modal featuring:
+ * - A glassmorphic blurred backdrop.
+ * - A custom rounded square close button matching the user's updated design.
+ * - Native browser PDF embedding capabilities (lightweight and high-performance).
+ * - Direct external tab opening actions.
+ * - Interactive loading indicator state.
+ */
+export function PdfViewerModal({
+  isOpen,
+  onClose,
+  pdfUrl,
+  fileName = "CV-Resume.pdf",
+}: PdfViewerModalProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      // Prevent scrolling of background page when modal is open
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, onClose]);
+
+  // Reset loading state when PDF url changes or modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsLoading(true);
+    }
+  }, [isOpen, pdfUrl]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 isolate z-50 flex items-center justify-center p-4 sm:p-6 md:p-8">
+      {/* Backdrop Blur */}
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-black/10 backdrop-blur-xs cursor-pointer"
+      />
+
+      {/* Premium Rounded Square Close Button (floating top-right) */}
+      <div className="absolute top-4 right-4 md:top-6 md:right-6 z-60">
+        <button
+          onClick={onClose}
+          type="button"
+          className={cn(
+            "relative flex items-center justify-center w-12 h-12 rounded-xl sm:rounded-2xl",
+            "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
+            "border border-white/40 dark:border-neutral-700/40 shadow-lg",
+            "text-neutral-950 dark:text-neutral-50",
+            "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
+            "transition-all duration-200 cursor-pointer outline-none group"
+          )}
+          title="Close viewer"
+        >
+          <X className="w-5 h-5 stroke-[2.5]" />
+        </button>
+      </div>
+
+      {/* Modal PDF Sheet Container */}
+      <div
+        className={cn(
+          "relative w-full max-w-5xl h-[85vh]",
+          "bg-white dark:bg-neutral-900 rounded-[28px]",
+          "border border-neutral-200 dark:border-neutral-800 shadow-2xl",
+          "flex flex-col overflow-hidden z-50"
+        )}
+      >
+        {/* Custom Control Toolbar Header */}
+        <div className="h-16 px-6 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-200/60 dark:border-neutral-800 flex items-center justify-between">
+          {/* Left: PDF Info */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-neutral-200/50 dark:bg-neutral-800 rounded-xl flex items-center justify-center shrink-0">
+              <FileText className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+            </div>
+            <span className="font-sans font-medium text-sm text-neutral-800 dark:text-neutral-200 truncate">
+              {fileName}
+            </span>
+          </div>
+
+          {/* Right: Quick Actions */}
+          <div className="flex items-center gap-3">
+            {/* Open in New Tab Button */}
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "flex items-center justify-center p-2.5 rounded-xl border transition-all duration-200 cursor-pointer outline-none",
+                "border-neutral-200 hover:bg-neutral-100 text-neutral-600",
+                "dark:border-neutral-800 dark:hover:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+              )}
+              title="Open in new tab"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="relative flex-1 bg-neutral-100 dark:bg-neutral-950 flex items-center justify-center overflow-hidden">
+          {/* Spinner while iframe loads */}
+          {isLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-100 dark:bg-neutral-950 z-10 transition-opacity">
+              <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
+              <span className="text-xs text-neutral-500 font-medium">Loading document...</span>
+            </div>
+          )}
+
+          {/* Native PDF Iframe */}
+          <iframe
+            src={`${pdfUrl}#toolbar=1`}
+            className="w-full h-full border-none"
+            title={fileName}
+            onLoad={() => setIsLoading(false)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
