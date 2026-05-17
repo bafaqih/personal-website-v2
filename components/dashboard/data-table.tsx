@@ -92,15 +92,15 @@ export function DataTable<T>({
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-neutral-200 dark:border-white/10">
+      <div className="overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
         <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
+          <TableHeader className="bg-neutral-100/60 dark:bg-neutral-900/60 border-b border-neutral-200 dark:border-white/10">
+            <TableRow className="hover:bg-transparent border-none">
               {columns.map((col) => (
                 <TableHead
                   key={col.key}
                   className={cn(
-                    "text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400",
+                    "text-xs !font-semibold uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5",
                     col.className
                   )}
                 >
@@ -108,7 +108,7 @@ export function DataTable<T>({
                 </TableHead>
               ))}
               {actions && (
-                <TableHead className="w-[100px] text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                <TableHead className="w-[100px] text-xs !font-semibold uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5">
                   Actions
                 </TableHead>
               )}
@@ -117,14 +117,14 @@ export function DataTable<T>({
           <TableBody>
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <TableRow key={i}>
+                <TableRow key={i} className="border-b border-neutral-100 dark:border-white/5 last:border-none">
                   {columns.map((col) => (
-                    <TableCell key={col.key}>
+                    <TableCell key={col.key} className="py-4">
                       <div className="h-4 w-full animate-pulse rounded bg-neutral-100 dark:bg-white/10" />
                     </TableCell>
                   ))}
                   {actions && (
-                    <TableCell>
+                    <TableCell className="py-4">
                       <div className="h-8 w-8 animate-pulse rounded bg-neutral-100 dark:bg-white/10" />
                     </TableCell>
                   )}
@@ -143,17 +143,27 @@ export function DataTable<T>({
               paginatedData.map((item, index) => (
                 <TableRow
                   key={(item as Record<string, unknown>).id as string ?? index}
-                  className="transition-colors"
+                  className="transition-colors border-b border-neutral-100 dark:border-white/5 last:border-none even:bg-neutral-100/60 dark:even:bg-neutral-800/30 hover:bg-neutral-100 dark:hover:bg-neutral-800/60"
                 >
-                  {columns.map((col) => (
-                    <TableCell key={col.key} className={col.className}>
-                      {col.render
-                        ? col.render(item)
-                        : String((item as Record<string, unknown>)[col.key] ?? "-")}
-                    </TableCell>
-                  ))}
+                  {columns.map((col, colIndex) => {
+                    const isPrimary = colIndex === 0 || (colIndex === 1 && (columns[0].key.includes("icon") || columns[0].key.includes("logo")));
+                    return (
+                      <TableCell
+                        key={col.key}
+                        className={cn(
+                          "py-3.5 text-neutral-700 dark:text-neutral-300",
+                          isPrimary && "font-medium text-neutral-950 dark:text-white",
+                          col.className
+                        )}
+                      >
+                        {col.render
+                          ? col.render(item)
+                          : String((item as Record<string, unknown>)[col.key] ?? "-")}
+                      </TableCell>
+                    );
+                  })}
                   {actions && (
-                    <TableCell>{actions(item)}</TableCell>
+                    <TableCell className="py-3.5">{actions(item)}</TableCell>
                   )}
                 </TableRow>
               ))
