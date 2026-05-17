@@ -137,7 +137,7 @@ export default function SkillsListPage() {
         )}
       />
 
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} />
+      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} itemName="skill" />
     </>
   );
 }

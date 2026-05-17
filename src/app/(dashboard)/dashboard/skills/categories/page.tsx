@@ -233,6 +233,7 @@ export default function SkillCategoriesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
+        itemName="category"
       />
     </>
   );

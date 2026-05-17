@@ -234,6 +234,7 @@ export default function BlogCategoriesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
+        itemName="category"
       />
     </>
   );

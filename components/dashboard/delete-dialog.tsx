@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2, X } from "lucide-react";
 
 interface DeleteDialogProps {
   open: boolean;
@@ -17,6 +17,7 @@ interface DeleteDialogProps {
   onConfirm: () => void;
   title?: string;
   description?: string;
+  itemName?: string;
   loading?: boolean;
 }
 
@@ -28,32 +29,53 @@ export function DeleteDialog({
   open,
   onOpenChange,
   onConfirm,
-  title = "Are you sure?",
-  description = "This action cannot be undone. This will permanently delete this item.",
+  title,
+  description,
+  itemName,
   loading = false,
 }: DeleteDialogProps) {
+  const capitalizedItemName = itemName
+    ? itemName.charAt(0).toUpperCase() + itemName.slice(1)
+    : "";
+
+  const displayTitle = title || (itemName ? `Delete ${capitalizedItemName}?` : "Delete Confirmation");
+  const displayDescription = description || (itemName
+    ? `Are you sure you want to delete this ${itemName.toLowerCase()}? This action cannot be undone.`
+    : "Are you sure you want to permanently delete this item? This action cannot be undone.");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle>{displayTitle}</DialogTitle>
+          <DialogDescription>{displayDescription}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="gap-2 sm:gap-0">
+        <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="gap-1.5 cursor-pointer"
           >
-            Cancel
+            <X className="h-4 w-4" /> Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={loading}
+            className="gap-1.5 cursor-pointer"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Delete
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

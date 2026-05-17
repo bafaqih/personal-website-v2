@@ -148,6 +148,7 @@ export default function ProjectsListPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
+        itemName="project"
       />
     </>
   );

@@ -144,6 +144,7 @@ export default function AchievementsListPage() {
         onOpenChange={() => setDeleteId(null)} 
         onConfirm={handleDelete} 
         loading={deleting} 
+        itemName="achievement"
       />
     </>
   );

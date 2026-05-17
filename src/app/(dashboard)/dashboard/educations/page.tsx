@@ -78,7 +78,7 @@ export default function EducationsPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         )} />
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} />
+      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} itemName="education" />
     </>
   );
 }

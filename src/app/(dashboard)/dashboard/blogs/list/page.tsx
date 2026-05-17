@@ -169,6 +169,7 @@ export default function BlogsListPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
+        itemName="blog"
       />
     </>
   );

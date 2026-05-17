@@ -234,6 +234,7 @@ export default function AchievementCategoriesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
+        itemName="category"
       />
     </>
   );

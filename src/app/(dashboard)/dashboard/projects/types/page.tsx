@@ -233,6 +233,7 @@ export default function ProjectTypesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
+        itemName="type"
       />
     </>
   );
