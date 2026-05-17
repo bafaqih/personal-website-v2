@@ -151,6 +151,7 @@ export default function ProjectCategoriesPage() {
       <DataTable
         data={categories}
         columns={columns}
+        loading={loading}
         searchPlaceholder="Search categories..."
         emptyMessage={loading ? "Loading categories..." : "No categories found."}
         actions={(cat) => (

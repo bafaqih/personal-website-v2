@@ -49,18 +49,15 @@ export default function DashboardPage() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {loading
-          ? Array.from({ length: 7 }).map((_, i) => (
-              <Skeleton key={i} className="h-[104px] rounded-xl" />
-            ))
-          : cards.map((card) => (
-              <StatCard
-                key={card.key}
-                title={card.title}
-                value={stats?.[card.key] ?? 0}
-                icon={card.icon}
-              />
-            ))}
+        {cards.map((card) => (
+          <StatCard
+            key={card.key}
+            title={card.title}
+            value={stats?.[card.key] ?? 0}
+            icon={card.icon}
+            loading={loading}
+          />
+        ))}
       </div>
     </>
   );

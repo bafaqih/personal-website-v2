@@ -20,9 +20,16 @@ import {
 
 export default function EducationsPage() {
   const [items, setItems] = useState<Education[]>([]);
+  const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const fetchData = () => { EducationService.getAll().then(setItems).catch(() => toast.error("Failed to load")); };
+  const fetchData = () => {
+    setLoading(true);
+    EducationService.getAll()
+      .then(setItems)
+      .catch(() => toast.error("Failed to load"))
+      .finally(() => setLoading(false));
+  };
   useEffect(() => { fetchData(); }, []);
   const handleDelete = async () => { if (!deleteId) return; setDeleting(true); try { await EducationService.delete(deleteId); toast.success("Deleted"); fetchData(); } catch { toast.error("Failed"); } finally { setDeleting(false); setDeleteId(null); } };
 
@@ -51,7 +58,7 @@ export default function EducationsPage() {
     <>
       <PageHeader title="Educations" icon={GraduationCap} description="Manage education records." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Educations" }]}
         actions={<Link href="/dashboard/educations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Education</Button></Link>} />
-      <DataTable data={items} columns={columns} searchPlaceholder="Search educations..."
+      <DataTable data={items} columns={columns} loading={loading} searchPlaceholder="Search educations..."
         actions={(e) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

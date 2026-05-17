@@ -151,6 +151,7 @@ export default function ProjectTypesPage() {
       <DataTable
         data={types}
         columns={columns}
+        loading={loading}
         searchPlaceholder="Search types..."
         emptyMessage={loading ? "Loading types..." : "No types found."}
         actions={(type) => (

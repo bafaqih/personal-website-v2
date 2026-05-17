@@ -110,24 +110,6 @@ export default function AchievementEditPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <PageHeader title="Edit Achievement" icon={Trophy} />
-        <Card className="w-full border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
-          <CardContent className="p-6 space-y-6">
-            <Skeleton className="h-10 w-full" />
-            <div className="grid gap-6 md:grid-cols-2">
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-            <Skeleton className="h-40 w-full" />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <>
       <PageHeader 
@@ -147,18 +129,26 @@ export default function AchievementEditPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Title (ID)</Label>
-                  <Input 
-                    {...register("title_id")} 
-                    placeholder="Judul sertifikat..."
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("title_id")} 
+                      placeholder="Judul sertifikat..."
+                    />
+                  )}
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>Title (EN)</Label>
-                  <Input 
-                    {...register("title_en")} 
-                    placeholder="Certificate title..."
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("title_en")} 
+                      placeholder="Certificate title..."
+                    />
+                  )}
                   {errors.title_en && <p className="text-xs text-red-500">{errors.title_en.message}</p>}
                 </div>
               </div>
@@ -166,19 +156,27 @@ export default function AchievementEditPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Publisher</Label>
-                  <Input 
-                    {...register("publisher")} 
-                    placeholder="e.g., Google, Microsoft, Udemy"
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("publisher")} 
+                      placeholder="e.g., Google, Microsoft, Udemy"
+                    />
+                  )}
                   {errors.publisher && <p className="text-xs text-red-500">{errors.publisher.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>Issue Date</Label>
-                  <Input 
-                    type="date" 
-                    {...register("issue_date")} 
-                    onClick={(e) => e.currentTarget.showPicker()}
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      type="date" 
+                      {...register("issue_date")} 
+                      onClick={(e) => e.currentTarget.showPicker()}
+                    />
+                  )}
                   {errors.issue_date && <p className="text-xs text-red-500">{errors.issue_date.message}</p>}
                 </div>
               </div>
@@ -186,85 +184,114 @@ export default function AchievementEditPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Type</Label>
-                  <Select 
-                    onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
-                    value={watch("type_id")}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {types.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Select 
+                      onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
+                      value={watch("type_id")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {types.map((t) => (
+                          <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                   {errors.type_id && <p className="text-xs text-red-500">{errors.type_id.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select 
-                    onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
-                    value={watch("category_id")}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Select 
+                      onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
+                      value={watch("category_id")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                   {errors.category_id && <p className="text-xs text-red-500">{errors.category_id.message}</p>}
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Credential URL</Label>
-                <Input 
-                  {...register("credential_url")} 
-                  placeholder="https://verify.example.com/certificate/123" 
-                />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input 
+                    {...register("credential_url")} 
+                    placeholder="https://verify.example.com/certificate/123" 
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label>Certificate Image</Label>
-                <ImageUpload 
-                  accept="image" 
-                  value={currentImageUrl || undefined}
-                  onChange={(f) => {
-                    setImageFile(f);
-                    if (!f && !currentImageUrl) {
-                      // Handled by ImageUpload component internal state usually
-                    }
-                  }} 
-                />
+                {loading ? (
+                  <Skeleton className="h-[120px] w-full rounded-xl" />
+                ) : (
+                  <ImageUpload 
+                    accept="image" 
+                    value={currentImageUrl || undefined}
+                    onChange={(f) => {
+                      setImageFile(f);
+                      if (!f && !currentImageUrl) {
+                        // Handled by ImageUpload component internal state usually
+                      }
+                    }} 
+                  />
+                )}
               </div>
 
               <div className="flex items-center gap-3 pt-2">
-                <Switch 
-                  checked={watch("is_published")} 
-                  onCheckedChange={(v) => setValue("is_published", v, { shouldDirty: true })} 
-                />
+                {loading ? (
+                  <Skeleton className="h-6 w-10 rounded-full" />
+                ) : (
+                  <Switch 
+                    checked={watch("is_published")} 
+                    onCheckedChange={(v) => setValue("is_published", v, { shouldDirty: true })} 
+                  />
+                )}
                 <Label>Published</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" 
-                  variant="outline" 
-                  onClick={() => router.back()} className="gap-1.5">
-                  <X className="h-4 w-4" /> Cancel
-                </Button>
-                <Button type="submit" 
-                  disabled={isSubmitting || !isValid || (!isDirty && !imageFile)} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-                  {isSubmitting ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
-                  ) : (
-                    <><Save className="h-4 w-4" /> Save Changes</>
-                  )}
-                </Button>
+                {loading ? (
+                  <>
+                    <Skeleton className="h-10 w-24" />
+                    <Skeleton className="h-10 w-32" />
+                  </>
+                ) : (
+                  <>
+                    <Button type="button" 
+                      variant="outline" 
+                      onClick={() => router.back()} className="gap-1.5">
+                      <X className="h-4 w-4" /> Cancel
+                    </Button>
+                    <Button type="submit" 
+                      disabled={isSubmitting || !isValid || (!isDirty && !imageFile)} 
+                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                      {isSubmitting ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                      ) : (
+                        <><Save className="h-4 w-4" /> Save Changes</>
+                      )}
+                    </Button>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

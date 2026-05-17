@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, User, PanelLeft, PanelLeftClose } from "lucide-react";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
@@ -41,6 +42,7 @@ export function DashboardHeader({
 }: DashboardHeaderProps) {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -48,7 +50,8 @@ export function DashboardHeader({
   useEffect(() => {
     AuthService.getProfile()
       .then(setProfile)
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const handleLogout = async () => {
@@ -60,12 +63,6 @@ export function DashboardHeader({
     }
   };
 
-  const initials = profile?.full_name
-    ?.split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() ?? "AD";
 
   return (
     <TooltipProvider>
@@ -120,22 +117,26 @@ export function DashboardHeader({
             <DropdownMenu onOpenChange={setDropdownOpen}>
               <TooltipTrigger asChild>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setTooltipOpen(false)}
-                    className="h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0"
-                  >
-                    <Avatar className="h-full w-full">
-                      <AvatarImage
-                        src={profile?.photo_url || undefined}
-                        alt={profile?.full_name || "Admin"}
-                        className="rounded-lg"
-                      />
-                      <AvatarFallback className="bg-neutral-900 text-[10px] text-white dark:bg-white dark:text-neutral-900 rounded-lg">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
+                  {loading ? (
+                    <Skeleton className="h-9 w-9 rounded-lg shrink-0 border border-neutral-200 dark:border-white/10" />
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      onClick={() => setTooltipOpen(false)}
+                      className="h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0"
+                    >
+                      <Avatar className="h-full w-full">
+                        <AvatarImage
+                          src={profile?.photo_url || undefined}
+                          alt={profile?.full_name || "Admin"}
+                          className="rounded-lg"
+                        />
+                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center">
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  )}
                 </DropdownMenuTrigger>
               </TooltipTrigger>
               <DropdownMenuContent

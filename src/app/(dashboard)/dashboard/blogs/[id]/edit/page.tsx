@@ -131,15 +131,6 @@ export default function BlogEditPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <PageHeader title="Edit Blog" icon={FileText} />
-        <Skeleton className="h-[600px] w-full rounded-xl" />
-      </div>
-    );
-  }
-
   return (
     <>
       <PageHeader 
@@ -160,124 +151,173 @@ export default function BlogEditPage() {
               <div className="space-y-3">
                 <Label className="text-base font-semibold text-neutral-900 dark:text-white">Thumbnail Blog</Label>
                 <div className="max-w-2xl">
-                  <ImageUpload 
-                    accept="image" 
-                    value={currentImageUrl || undefined} 
-                    onChange={(f) => {
-                      setThumbFile(f);
-                      if (!f) setCurrentImageUrl(null);
-                    }} 
-                    previewClassName="aspect-video w-full"
-                  />
+                  {loading ? (
+                    <Skeleton className="aspect-video w-full rounded-xl" />
+                  ) : (
+                    <ImageUpload 
+                      accept="image" 
+                      value={currentImageUrl || undefined} 
+                      onChange={(f) => {
+                        setThumbFile(f);
+                        if (!f) setCurrentImageUrl(null);
+                      }} 
+                      previewClassName="aspect-video w-full"
+                    />
+                  )}
                 </div>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Title (ID)</Label>
-                  <Input 
-                    {...register("title_id")} 
-                    placeholder="e.g., Cara membuat aplikasi Next.js" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("title_id")} 
+                      placeholder="e.g., Cara membuat aplikasi Next.js" 
+                    />
+                  )}
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>Title (EN)</Label>
-                  <Input 
-                    {...register("title_en")} 
-                    placeholder="e.g., How to build a Next.js application" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("title_en")} 
+                      placeholder="e.g., How to build a Next.js application" 
+                    />
+                  )}
                   {errors.title_en && <p className="text-xs text-red-500">{errors.title_en.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Slug</Label>
-                  <Input 
-                    {...register("slug")} 
-                    placeholder="e.g., how-to-build-nextjs-app" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("slug")} 
+                      placeholder="e.g., how-to-build-nextjs-app" 
+                    />
+                  )}
                   {errors.slug && <p className="text-xs text-red-500">{errors.slug.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>Tags</Label>
-                  <TagsInput 
-                    value={watch("tags") || []} 
-                    onChange={(tags) => {
-                      setValue("tags", tags, { shouldDirty: true });
-                    }} 
-                    suggestions={existingTags}
-                    placeholder="Type tag and press space/enter..."
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <TagsInput 
+                      value={watch("tags") || []} 
+                      onChange={(tags) => {
+                        setValue("tags", tags, { shouldDirty: true });
+                      }} 
+                      suggestions={existingTags}
+                      placeholder="Type tag and press space/enter..."
+                    />
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Type</Label>
-                  <Select 
-                    onValueChange={(v) => setValue("type_id", v)} 
-                    value={watch("type_id")}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select post type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {types.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Select 
+                      onValueChange={(v) => setValue("type_id", v)} 
+                      value={watch("type_id")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select post type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {types.map((t) => (
+                          <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select 
-                    onValueChange={(v) => setValue("category_id", v)} 
-                    value={watch("category_id")}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Select 
+                      onValueChange={(v) => setValue("category_id", v)} 
+                      value={watch("category_id")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Content (ID)</Label>
-                  <RichTextEditor content={contentId} onChange={setContentId} />
+                  {loading ? (
+                    <Skeleton className="h-[300px] w-full rounded-xl" />
+                  ) : (
+                    <RichTextEditor content={contentId} onChange={setContentId} />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Content (EN)</Label>
-                  <RichTextEditor content={contentEn} onChange={setContentEn} />
+                  {loading ? (
+                    <Skeleton className="h-[300px] w-full rounded-xl" />
+                  ) : (
+                    <RichTextEditor content={contentEn} onChange={setContentEn} />
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center gap-3 pt-2">
-                <Switch 
-                  checked={watch("is_published")} 
-                  onCheckedChange={(v) => setValue("is_published", v)} 
-                />
+                {loading ? (
+                  <Skeleton className="h-6 w-10 rounded-full" />
+                ) : (
+                  <Switch 
+                    checked={watch("is_published")} 
+                    onCheckedChange={(v) => setValue("is_published", v)} 
+                  />
+                )}
                 <Label>Published</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" 
-                  variant="outline" 
-                  onClick={() => router.back()} className="gap-1.5">
-                  <X className="h-4 w-4" /> Cancel
-                </Button>
-                <Button type="submit" 
-                  disabled={isSaveDisabled} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-                  {isSubmitting ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
-                  ) : (
-                    <><Save className="h-4 w-4" /> Save Changes</>
-                  )}
-                </Button>
+                {loading ? (
+                  <>
+                    <Skeleton className="h-10 w-24" />
+                    <Skeleton className="h-10 w-32" />
+                  </>
+                ) : (
+                  <>
+                    <Button type="button" 
+                      variant="outline" 
+                      onClick={() => router.back()} className="gap-1.5">
+                      <X className="h-4 w-4" /> Cancel
+                    </Button>
+                    <Button type="submit" 
+                      disabled={isSaveDisabled} 
+                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                      {isSubmitting ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                      ) : (
+                        <><Save className="h-4 w-4" /> Save Changes</>
+                      )}
+                    </Button>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

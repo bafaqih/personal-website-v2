@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -15,12 +16,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { 
-  Camera, 
-  Mail, 
-  Pencil, 
-  User as UserIcon, 
-  AtSign, 
+import {
+  Camera,
+  Mail,
+  Pencil,
+  User as UserIcon,
+  AtSign,
   Loader2,
   Save,
   X,
@@ -109,11 +110,11 @@ export default function ProfilePage() {
     try {
       setIsUploading(true);
       const { publicUrl } = await StorageService.uploadImage(STORAGE_PATHS.PROFILES, file);
-      
+
       const updated = await AuthService.updateProfile(profile.id, {
         photo_url: publicUrl,
       });
-      
+
       setProfile(updated);
       toast.success("Profile picture updated");
       window.location.reload();
@@ -124,23 +125,8 @@ export default function ProfilePage() {
     }
   };
 
-  const initials = profile?.full_name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() ?? "AD";
-
-  if (loading) {
-    return (
-      <div className="flex h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8">
       <PageHeader
         title="My Profile"
         icon={UserIcon}
@@ -159,32 +145,38 @@ export default function ProfilePage() {
               <div className="relative group">
                 <button
                   onClick={handleImageClick}
-                  disabled={isUploading}
+                  disabled={isUploading || loading}
                   className="relative h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition"
                   title="Change profile picture"
                 >
                   <div className="w-full h-full relative transition-transform duration-200 ease-out group-active:scale-95">
-                    <Avatar className="h-full w-full rounded-2xl">
-                      <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover rounded-2xl h-full w-full" />
-                      <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl flex items-center justify-center h-full w-full">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    
+                    {loading ? (
+                      <Skeleton className="h-full w-full rounded-2xl" />
+                    ) : (
+                      <Avatar className="h-full w-full rounded-2xl">
+                        <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover rounded-2xl h-full w-full" />
+                        <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl flex items-center justify-center h-full w-full">
+                          <UserIcon className="h-10 w-10 text-neutral-400" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+
                     {/* Hover overlay / Uploading state */}
-                    <div className={`absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl ${isUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
-                      {isUploading ? (
-                        <>
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          <span className="text-[10px] font-medium tracking-wide">Uploading...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Camera className="h-5 w-5" />
-                          <span className="text-[10px] font-medium tracking-wide">Change Photo</span>
-                        </>
-                      )}
-                    </div>
+                    {!loading && (
+                      <div className={`absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl ${isUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <span className="text-[10px] font-medium tracking-wide">Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Camera className="h-5 w-5" />
+                            <span className="text-[10px] font-medium tracking-wide">Change Photo</span>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </button>
                 <input
@@ -196,13 +188,22 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <div className="flex-1 text-center md:text-left">
-                <h2 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
-                  {profile?.full_name}
-                </h2>
-                <p className="text-lg text-neutral-500 dark:text-neutral-400">
-                  @{profile?.username}
-                </p>
+              <div className="flex-1 text-center md:text-left flex flex-col justify-center">
+                {loading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-8 w-56 mx-auto md:mx-0" />
+                    <Skeleton className="h-5 w-36 mx-auto md:mx-0" />
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                      {profile?.full_name}
+                    </h2>
+                    <p className="text-lg text-neutral-500 dark:text-neutral-400">
+                      @{profile?.username}
+                    </p>
+                  </>
+                )}
                 <div className="mt-3 flex flex-wrap justify-center gap-2 md:justify-start">
                   <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
                     Administrator
@@ -216,15 +217,19 @@ export default function ProfilePage() {
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
                   Personal Information
                 </h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleEditClick}
-                  className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit Profile
-                </Button>
+                {loading ? (
+                  <Skeleton className="h-9 w-28" />
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleEditClick}
+                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  >
+                    <Pencil className="h-4 w-4" />
+                    Edit Profile
+                  </Button>
+                )}
               </div>
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -232,16 +237,19 @@ export default function ProfilePage() {
                   label="Full Name"
                   value={profile?.full_name || "-"}
                   icon={<UserIcon className="h-5 w-5 text-neutral-400" />}
+                  loading={loading}
                 />
                 <InfoCard
                   label="Username"
                   value={profile?.username || "-"}
                   icon={<AtSign className="h-5 w-5 text-neutral-400" />}
+                  loading={loading}
                 />
                 <InfoCard
                   label="Email"
                   value={profile?.email || "-"}
                   icon={<Mail className="h-5 w-5 text-neutral-400" />}
+                  loading={loading}
                 />
               </div>
 
@@ -333,16 +341,30 @@ export default function ProfilePage() {
   );
 }
 
-function InfoCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
+function InfoCard({
+  label,
+  value,
+  icon,
+  loading
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+  loading?: boolean;
+}) {
   return (
     <Card className="border-none bg-neutral-50/50 shadow-none dark:bg-neutral-900/50">
       <CardContent className="flex items-center gap-4 p-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-neutral-800">
           {icon}
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1">
           <span className="text-xs text-neutral-500 dark:text-neutral-500">{label}</span>
-          <span className="font-semibold text-neutral-900 dark:text-white">{value}</span>
+          {loading ? (
+            <Skeleton className="h-5 w-32 mt-1" />
+          ) : (
+            <span className="font-semibold text-neutral-900 dark:text-white truncate">{value}</span>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -108,6 +108,7 @@ export default function SkillsListPage() {
       <DataTable
         data={skills}
         columns={columns}
+        loading={loading}
         searchPlaceholder="Search skills..."
         actions={(skill) => (
           <DropdownMenu>

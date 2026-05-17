@@ -8,11 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { toast } from "sonner";
-import { 
-  User as UserIcon, 
-  KeyRound, 
-  Eye, 
-  EyeOff, 
+import {
+  User as UserIcon,
+  KeyRound,
+  Eye,
+  EyeOff,
   Loader2
 } from "lucide-react";
 import { AuthService } from "@/src/services/auth.service";
@@ -99,7 +99,7 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6">
       <PageHeader
         title="My Profile"
         icon={UserIcon}

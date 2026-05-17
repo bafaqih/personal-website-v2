@@ -94,8 +94,6 @@ export default function OrganizationEditPage() {
     }
   };
 
-  if (loading) return <><PageHeader title="Edit Organization" icon={Users} /><Skeleton className="h-64 w-full rounded-xl" /></>;
-
   return (
     <>
       <PageHeader 
@@ -113,31 +111,51 @@ export default function OrganizationEditPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Organization Name</Label>
-                <Input {...register("organization")} placeholder="e.g., Google Developer Student Clubs" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("organization")} placeholder="e.g., Google Developer Student Clubs" />
+                )}
                 {errors.organization && <p className="text-xs text-red-500">{errors.organization.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Location</Label>
-                <Input {...register("location")} placeholder="e.g., Jakarta, Indonesia" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("location")} placeholder="e.g., Jakarta, Indonesia" />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Organization URL</Label>
-                <Input {...register("url")} placeholder="https://example.com" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("url")} placeholder="https://example.com" />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Role (ID)</Label>
-                <Input {...register("role_id")} placeholder="e.g., Ketua Divisi IT" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("role_id")} placeholder="e.g., Ketua Divisi IT" />
+                )}
                 {errors.role_id && <p className="text-xs text-red-500">{errors.role_id.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Role (EN)</Label>
-                <Input {...register("role_en")} placeholder="e.g., Head of IT Division" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("role_en")} placeholder="e.g., Head of IT Division" />
+                )}
                 {errors.role_en && <p className="text-xs text-red-500">{errors.role_en.message}</p>}
               </div>
             </div>
@@ -145,61 +163,94 @@ export default function OrganizationEditPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Start Date</Label>
-                <Input type="date" {...register("start_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input type="date" {...register("start_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                )}
                 {errors.start_date && <p className="text-xs text-red-500">{errors.start_date.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>End Date</Label>
-                <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Detail Points (ID)</Label>
-                <BulletListInput
-                  id="detail_id"
-                  value={watch("detail_points_id") || []}
-                  onChange={(val) => setValue("detail_points_id", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Ceritakan tanggung jawab atau kontribusi Anda..."
-                />
+                {loading ? (
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                ) : (
+                  <BulletListInput
+                    id="detail_id"
+                    value={watch("detail_points_id") || []}
+                    onChange={(val) => setValue("detail_points_id", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Ceritakan tanggung jawab atau kontribusi Anda..."
+                  />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Detail Points (EN)</Label>
-                <BulletListInput
-                  id="detail_en"
-                  value={watch("detail_points_en") || []}
-                  onChange={(val) => setValue("detail_points_en", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Describe your responsibilities or contributions..."
-                />
+                {loading ? (
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                ) : (
+                  <BulletListInput
+                    id="detail_en"
+                    value={watch("detail_points_en") || []}
+                    onChange={(val) => setValue("detail_points_en", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Describe your responsibilities or contributions..."
+                  />
+                )}
               </div>
             </div>
 
             <div className="space-y-2">
               <Label>Organization Logo</Label>
-              <ImageUpload 
-                accept="image" 
-                value={currentLogoUrl || undefined} 
-                onChange={(f) => { setLogoFile(f); setIsImageChanged(true); if (!f) setCurrentLogoUrl(null); }} 
-              />
+              {loading ? (
+                <Skeleton className="h-[120px] w-full rounded-xl" />
+              ) : (
+                <ImageUpload 
+                  accept="image" 
+                  value={currentLogoUrl || undefined} 
+                  onChange={(f) => { setLogoFile(f); setIsImageChanged(true); if (!f) setCurrentLogoUrl(null); }} 
+                />
+              )}
             </div>
 
             <div className="flex items-center gap-3 pt-2">
-              <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
+              {loading ? (
+                <Skeleton className="h-6 w-10 rounded-full" />
+              ) : (
+                <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
+              )}
               <Label>Published</Label>
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
-                <X className="h-4 w-4" /> Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-                {isSubmitting ? (
-                  <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
-                ) : (
-                  <><Save className="h-4 w-4" /> Save Changes</>
-                )}
-              </Button>
+              {loading ? (
+                <>
+                  <Skeleton className="h-10 w-24" />
+                  <Skeleton className="h-10 w-32" />
+                </>
+              ) : (
+                <>
+                  <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
+                    <X className="h-4 w-4" /> Cancel
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                    {isSubmitting ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                    ) : (
+                      <><Save className="h-4 w-4" /> Save Changes</>
+                    )}
+                  </Button>
+                </>
+              )}
             </div>
           </form>
         </CardContent>

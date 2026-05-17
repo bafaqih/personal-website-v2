@@ -39,14 +39,22 @@ export function ImageUpload({
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isRemoved, setIsRemoved] = useState(false);
+  const [imgLoading, setImgLoading] = useState(true);
 
   // Sync with value prop if it changes (e.g. after save)
   useEffect(() => {
     if (value) {
       setPreview(value);
       setIsRemoved(false);
+      setImgLoading(true);
     }
   }, [value]);
+
+  useEffect(() => {
+    if (preview) {
+      setImgLoading(true);
+    }
+  }, [preview]);
 
   const acceptedTypes =
     accept === "pdf" ? ACCEPTED_PDF_TYPES : ACCEPTED_IMAGE_TYPES;
@@ -59,6 +67,7 @@ export function ImageUpload({
     (file: File) => {
       setError(null);
       setIsRemoved(false);
+      setImgLoading(true);
 
       // Validate type
       if (!acceptedTypes.includes(file.type)) {
@@ -124,22 +133,34 @@ export function ImageUpload({
             previewClassName ? (
               <div className={cn(
                 "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", 
-                previewClassName
+                previewClassName,
+                imgLoading && "animate-pulse bg-neutral-100 dark:bg-neutral-800"
               )}>
                 <Image
                   src={preview}
                   alt="Preview"
                   fill
-                  className="object-cover"
+                  className={cn(
+                    "object-cover transition-opacity duration-300",
+                    imgLoading ? "opacity-0" : "opacity-100"
+                  )}
+                  onLoadingComplete={() => setImgLoading(false)}
                   unoptimized
                 />
               </div>
             ) : (
-              <div className="relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10 w-fit">
+              <div className={cn(
+                "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10 w-fit",
+                imgLoading && "animate-pulse bg-neutral-100 dark:bg-neutral-800"
+              )}>
                 <img
                   src={preview}
                   alt="Preview"
-                  className="h-32 w-auto max-w-full object-contain rounded-lg"
+                  className={cn(
+                    "h-32 w-auto max-w-full object-contain rounded-lg transition-opacity duration-300",
+                    imgLoading ? "opacity-0" : "opacity-100"
+                  )}
+                  onLoad={() => setImgLoading(false)}
                 />
               </div>
             )

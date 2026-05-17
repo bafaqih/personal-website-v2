@@ -10,8 +10,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function OrganizationsPage() {
-  const [items, setItems] = useState<Organization[]>([]); const [deleteId, setDeleteId] = useState<string | null>(null); const [deleting, setDeleting] = useState(false);
-  const fetchData = () => { OrganizationService.getAll().then(setItems).catch(() => toast.error("Failed")); };
+  const [items, setItems] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const fetchData = () => {
+    setLoading(true);
+    OrganizationService.getAll()
+      .then(setItems)
+      .catch(() => toast.error("Failed"))
+      .finally(() => setLoading(false));
+  };
   useEffect(() => { fetchData(); }, []);
   const handleDelete = async () => { if (!deleteId) return; setDeleting(true); try { await OrganizationService.delete(deleteId); toast.success("Deleted"); fetchData(); } catch { toast.error("Failed"); } finally { setDeleting(false); setDeleteId(null); } };
   const columns: Column<Organization>[] = [
@@ -35,7 +45,7 @@ export default function OrganizationsPage() {
   return (
     <><PageHeader title="Organizations" icon={Users} description="Manage organization experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Organizations" }]}
         actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Organization</Button></Link>} />
-      <DataTable data={items} columns={columns} searchPlaceholder="Search organizations..."
+      <DataTable data={items} columns={columns} loading={loading} searchPlaceholder="Search organizations..."
         actions={(o) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

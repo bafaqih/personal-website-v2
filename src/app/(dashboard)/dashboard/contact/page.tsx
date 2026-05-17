@@ -95,27 +95,6 @@ export default function ContactPage() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <PageHeader title="Contact" icon={Mail} />
-        <Card className="w-full border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
-          <CardContent className="p-6 space-y-8">
-            <div className="grid gap-6 md:grid-cols-2">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-            <div className="space-y-4">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <>
       <PageHeader 
@@ -136,76 +115,108 @@ export default function ContactPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Email</Label>
-                  <Input 
-                    {...register("email")} 
-                    type="text" 
-                    placeholder="e.g., mail@example.com" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("email")} 
+                      type="text" 
+                      placeholder="e.g., mail@example.com" 
+                    />
+                  )}
                   {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>WhatsApp URL</Label>
-                  <Input 
-                    {...register("whatsapp_url")} 
-                    placeholder="e.g., https://wa.me/628123456789" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("whatsapp_url")} 
+                      placeholder="e.g., https://wa.me/628123456789" 
+                    />
+                  )}
                 </div>
               </div>
 
               {/* Location */}
               <div className="space-y-2">
                 <Label>Location</Label>
-                <Input 
-                  {...register("location")} 
-                  placeholder="e.g., Jakarta, Indonesia" 
-                />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input 
+                    {...register("location")} 
+                    placeholder="e.g., Jakarta, Indonesia" 
+                  />
+                )}
               </div>
 
               {/* Social Links */}
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>GitHub URL</Label>
-                  <Input 
-                    {...register("github_url")} 
-                    placeholder="https://github.com/username" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("github_url")} 
+                      placeholder="https://github.com/username" 
+                    />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>LinkedIn URL</Label>
-                  <Input 
-                    {...register("linkedin_url")} 
-                    placeholder="https://linkedin.com/in/username" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("linkedin_url")} 
+                      placeholder="https://linkedin.com/in/username" 
+                    />
+                  )}
                 </div>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Instagram URL</Label>
-                  <Input 
-                    {...register("instagram_url")} 
-                    placeholder="https://instagram.com/username" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("instagram_url")} 
+                      placeholder="https://instagram.com/username" 
+                    />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>TikTok URL</Label>
-                  <Input 
-                    {...register("tiktok_url")} 
-                    placeholder="https://tiktok.com/@username" 
-                  />
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input 
+                      {...register("tiktok_url")} 
+                      placeholder="https://tiktok.com/@username" 
+                    />
+                  )}
                 </div>
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button type="submit" 
-                  disabled={isSubmitting || !isDirty} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-                  {isSubmitting ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
-                  ) : (
-                    <><Save className="h-4 w-4" /> Save Changes</>
-                  )}
-                </Button>
+                {loading ? (
+                  <Skeleton className="h-10 w-32 ml-auto" />
+                ) : (
+                  <Button type="submit" 
+                    disabled={isSubmitting || !isDirty} 
+                    className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                    {isSubmitting ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                    ) : (
+                      <><Save className="h-4 w-4" /> Save Changes</>
+                    )}
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

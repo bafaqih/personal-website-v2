@@ -100,7 +100,7 @@ export function DataTable<T>({
                 <TableHead
                   key={col.key}
                   className={cn(
-                    "text-xs !font-semibold uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5",
+                    "text-xs font-semibold! uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5",
                     col.className
                   )}
                 >
@@ -108,7 +108,7 @@ export function DataTable<T>({
                 </TableHead>
               ))}
               {actions && (
-                <TableHead className="w-[100px] text-xs !font-semibold uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5">
+                <TableHead className="w-[100px] text-xs font-semibold! uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5">
                   Actions
                 </TableHead>
               )}
@@ -116,7 +116,7 @@ export function DataTable<T>({
           </TableHeader>
           <TableBody>
             {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
+              Array.from({ length: 10 }).map((_, i) => (
                 <TableRow key={i} className="border-b border-neutral-100 dark:border-white/5 last:border-none">
                   {columns.map((col) => (
                     <TableCell key={col.key} className="py-4">

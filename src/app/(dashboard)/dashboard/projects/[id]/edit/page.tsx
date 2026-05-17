@@ -281,16 +281,6 @@ export default function ProjectEditPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-12 w-1/3" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
-  }
-
   return (
     <>
       <PageHeader
@@ -312,44 +302,76 @@ export default function ProjectEditPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Slug</Label>
-                <Input {...register("slug")} placeholder="e.g., my-awesome-project" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("slug")} placeholder="e.g., my-awesome-project" />
+                )}
                 {errors.slug && <p className="text-xs text-red-500">{errors.slug.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Project Date</Label>
-                <Input type="date" {...register("project_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input type="date" {...register("project_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                )}
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Project Title (ID)</Label>
-                <Input {...register("title_id")} placeholder="Project title (ID)" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("title_id")} placeholder="Project title (ID)" />
+                )}
                 {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Project Title (EN)</Label>
-                <Input {...register("title_en")} placeholder="Project title (EN)" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("title_en")} placeholder="Project title (EN)" />
+                )}
                 {errors.title_en && <p className="text-xs text-red-500">{errors.title_en.message}</p>}
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Short bio (ID)</Label>
-                <Textarea {...register("bio_id")} rows={2} placeholder="Short bio (ID)..." />
+                {loading ? (
+                  <Skeleton className="h-[68px] w-full" />
+                ) : (
+                  <Textarea {...register("bio_id")} rows={2} placeholder="Short bio (ID)..." />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Short bio (EN)</Label>
-                <Textarea {...register("bio_en")} rows={2} placeholder="Short bio (EN)..." />
+                {loading ? (
+                  <Skeleton className="h-[68px] w-full" />
+                ) : (
+                  <Textarea {...register("bio_en")} rows={2} placeholder="Short bio (EN)..." />
+                )}
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Project overview (ID)</Label>
-                <Textarea {...register("overview_id")} rows={4} placeholder="Project overview (ID)..." />
+                {loading ? (
+                  <Skeleton className="h-[116px] w-full" />
+                ) : (
+                  <Textarea {...register("overview_id")} rows={4} placeholder="Project overview (ID)..." />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Project overview (EN)</Label>
-                <Textarea {...register("overview_en")} rows={4} placeholder="Project overview (EN)..." />
+                {loading ? (
+                  <Skeleton className="h-[116px] w-full" />
+                ) : (
+                  <Textarea {...register("overview_en")} rows={4} placeholder="Project overview (EN)..." />
+                )}
               </div>
             </div>
           </CardContent>
@@ -362,44 +384,68 @@ export default function ProjectEditPage() {
             <div className="grid gap-6 md:grid-cols-3">
               <div className="space-y-2">
                 <Label>Type</Label>
-                <Select onValueChange={(v) => setValue("type_id", v, { shouldDirty: true })} value={watch("type_id")}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                  <SelectContent>
-                    {types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Select onValueChange={(v) => setValue("type_id", v, { shouldDirty: true })} value={watch("type_id")}>
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>
+                      {types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select onValueChange={(v) => setValue("category_id", v, { shouldDirty: true })} value={watch("category_id")}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                  <SelectContent>
-                    {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Select onValueChange={(v) => setValue("category_id", v, { shouldDirty: true })} value={watch("category_id")}>
+                    <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                    <SelectContent>
+                      {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Skills / Tech Stack</Label>
-                <MultiSelectSkill
-                  options={activeSkills}
-                  selected={watch("skill_ids") || []}
-                  onChange={(val) => setValue("skill_ids", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Select technologies..."
-                />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <MultiSelectSkill
+                    options={activeSkills}
+                    selected={watch("skill_ids") || []}
+                    onChange={(val) => setValue("skill_ids", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Select technologies..."
+                  />
+                )}
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-3">
               <div className="space-y-2">
                 <Label>GitHub URL</Label>
-                <Input {...register("github_url")} placeholder="https://github.com/..." />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("github_url")} placeholder="https://github.com/..." />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Live URL</Label>
-                <Input {...register("live_url")} placeholder="https://..." />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("live_url")} placeholder="https://..." />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Video URL</Label>
-                <Input {...register("video_url")} placeholder="https://youtube.com/..." />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("video_url")} placeholder="https://youtube.com/..." />
+                )}
               </div>
             </div>
           </CardContent>
@@ -410,39 +456,55 @@ export default function ProjectEditPage() {
           <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center border-b pb-2">
               <h3 className="font-semibold text-lg">Project Gallery</h3>
-              <Button type="button" variant="outline" size="sm" onClick={addImageSlot} className="gap-1.5">
-                <Plus className="h-4 w-4" /> Add Image
-              </Button>
+              {loading ? (
+                <Skeleton className="h-9 w-28" />
+              ) : (
+                <Button type="button" variant="outline" size="sm" onClick={addImageSlot} className="gap-1.5">
+                  <Plus className="h-4 w-4" /> Add Image
+                </Button>
+              )}
             </div>
             <p className="text-sm text-neutral-500">The first image in the list will automatically become the project thumbnail.</p>
             
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {imageSlots.map((slot, index) => (
-                <div key={slot.id} className="relative group border rounded-xl p-3 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col gap-3">
-                  <div className="absolute -top-3 -left-3 bg-neutral-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 border-2 border-white dark:border-neutral-900 shadow-sm">
-                    {index + 1}
+              {loading ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="border rounded-xl p-3 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col gap-3">
+                    <Skeleton className="w-full aspect-video rounded-lg" />
+                    <div className="flex justify-between items-center gap-1">
+                      <Skeleton className="h-7 w-16" />
+                      <Skeleton className="h-7 w-7 rounded-lg" />
+                    </div>
                   </div>
-                  <ImageUpload 
-                    accept="image" 
-                    value={slot.existingUrl}
-                    onChange={(f) => updateImageSlot(slot.id, f)} 
-                    previewClassName="w-full aspect-video"
-                  />
-                  <div className="flex justify-between items-center gap-1">
-                    <div className="flex gap-1">
-                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
-                        <ArrowUp className="h-4 w-4" />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
-                        <ArrowDown className="h-4 w-4" />
+                ))
+              ) : (
+                imageSlots.map((slot, index) => (
+                  <div key={slot.id} className="relative group border rounded-xl p-3 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col gap-3">
+                    <div className="absolute -top-3 -left-3 bg-neutral-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 border-2 border-white dark:border-neutral-900 shadow-sm">
+                      {index + 1}
+                    </div>
+                    <ImageUpload 
+                      accept="image" 
+                      value={slot.existingUrl}
+                      onChange={(f) => updateImageSlot(slot.id, f)} 
+                      previewClassName="w-full aspect-video"
+                    />
+                    <div className="flex justify-between items-center gap-1">
+                      <div className="flex gap-1">
+                        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -455,42 +517,58 @@ export default function ProjectEditPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Responsibilities (ID)</Label>
-                <BulletListInput
-                  id="resp_id"
-                  value={watch("responsibilities_id")}
-                  onChange={(val) => setValue("responsibilities_id", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Responsibilities (ID)..."
-                />
+                {loading ? (
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                ) : (
+                  <BulletListInput
+                    id="resp_id"
+                    value={watch("responsibilities_id")}
+                    onChange={(val) => setValue("responsibilities_id", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Responsibilities (ID)..."
+                  />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Responsibilities (EN)</Label>
-                <BulletListInput
-                  id="resp_en"
-                  value={watch("responsibilities_en")}
-                  onChange={(val) => setValue("responsibilities_en", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Responsibilities (EN)..."
-                />
+                {loading ? (
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                ) : (
+                  <BulletListInput
+                    id="resp_en"
+                    value={watch("responsibilities_en")}
+                    onChange={(val) => setValue("responsibilities_en", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Responsibilities (EN)..."
+                  />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Key Features (ID) <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
-                <BulletListInput
-                  id="feat_id"
-                  value={watch("features_id")}
-                  onChange={(val) => setValue("features_id", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Login: Authentication feature (ID)..."
-                />
+                {loading ? (
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                ) : (
+                  <BulletListInput
+                    id="feat_id"
+                    value={watch("features_id")}
+                    onChange={(val) => setValue("features_id", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Login: Authentication feature (ID)..."
+                  />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Key Features (EN) <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
-                <BulletListInput
-                  id="feat_en"
-                  value={watch("features_en")}
-                  onChange={(val) => setValue("features_en", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Login: Authentication feature (EN)..."
-                />
+                {loading ? (
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                ) : (
+                  <BulletListInput
+                    id="feat_en"
+                    value={watch("features_en")}
+                    onChange={(val) => setValue("features_en", val, { shouldValidate: true, shouldDirty: true })}
+                    placeholder="Login: Authentication feature (EN)..."
+                  />
+                )}
               </div>
             </div>
           </CardContent>
@@ -507,21 +585,37 @@ export default function ProjectEditPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Challenge Intro (ID)</Label>
-                  <Textarea {...register("challenge_intro_id")} rows={2} placeholder="Challenge intro (ID)..." />
+                  {loading ? (
+                    <Skeleton className="h-[68px] w-full" />
+                  ) : (
+                    <Textarea {...register("challenge_intro_id")} rows={2} placeholder="Challenge intro (ID)..." />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Challenge Intro (EN)</Label>
-                  <Textarea {...register("challenge_intro_en")} rows={2} placeholder="Challenge intro (EN)..." />
+                  {loading ? (
+                    <Skeleton className="h-[68px] w-full" />
+                  ) : (
+                    <Textarea {...register("challenge_intro_en")} rows={2} placeholder="Challenge intro (EN)..." />
+                  )}
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Challenge Points (ID)</Label>
-                  <BulletListInput id="ch_pts_id" value={watch("challenge_points_id")} onChange={(v) => setValue("challenge_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (ID)..." />
+                  {loading ? (
+                    <Skeleton className="h-[200px] w-full rounded-lg" />
+                  ) : (
+                    <BulletListInput id="ch_pts_id" value={watch("challenge_points_id")} onChange={(v) => setValue("challenge_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (ID)..." />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Challenge Points (EN)</Label>
-                  <BulletListInput id="ch_pts_en" value={watch("challenge_points_en")} onChange={(v) => setValue("challenge_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (EN)..." />
+                  {loading ? (
+                    <Skeleton className="h-[200px] w-full rounded-lg" />
+                  ) : (
+                    <BulletListInput id="ch_pts_en" value={watch("challenge_points_en")} onChange={(v) => setValue("challenge_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (EN)..." />
+                  )}
                 </div>
               </div>
             </div>
@@ -532,21 +626,37 @@ export default function ProjectEditPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Result Intro (ID)</Label>
-                  <Textarea {...register("result_intro_id")} rows={2} placeholder="Result intro (ID)..." />
+                  {loading ? (
+                    <Skeleton className="h-[68px] w-full" />
+                  ) : (
+                    <Textarea {...register("result_intro_id")} rows={2} placeholder="Result intro (ID)..." />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Result Intro (EN)</Label>
-                  <Textarea {...register("result_intro_en")} rows={2} placeholder="Result intro (EN)..." />
+                  {loading ? (
+                    <Skeleton className="h-[68px] w-full" />
+                  ) : (
+                    <Textarea {...register("result_intro_en")} rows={2} placeholder="Result intro (EN)..." />
+                  )}
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Result Points (ID)</Label>
-                  <BulletListInput id="rs_pts_id" value={watch("result_points_id")} onChange={(v) => setValue("result_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (ID)..." />
+                  {loading ? (
+                    <Skeleton className="h-[200px] w-full rounded-lg" />
+                  ) : (
+                    <BulletListInput id="rs_pts_id" value={watch("result_points_id")} onChange={(v) => setValue("result_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (ID)..." />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Result Points (EN)</Label>
-                  <BulletListInput id="rs_pts_en" value={watch("result_points_en")} onChange={(v) => setValue("result_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (EN)..." />
+                  {loading ? (
+                    <Skeleton className="h-[200px] w-full rounded-lg" />
+                  ) : (
+                    <BulletListInput id="rs_pts_en" value={watch("result_points_en")} onChange={(v) => setValue("result_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (EN)..." />
+                  )}
                 </div>
               </div>
             </div>
@@ -557,21 +667,37 @@ export default function ProjectEditPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Lesson Intro (ID)</Label>
-                  <Textarea {...register("lesson_intro_id")} rows={2} placeholder="Lesson intro (ID)..." />
+                  {loading ? (
+                    <Skeleton className="h-[68px] w-full" />
+                  ) : (
+                    <Textarea {...register("lesson_intro_id")} rows={2} placeholder="Lesson intro (ID)..." />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Lesson Intro (EN)</Label>
-                  <Textarea {...register("lesson_intro_en")} rows={2} placeholder="Lesson intro (EN)..." />
+                  {loading ? (
+                    <Skeleton className="h-[68px] w-full" />
+                  ) : (
+                    <Textarea {...register("lesson_intro_en")} rows={2} placeholder="Lesson intro (EN)..." />
+                  )}
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Lesson Points (ID)</Label>
-                  <BulletListInput id="ls_pts_id" value={watch("lesson_points_id")} onChange={(v) => setValue("lesson_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (ID)..." />
+                  {loading ? (
+                    <Skeleton className="h-[200px] w-full rounded-lg" />
+                  ) : (
+                    <BulletListInput id="ls_pts_id" value={watch("lesson_points_id")} onChange={(v) => setValue("lesson_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (ID)..." />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Lesson Points (EN)</Label>
-                  <BulletListInput id="ls_pts_en" value={watch("lesson_points_en")} onChange={(v) => setValue("lesson_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (EN)..." />
+                  {loading ? (
+                    <Skeleton className="h-[200px] w-full rounded-lg" />
+                  ) : (
+                    <BulletListInput id="ls_pts_en" value={watch("lesson_points_en")} onChange={(v) => setValue("lesson_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (EN)..." />
+                  )}
                 </div>
               </div>
             </div>
@@ -582,20 +708,33 @@ export default function ProjectEditPage() {
         {/* Actions */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
+            {loading ? (
+              <Skeleton className="h-6 w-10 rounded-full" />
+            ) : (
+              <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
+            )}
             <Label>Published</Label>
           </div>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
-              <X className="h-4 w-4" /> Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-              {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
-              ) : (
-                <><Save className="h-4 w-4" /> Save Changes</>
-              )}
-            </Button>
+            {loading ? (
+              <>
+                <Skeleton className="h-10 w-24" />
+                <Skeleton className="h-10 w-32" />
+              </>
+            ) : (
+              <>
+                <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
+                  <X className="h-4 w-4" /> Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                  {isSubmitting ? (
+                    <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                  ) : (
+                    <><Save className="h-4 w-4" /> Save Changes</>
+                  )}
+                </Button>
+              </>
+            )}
           </div>
         </div>
 

@@ -70,8 +70,6 @@ export default function SkillEditPage() {
     }
   };
 
-  if (loading) return <><PageHeader title="Edit Skill" icon={Code2} /><Skeleton className="h-64 w-full rounded-xl" /></>;
-
   return (
     <>
       <PageHeader
@@ -88,41 +86,62 @@ export default function SkillEditPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <Label>Name</Label>
-              <Input {...register("name")} />
+              {loading ? <Skeleton className="h-10 w-full" /> : <Input {...register("name")} />}
               {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label>Category</Label>
-              <Select onValueChange={(v) => setValue("category_id", v)} value={watch("category_id")}>
-                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name_en}</SelectItem>))}
-                </SelectContent>
-              </Select>
+              {loading ? (
+                <Skeleton className="h-10 w-full" />
+              ) : (
+                <Select onValueChange={(v) => setValue("category_id", v)} value={watch("category_id")}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name_en}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Icon</Label>
-              <ImageUpload accept="image" value={currentIconUrl || undefined} onChange={(file) => { setIconFile(file); setIsImageChanged(true); if (!file) setCurrentIconUrl(null); }} />
+              {loading ? (
+                <Skeleton className="h-[120px] w-full rounded-xl" />
+              ) : (
+                <ImageUpload accept="image" value={currentIconUrl || undefined} onChange={(file) => { setIconFile(file); setIsImageChanged(true); if (!file) setCurrentIconUrl(null); }} />
+              )}
             </div>
             <div className="flex items-center gap-3">
-              <Switch checked={watch("is_active")} onCheckedChange={(v) => setValue("is_active", v)} />
+              {loading ? (
+                <Skeleton className="h-6 w-10 rounded-full" />
+              ) : (
+                <Switch checked={watch("is_active")} onCheckedChange={(v) => setValue("is_active", v)} />
+              )}
               <Label>Active</Label>
             </div>
             <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
-                <X className="h-4 w-4" /> Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" /> Save Changes
-                  </>
-                )}
-              </Button>
+              {loading ? (
+                <>
+                  <Skeleton className="h-10 w-24" />
+                  <Skeleton className="h-10 w-32" />
+                </>
+              ) : (
+                <>
+                  <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
+                    <X className="h-4 w-4" /> Cancel
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4" /> Save Changes
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
             </div>
           </form>
         </CardContent>

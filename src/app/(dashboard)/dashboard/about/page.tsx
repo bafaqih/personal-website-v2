@@ -87,19 +87,6 @@ export default function AboutPage() {
     });
   };
 
-  if (loading) {
-    return (
-      <>
-        <PageHeader title="About" />
-        <div className="space-y-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-lg" />
-          ))}
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <PageHeader
@@ -118,79 +105,123 @@ export default function AboutPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Badge (ID)</Label>
-                <Input {...register("badge_id")} placeholder="e.g., Full-Stack Developer" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("badge_id")} placeholder="e.g., Full-Stack Developer" />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Badge (EN)</Label>
-                <Input {...register("badge_en")} placeholder="e.g., Full-Stack Developer" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("badge_en")} placeholder="e.g., Full-Stack Developer" />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Bio (ID)</Label>
-                <Textarea {...register("bio_id")} rows={3} placeholder="Short bio in Indonesian" />
+                {loading ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : (
+                  <Textarea {...register("bio_id")} rows={3} placeholder="Short bio in Indonesian" />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Bio (EN)</Label>
-                <Textarea {...register("bio_en")} rows={3} placeholder="Short bio in English" />
+                {loading ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : (
+                  <Textarea {...register("bio_en")} rows={3} placeholder="Short bio in English" />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Description (ID)</Label>
-                <Textarea {...register("description_id")} rows={4} placeholder="Full description in Indonesian" />
+                {loading ? (
+                  <Skeleton className="h-24 w-full" />
+                ) : (
+                  <Textarea {...register("description_id")} rows={4} placeholder="Full description in Indonesian" />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Description (EN)</Label>
-                <Textarea {...register("description_en")} rows={4} placeholder="Full description in English" />
+                {loading ? (
+                  <Skeleton className="h-24 w-full" />
+                ) : (
+                  <Textarea {...register("description_en")} rows={4} placeholder="Full description in English" />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Quotes (ID)</Label>
-                <Input {...register("quotes_id")} placeholder="Motivational quote in Indonesian" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("quotes_id")} placeholder="Motivational quote in Indonesian" />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Quotes (EN)</Label>
-                <Input {...register("quotes_en")} placeholder="Motivational quote in English" />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input {...register("quotes_en")} placeholder="Motivational quote in English" />
+                )}
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Years of Experience</Label>
-                <Input type="number" {...register("years_of_experience")} />
+                {loading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Input type="number" {...register("years_of_experience")} />
+                )}
               </div>
               <div className="space-y-2">
                 <Label>CV / Resume (PDF)</Label>
-                <ImageUpload
-                  accept="pdf"
-                  value={about?.cv_url || undefined}
-                  onChange={(file) => setCvFile(file)}
-                  onViewPdf={(url) => setViewPdfUrl(url)}
-                />
+                {loading ? (
+                  <Skeleton className="h-32 w-full" />
+                ) : (
+                  <ImageUpload
+                    accept="pdf"
+                    value={about?.cv_url || undefined}
+                    onChange={(file) => setCvFile(file)}
+                    onViewPdf={(url) => setViewPdfUrl(url)}
+                  />
+                )}
               </div>
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit"
-                disabled={isSubmitting || (!isDirty && !cvFile)}
-                className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5">
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Save Changes
-                  </>
-                )}
-              </Button>
+              {loading ? (
+                <Skeleton className="h-10 w-32" />
+              ) : (
+                <Button type="submit"
+                  disabled={isSubmitting || (!isDirty && !cvFile)}
+                  className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5">
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </form>
         </CardContent>

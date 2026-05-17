@@ -3,19 +3,21 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/src/app/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StatCardProps {
   title: string;
   value: number;
   icon: React.ComponentType<{ className?: string }>;
   className?: string;
+  loading?: boolean;
 }
 
 /**
  * Dashboard statistics card with glassmorphism effect.
  * Displays a metric count with icon and label.
  */
-export function StatCard({ title, value, icon: Icon, className }: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, className, loading }: StatCardProps) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
@@ -57,9 +59,13 @@ export function StatCard({ title, value, icon: Icon, className }: StatCardProps)
             <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
               {title}
             </p>
-            <p className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              {displayValue}
-            </p>
+            <div className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              {loading ? (
+                <Skeleton className="h-9 w-12 mt-1" />
+              ) : (
+                displayValue
+              )}
+            </div>
           </div>
           <div className="rounded-xl bg-neutral-100 p-2.5 transition-colors group-hover:bg-neutral-900 group-hover:text-white dark:bg-white/10 dark:group-hover:bg-white dark:group-hover:text-neutral-900">
             <Icon className="h-5 w-5" />
