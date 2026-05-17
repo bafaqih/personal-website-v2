@@ -70,7 +70,7 @@ export function PdfViewerModal({
           className={cn(
             "relative flex items-center justify-center w-12 h-12 rounded-xl sm:rounded-2xl",
             "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
-            "border border-white/40 dark:border-neutral-700/40 shadow-lg",
+            "border border-neutral-300 dark:border-neutral-600 shadow-lg",
             "text-neutral-950 dark:text-neutral-50",
             "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
             "transition-all duration-200 cursor-pointer outline-none group"
