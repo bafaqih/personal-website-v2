@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +23,8 @@ import {
   AtSign, 
   Loader2,
   Save,
-  X
+  X,
+  KeyRound
 } from "lucide-react";
 import { AuthService } from "@/src/services/auth.service";
 import { StorageService } from "@/src/services/storage.service";
@@ -212,7 +214,7 @@ export default function ProfilePage() {
             <div className="border-t border-neutral-100 pt-8 dark:border-neutral-800">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                  Informasi Pribadi
+                  Personal Information
                 </h3>
                 <Button
                   variant="outline"
@@ -221,13 +223,13 @@ export default function ProfilePage() {
                   className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800"
                 >
                   <Pencil className="h-4 w-4" />
-                  Edit Profil
+                  Edit Profile
                 </Button>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <InfoCard
-                  label="Nama Lengkap"
+                  label="Full Name"
                   value={profile?.full_name || "-"}
                   icon={<UserIcon className="h-5 w-5 text-neutral-400" />}
                 />
@@ -241,6 +243,17 @@ export default function ProfilePage() {
                   value={profile?.email || "-"}
                   icon={<Mail className="h-5 w-5 text-neutral-400" />}
                 />
+              </div>
+
+              <div className="border-t border-neutral-100 mt-8 pt-8 dark:border-neutral-800 flex justify-start">
+                <Link href="/dashboard/profile/password/change">
+                  <Button
+                    className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5"
+                  >
+                    <KeyRound className="h-4 w-4" />
+                    Change Password
+                  </Button>
+                </Link>
               </div>
             </div>
           </CardContent>

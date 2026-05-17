@@ -66,4 +66,34 @@ export const AuthService = {
     if (error) throw error;
     return data as Profile;
   },
+
+  /** Update the password of the currently authenticated user */
+  async updatePassword(oldPassword: string, newPassword: string): Promise<void> {
+    const supabase = createClient();
+    
+    // Get the current user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    if (userError || !user || !user.email) {
+      throw new Error("User session not found. Please log in again.");
+    }
+
+    // Re-authenticate to verify old password
+    const { error: reauthError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: oldPassword,
+    });
+    if (reauthError) {
+      throw new Error("Incorrect old password.");
+    }
+
+    // Update password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+      current_password: oldPassword,
+    });
+    if (updateError) throw updateError;
+  },
 };
