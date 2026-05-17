@@ -54,7 +54,14 @@ export default function SkillsListPage() {
       className: "w-[60px]",
       render: (skill) =>
         skill.icon_url ? (
-          <Image src={skill.icon_url} alt={skill.name} width={28} height={28} className="rounded" unoptimized />
+          <Image
+            src={skill.icon_url}
+            alt={skill.name}
+            width={28}
+            height={28}
+            className="rounded object-contain brightness-0 dark:invert"
+            unoptimized
+          />
         ) : (
           <div className="h-7 w-7 rounded bg-neutral-100 dark:bg-white/10" />
         ),
