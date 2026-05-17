@@ -88,13 +88,13 @@ export default function BlogsListPage() {
       key: "views_count",
       header: "Views & Likes",
       render: (b) => (
-        <div className="flex items-center gap-3 text-xs text-neutral-500">
+        <div className="flex items-center gap-3 text-xs text-neutral-900 dark:text-neutral-100 font-medium">
           <span className="flex items-center gap-1">
-            <Eye className="h-3.5 w-3.5 opacity-60" />
+            <Eye className="h-3.5 w-3.5" />
             {b.views_count}
           </span>
           <span className="flex items-center gap-1">
-            <Heart className="h-3.5 w-3.5 opacity-60 text-red-500 fill-red-500/20" />
+            <Heart className="h-3.5 w-3.5" />
             {b.likes_count}
           </span>
         </div>
