@@ -169,7 +169,6 @@ export default function BlogEditPage() {
                     }} 
                     previewClassName="aspect-video w-full"
                   />
-                  <p className="text-[11px] text-neutral-500 mt-2">Recommended aspect ratio 16:9 for the best display.</p>
                 </div>
               </div>
 
