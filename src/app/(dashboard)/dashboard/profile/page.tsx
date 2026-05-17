@@ -20,7 +20,9 @@ import {
   Pencil, 
   User as UserIcon, 
   AtSign, 
-  Loader2
+  Loader2,
+  Save,
+  X
 } from "lucide-react";
 import { AuthService } from "@/src/services/auth.service";
 import { StorageService } from "@/src/services/storage.service";
@@ -139,6 +141,7 @@ export default function ProfilePage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <PageHeader
         title="My Profile"
+        icon={UserIcon}
         description="Manage your account settings and profile information."
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
@@ -152,23 +155,35 @@ export default function ProfilePage() {
           <CardContent className="p-8 space-y-8">
             <div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
               <div className="relative group">
-                <Avatar className="h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl">
-                  <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover rounded-2xl" />
-                  <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                
                 <button
                   onClick={handleImageClick}
                   disabled={isUploading}
-                  className="absolute bottom-0 right-0 rounded-lg bg-emerald-500 p-2 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 disabled:bg-neutral-400"
+                  className="relative h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition"
+                  title="Change profile picture"
                 >
-                  {isUploading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Camera className="h-4 w-4" />
-                  )}
+                  <div className="w-full h-full relative transition-transform duration-200 ease-out group-active:scale-95">
+                    <Avatar className="h-full w-full rounded-2xl">
+                      <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover rounded-2xl h-full w-full" />
+                      <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl flex items-center justify-center h-full w-full">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    {/* Hover overlay / Uploading state */}
+                    <div className={`absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl ${isUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <span className="text-[10px] font-medium tracking-wide">Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="h-5 w-5" />
+                          <span className="text-[10px] font-medium tracking-wide">Change Photo</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </button>
                 <input
                   type="file"
@@ -187,7 +202,7 @@ export default function ProfilePage() {
                   @{profile?.username}
                 </p>
                 <div className="mt-3 flex flex-wrap justify-center gap-2 md:justify-start">
-                  <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
+                  <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
                     Administrator
                   </span>
                 </div>
@@ -203,7 +218,7 @@ export default function ProfilePage() {
                   variant="outline"
                   size="sm"
                   onClick={handleEditClick}
-                  className="gap-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+                  className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit Profil
@@ -276,21 +291,26 @@ export default function ProfilePage() {
               variant="outline"
               onClick={() => setIsEditModalOpen(false)}
               disabled={isSaving}
+              className="gap-1.5"
             >
+              <X className="h-4 w-4" />
               Cancel
             </Button>
             <Button
               onClick={handleSaveProfile}
               disabled={isSaving}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Saving...
                 </>
               ) : (
-                "Save Changes"
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </>
               )}
             </Button>
           </DialogFooter>
