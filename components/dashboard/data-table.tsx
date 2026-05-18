@@ -177,6 +177,51 @@ export function DataTable<T>({
     page * pageSize
   );
 
+  // Generate pages to show with Ellipsis Algorithm when totalPages > 5
+  const visiblePages = useMemo(() => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show page 1
+      pages.push(1);
+      
+      if (page > 3) {
+        pages.push("ellipsis-start");
+      }
+      
+      // Show page neighbors
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+      
+      // Adjust neighbors if we are close to the start or end to keep exactly 5 visual items
+      let adjustedStart = start;
+      let adjustedEnd = end;
+      
+      if (page <= 3) {
+        adjustedEnd = 4;
+      } else if (page >= totalPages - 2) {
+        adjustedStart = totalPages - 3;
+      }
+      
+      for (let i = adjustedStart; i <= adjustedEnd; i++) {
+        pages.push(i);
+      }
+      
+      if (page < totalPages - 2) {
+        pages.push("ellipsis-end");
+      }
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  }, [page, totalPages]);
+
   return (
     <div className={cn("space-y-4", className)}>
       {/* Search and Filters top bar */}
@@ -448,15 +493,25 @@ export function DataTable<T>({
               </Button>
 
               <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => {
-                  const pageNumber = i + 1;
-                  const isCurrent = page === pageNumber;
+                {visiblePages.map((pageItem, index) => {
+                  if (typeof pageItem === "string") {
+                    return (
+                      <span
+                        key={`ellipsis-${index}`}
+                        className="h-8 w-8 flex items-center justify-center text-xs font-semibold text-neutral-400 dark:text-neutral-500"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+
+                  const isCurrent = page === pageItem;
                   return (
                     <Button
-                      key={pageNumber}
+                      key={pageItem}
                       variant={isCurrent ? "default" : "ghost"}
                       size="sm"
-                      onClick={() => setPage(pageNumber)}
+                      onClick={() => setPage(pageItem)}
                       className={cn(
                         "h-8 w-8 rounded-md p-0 text-xs font-semibold cursor-pointer",
                         isCurrent
@@ -464,7 +519,7 @@ export function DataTable<T>({
                           : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
                       )}
                     >
-                      {pageNumber}
+                      {pageItem}
                     </Button>
                   );
                 })}
