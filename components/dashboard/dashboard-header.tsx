@@ -44,8 +44,10 @@ export function DashboardHeader({
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [imageStatus, setImageStatus] = useState<"idle" | "loading" | "loaded" | "error">("idle");
+
+  const showSkeleton = loading || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
 
   useEffect(() => {
     AuthService.getProfile()
@@ -117,26 +119,32 @@ export function DashboardHeader({
             <DropdownMenu onOpenChange={setDropdownOpen}>
               <TooltipTrigger asChild>
                 <DropdownMenuTrigger asChild>
-                  {loading ? (
-                    <Skeleton className="h-9 w-9 rounded-lg shrink-0 border border-neutral-200 dark:border-white/10" />
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      onClick={() => setTooltipOpen(false)}
-                      className="h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0"
-                    >
-                      <Avatar className="h-full w-full">
-                        <AvatarImage
-                          src={profile?.photo_url || undefined}
-                          alt={profile?.full_name || "Admin"}
-                          className="rounded-lg"
-                        />
-                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center">
-                          <User className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  )}
+                  <Button
+                    variant="ghost"
+                    disabled={showSkeleton}
+                    onClick={() => !showSkeleton && setTooltipOpen(false)}
+                    className={cn(
+                      "h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0 relative overflow-hidden",
+                      showSkeleton && "pointer-events-none cursor-default"
+                    )}
+                  >
+                    <Avatar className={cn("h-full w-full", showSkeleton && "invisible")}>
+                      <AvatarImage
+                        src={profile?.photo_url || undefined}
+                        alt={profile?.full_name || "Admin"}
+                        className="rounded-lg"
+                        onLoadingStatusChange={(status) => {
+                          setImageStatus(status);
+                        }}
+                      />
+                      <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center">
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    {showSkeleton && (
+                      <Skeleton className="absolute inset-0 h-full w-full rounded-lg" />
+                    )}
+                  </Button>
                 </DropdownMenuTrigger>
               </TooltipTrigger>
               <DropdownMenuContent

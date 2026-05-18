@@ -33,6 +33,7 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { Profile } from "@/src/types/database";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { toast } from "sonner";
+import { cn } from "@/src/app/lib/utils";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -40,6 +41,9 @@ export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageStatus, setImageStatus] = useState<"idle" | "loading" | "loaded" | "error">("idle");
+
+  const showSkeleton = loading || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -150,19 +154,29 @@ export default function ProfilePage() {
                   title="Change profile picture"
                 >
                   <div className="w-full h-full relative transition-transform duration-200 ease-out group-active:scale-95">
-                    {loading ? (
-                      <Skeleton className="h-full w-full rounded-2xl" />
-                    ) : (
-                      <Avatar className="h-full w-full rounded-2xl">
-                        <AvatarImage src={profile?.photo_url || undefined} alt={profile?.full_name} className="object-cover rounded-2xl h-full w-full" />
+                    {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
+                    {!loading && (
+                      <Avatar className={cn("h-full w-full rounded-2xl", showSkeleton && "invisible")}>
+                        <AvatarImage
+                          src={profile?.photo_url || undefined}
+                          alt={profile?.full_name}
+                          className="object-cover rounded-2xl h-full w-full"
+                          onLoadingStatusChange={(status) => {
+                            setImageStatus(status);
+                          }}
+                        />
                         <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl flex items-center justify-center h-full w-full">
                           <UserIcon className="h-10 w-10 text-neutral-400" />
                         </AvatarFallback>
                       </Avatar>
                     )}
 
+                    {showSkeleton && (
+                      <Skeleton className="absolute inset-0 h-full w-full rounded-2xl" />
+                    )}
+
                     {/* Hover overlay / Uploading state */}
-                    {!loading && (
+                    {!showSkeleton && (
                       <div className={`absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl ${isUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
                         {isUploading ? (
                           <>
