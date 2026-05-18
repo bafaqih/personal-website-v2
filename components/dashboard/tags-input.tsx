@@ -67,7 +67,11 @@ export function TagsInput({
     <div className="relative w-full" ref={containerRef}>
       <div
         className="flex min-h-9 w-full cursor-pointer flex-wrap items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow,background-color] outline-none dark:bg-input/30 dark:hover:bg-input/50"
-        onClick={() => inputRef.current?.focus()}
+        onMouseDown={(e) => {
+          if (e.target === inputRef.current) return;
+          e.preventDefault();
+          inputRef.current?.focus();
+        }}
       >
         <div className="flex flex-wrap items-center gap-1.5 flex-1">
           {value.map((tag) => (
@@ -79,6 +83,7 @@ export function TagsInput({
               {tag}
               <div
                 className="ml-1 cursor-pointer rounded-full p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={(e) => removeTag(e, tag)}
               >
                 <X className="h-3 w-3" />
@@ -109,9 +114,7 @@ export function TagsInput({
           {suggestions.length === 0 ? (
             <div className="p-2 text-center text-sm text-muted-foreground">No options found.</div>
           ) : filteredSuggestions.length === 0 ? (
-            <div className="p-2 text-center text-sm text-muted-foreground">
-              {inputValue.trim() ? "No results found." : "All selected."}
-            </div>
+            <div className="p-2 text-center text-sm text-muted-foreground">No results found.</div>
           ) : (
             filteredSuggestions.map((suggestion) => (
               <div
