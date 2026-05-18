@@ -8,11 +8,8 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Admin Dashboard — Fadil Bafagih",
-    template: "%s — Admin Dashboard",
-  },
-  description: "Admin dashboard for managing Fadil Bafagih's personal website content.",
+  title: "Admin Dashboard | Fadil Bafagih",
+  description: "Admin dashboard for managing personal website content.",
   robots: { index: false, follow: false },
 };
 
