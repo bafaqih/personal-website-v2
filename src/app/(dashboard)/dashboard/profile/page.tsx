@@ -178,7 +178,6 @@ export default function ProfilePage() {
                   onClick={() => setIsViewerOpen(true)}
                   disabled={isUploading || isDeletingImage || loading}
                   className="relative h-32 w-32 p-1 bg-neutral-50 dark:bg-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
-                  title="View profile picture"
                 >
                   <div className="w-full h-full relative rounded-xl overflow-hidden isolate">
                     {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
@@ -187,12 +186,12 @@ export default function ProfilePage() {
                         <AvatarImage
                           src={profile?.photo_url || undefined}
                           alt={profile?.full_name}
-                          className="object-cover rounded-xl h-full w-full"
+                          className="object-cover rounded-xl h-full w-full transition-all duration-300 group-hover:scale-105"
                           onLoadingStatusChange={(status) => {
                             setImageStatus(status);
                           }}
                         />
-                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full">
+                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full transition-all duration-300 group-hover:scale-105">
                           <UserIcon className="h-10 w-10 text-white dark:text-neutral-900" />
                         </AvatarFallback>
                       </Avatar>
