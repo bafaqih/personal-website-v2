@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Camera,
+  Eye,
   Mail,
   Pencil,
   User as UserIcon,
@@ -25,13 +25,16 @@ import {
   Loader2,
   Save,
   X,
-  KeyRound
+  KeyRound,
+  Trash2
 } from "lucide-react";
 import { AuthService } from "@/src/services/auth.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { Profile } from "@/src/types/database";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
+import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import { toast } from "sonner";
 import { cn } from "@/src/app/lib/utils";
 
@@ -40,10 +43,13 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeletingImage, setIsDeletingImage] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageStatus, setImageStatus] = useState<"idle" | "loading" | "loaded" | "error">("idle");
 
-  const showSkeleton = loading || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
+  const showSkeleton = loading || isUploading || isDeletingImage || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -120,12 +126,33 @@ export default function ProfilePage() {
       });
 
       setProfile(updated);
-      toast.success("Profile picture updated");
+      toast.success("Profile picture updated successfully");
+      setIsViewerOpen(false);
       window.location.reload();
     } catch (error) {
       toast.error("Failed to upload image");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    if (!profile) return;
+
+    try {
+      setIsDeletingImage(true);
+      const updated = await AuthService.updateProfile(profile.id, {
+        photo_url: null,
+      });
+
+      setProfile(updated);
+      toast.success("Profile picture deleted successfully");
+      setIsViewerOpen(false);
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete profile picture");
+    } finally {
+      setIsDeletingImage(false);
     }
   };
 
@@ -148,12 +175,12 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
               <div className="relative group">
                 <button
-                  onClick={handleImageClick}
-                  disabled={isUploading || loading}
-                  className="relative h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition"
-                  title="Change profile picture"
+                  onClick={() => setIsViewerOpen(true)}
+                  disabled={isUploading || isDeletingImage || loading}
+                  className="relative h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
+                  title="View profile picture"
                 >
-                  <div className="w-full h-full relative transition-transform duration-200 ease-out group-active:scale-95">
+                  <div className="w-full h-full relative">
                     {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
                     {!loading && (
                       <Avatar className={cn("h-full w-full rounded-2xl", showSkeleton && "invisible")}>
@@ -165,8 +192,8 @@ export default function ProfilePage() {
                             setImageStatus(status);
                           }}
                         />
-                        <AvatarFallback className="bg-neutral-100 text-2xl font-bold text-neutral-400 dark:bg-neutral-800 rounded-2xl flex items-center justify-center h-full w-full">
-                          <UserIcon className="h-10 w-10 text-neutral-400" />
+                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-2xl flex items-center justify-center h-full w-full">
+                          <UserIcon className="h-10 w-10 text-white dark:text-neutral-900" />
                         </AvatarFallback>
                       </Avatar>
                     )}
@@ -177,16 +204,24 @@ export default function ProfilePage() {
 
                     {/* Hover overlay / Uploading state */}
                     {!showSkeleton && (
-                      <div className={`absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl ${isUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                      <div className={cn(
+                        "absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl",
+                        isUploading || isDeletingImage ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                      )}>
                         {isUploading ? (
                           <>
                             <Loader2 className="h-5 w-5 animate-spin" />
                             <span className="text-[10px] font-medium tracking-wide">Uploading...</span>
                           </>
+                        ) : isDeletingImage ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <span className="text-[10px] font-medium tracking-wide">Deleting...</span>
+                          </>
                         ) : (
                           <>
-                            <Camera className="h-5 w-5" />
-                            <span className="text-[10px] font-medium tracking-wide">Change Photo</span>
+                            <Eye className="h-5 w-5" />
+                            <span className="text-[10px] font-medium tracking-wide">View Image</span>
                           </>
                         )}
                       </div>
@@ -351,6 +386,24 @@ export default function ProfilePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ImageViewerModal
+        isOpen={isViewerOpen}
+        onClose={() => setIsViewerOpen(false)}
+        images={profile?.photo_url ? [profile.photo_url] : []}
+        onEdit={handleImageClick}
+        onDelete={profile?.photo_url ? () => setIsDeleteOpen(true) : undefined}
+        isEditLoading={isUploading}
+        isDeleteLoading={isDeletingImage}
+      />
+
+      <DeleteDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        onConfirm={handleDeleteImage}
+        itemName="profile picture"
+        loading={isDeletingImage}
+      />
     </div>
   );
 }

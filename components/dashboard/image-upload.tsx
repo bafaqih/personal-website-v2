@@ -181,7 +181,6 @@ export function ImageUpload({
                   <div 
                     onClick={() => onViewImage ? onViewImage() : setIsViewerOpen(true)}
                     className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
-                    title="View image fullscreen"
                   >
                     <Eye className="h-5 w-5" />
                     <span className="text-[10px] font-medium tracking-wide">View Image</span>

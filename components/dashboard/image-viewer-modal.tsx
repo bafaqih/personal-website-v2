@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Pencil, Trash2, Loader2 } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 
 interface ImageViewerModalProps {
@@ -10,6 +10,10 @@ interface ImageViewerModalProps {
   onClose: () => void;
   images: (string | { url: string; name?: string })[];
   initialIndex?: number;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  isEditLoading?: boolean;
+  isDeleteLoading?: boolean;
 }
 
 /**
@@ -26,6 +30,10 @@ export function ImageViewerModal({
   onClose,
   images,
   initialIndex = 0,
+  onEdit,
+  onDelete,
+  isEditLoading = false,
+  isDeleteLoading = false,
 }: ImageViewerModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [mounted, setMounted] = useState(false);
@@ -139,10 +147,10 @@ export function ImageViewerModal({
     }
   }, [currentIndex]);
 
-  if (!isOpen || !images || images.length === 0 || !mounted) return null;
+  if (!isOpen || !mounted) return null;
 
   const getImageName = (item: string | { url: string; name?: string }, index: number): string => {
-    if (!item) return "";
+    if (!item) return "No Image";
     if (typeof item !== "string" && item.name) {
       return item.name;
     }
@@ -181,7 +189,7 @@ export function ImageViewerModal({
         </div>
       </div>
 
-      {/* Floating Close Button (Top-Right) */}
+      {/* Floating Control Buttons (Top-Right) */}
       <div className="absolute top-4 right-4 md:top-6 md:right-6 z-60">
         <button
           onClick={onClose}
@@ -244,16 +252,29 @@ export function ImageViewerModal({
 
       {/* Primary Image Viewport Container */}
       <div className="relative w-full max-w-[85vw] h-[68vh] flex items-center justify-center z-50 pointer-events-none select-none">
-        <img
-          src={activeUrl}
-          alt={activeName}
-          className={cn(
-            "max-w-full max-h-full object-contain rounded-2xl pointer-events-auto select-none transition-all duration-300",
-            isTransparent
-              ? "" 
-              : "shadow-2xl border border-neutral-200/10 dark:border-neutral-800/10"
-          )}
-        />
+        {activeUrl ? (
+          <img
+            src={activeUrl}
+            alt={activeName}
+            className={cn(
+              "max-w-full max-h-full object-contain rounded-2xl pointer-events-auto select-none transition-all duration-300",
+              isTransparent
+                ? "" 
+                : "shadow-2xl border border-neutral-200/10 dark:border-neutral-800/10"
+            )}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center p-8 rounded-3xl bg-white/40 dark:bg-neutral-800/40 backdrop-blur-md border border-neutral-200/20 dark:border-neutral-800/20 shadow-2xl pointer-events-auto select-none max-w-sm w-full gap-4 text-center">
+            {/* Glassmorphic user fallback placeholder in the modal */}
+            <div className="p-6 bg-neutral-200/50 dark:bg-neutral-800/50 rounded-full flex items-center justify-center text-neutral-400 dark:text-neutral-500">
+              <ImageIcon className="w-16 h-16 stroke-[1.5]" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-semibold text-neutral-900 dark:text-white text-base">No Profile Picture</h4>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">Click the Edit button below to upload a photo.</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Bottom Gallery Thumbnail Strip */}
@@ -293,6 +314,53 @@ export function ImageViewerModal({
                 </button>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Action Buttons (Balanced and Centered) */}
+      {(onEdit || onDelete) && !hasMultiple && (
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-60 w-full max-w-[280px] sm:max-w-[320px] px-4 pointer-events-auto">
+          <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md border border-neutral-300 dark:border-neutral-600 shadow-xl">
+            {onEdit && (
+              <button
+                onClick={onEdit}
+                disabled={isEditLoading}
+                type="button"
+                className={cn(
+                  "flex-1 flex items-center justify-center h-11 px-4 rounded-xl",
+                  "bg-neutral-500/10 hover:bg-neutral-500/20 active:scale-95",
+                  "border border-neutral-500/20 shadow-sm",
+                  "text-neutral-900 dark:text-neutral-100",
+                  "transition-all duration-200 cursor-pointer outline-none group gap-2 text-xs font-semibold select-none disabled:opacity-50"
+                )}
+              >
+                {isEditLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
+                ) : (
+                  <Pencil className="w-4 h-4 text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200" />
+                )}
+                <span>Edit</span>
+              </button>
+            )}
+            
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                disabled={isDeleteLoading}
+                type="button"
+                className={cn(
+                  "flex-1 flex items-center justify-center h-11 px-4 rounded-xl",
+                  "bg-red-500/10 hover:bg-red-500/20 active:scale-95",
+                  "border border-red-500/20 shadow-sm",
+                  "text-red-600 dark:text-red-400",
+                  "transition-all duration-200 cursor-pointer outline-none group gap-2 text-xs font-semibold select-none disabled:opacity-50"
+                )}
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Delete</span>
+              </button>
+            )}
           </div>
         </div>
       )}
