@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Upload, X, FileText, Image as ImageIcon } from "lucide-react";
+import { Upload, X, FileText, Image as ImageIcon, Eye } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
+import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
 import {
   ACCEPTED_IMAGE_TYPES,
   ACCEPTED_PDF_TYPES,
@@ -14,6 +15,7 @@ interface ImageUploadProps {
   value?: string;
   onChange: (file: File | null, previewUrl: string | null) => void;
   onViewPdf?: (url: string) => void;
+  onViewImage?: () => void;
   accept?: "image" | "pdf";
   className?: string;
   previewClassName?: string;
@@ -29,6 +31,7 @@ export function ImageUpload({
   value,
   onChange,
   onViewPdf,
+  onViewImage,
   accept = "image",
   className,
   previewClassName,
@@ -40,6 +43,7 @@ export function ImageUpload({
   const [error, setError] = useState<string | null>(null);
   const [isRemoved, setIsRemoved] = useState(false);
   const [imgLoading, setImgLoading] = useState(true);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Sync with value prop if it changes (e.g. after save)
   useEffect(() => {
@@ -128,11 +132,11 @@ export function ImageUpload({
     <div className={cn("space-y-2", className)}>
       {/* Preview */}
       {showPreview && (
-        <div className={cn("relative group", previewClassName ? "w-full" : "w-fit")}>
+        <div className={cn("relative", previewClassName ? "w-full" : "w-fit")}>
           {accept === "image" && preview ? (
             previewClassName ? (
               <div className={cn(
-                "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10", 
+                "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10 group isolate transform translate-z-0", 
                 previewClassName,
                 imgLoading && "animate-pulse bg-neutral-100 dark:bg-neutral-800"
               )}>
@@ -141,27 +145,48 @@ export function ImageUpload({
                   alt="Preview"
                   fill
                   className={cn(
-                    "object-cover transition-opacity duration-300",
+                    "object-cover transition-all duration-300 group-hover:scale-105",
                     imgLoading ? "opacity-0" : "opacity-100"
                   )}
                   onLoadingComplete={() => setImgLoading(false)}
                   unoptimized
                 />
+                {/* Full-width premium hover overlay */}
+                {!imgLoading && (
+                  <div 
+                    onClick={() => onViewImage ? onViewImage() : setIsViewerOpen(true)}
+                    className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
+                  >
+                    <Eye className="h-5 w-5" />
+                    <span className="text-[10px] font-medium tracking-wide">View Image</span>
+                  </div>
+                )}
               </div>
             ) : (
               <div className={cn(
-                "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10 w-fit",
+                "relative overflow-hidden rounded-lg border border-neutral-200 dark:border-white/10 w-fit group isolate transform translate-z-0",
                 imgLoading && "animate-pulse bg-neutral-100 dark:bg-neutral-800"
               )}>
                 <img
                   src={preview}
                   alt="Preview"
                   className={cn(
-                    "h-32 w-auto max-w-full object-contain rounded-lg transition-opacity duration-300",
+                    "h-32 w-auto max-w-full object-contain rounded-lg transition-all duration-300 group-hover:scale-105",
                     imgLoading ? "opacity-0" : "opacity-100"
                   )}
                   onLoad={() => setImgLoading(false)}
                 />
+                {/* Full-width premium hover overlay */}
+                {!imgLoading && (
+                  <div 
+                    onClick={() => onViewImage ? onViewImage() : setIsViewerOpen(true)}
+                    className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
+                    title="View image fullscreen"
+                  >
+                    <Eye className="h-5 w-5" />
+                    <span className="text-[10px] font-medium tracking-wide">View Image</span>
+                  </div>
+                )}
               </div>
             )
           ) : (
@@ -196,7 +221,7 @@ export function ImageUpload({
           {!disabled && (
             <button
               onClick={handleRemove}
-              className="absolute -right-2 -top-2 rounded-full bg-neutral-900 p-1 text-white shadow-sm transition-colors hover:bg-red-600 dark:bg-white dark:text-neutral-900 dark:hover:bg-red-500 dark:hover:text-white"
+              className="absolute -right-2 -top-2 z-20 rounded-full bg-neutral-900 p-1 text-white shadow-sm transition-colors hover:bg-red-600 dark:bg-white dark:text-neutral-900 dark:hover:bg-red-500 dark:hover:text-white"
               type="button"
             >
               <X className="h-3 w-3" />
@@ -254,6 +279,15 @@ export function ImageUpload({
 
       {/* Error */}
       {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {/* Reusable Image Viewer Modal */}
+      {accept === "image" && preview && (
+        <ImageViewerModal
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          images={[{ url: preview, name: fileName || (value ? value.split("/").pop()?.split("?")[0] : "image-preview.png") }]}
+        />
+      )}
     </div>
   );
 }

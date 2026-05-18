@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BulletListInput } from "@/components/dashboard/bullet-list-input";
 import { MultiSelectSkill } from "@/components/dashboard/multi-select-skill";
 import { ImageUpload } from "@/components/dashboard/image-upload";
+import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
 import { ProjectService } from "@/src/services/project.service";
 import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
@@ -70,8 +71,17 @@ export default function ProjectEditPage() {
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
   
   // Image states
-  const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null; existingUrl?: string }[]>([]);
+  const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null; previewUrl?: string; existingUrl?: string }[]>([]);
   const [hasImageChanges, setHasImageChanges] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+
+  const galleryImages = imageSlots
+    .map((slot) => ({
+      url: slot.existingUrl || slot.previewUrl || "",
+      name: slot.file?.name || (slot.existingUrl ? slot.existingUrl.split("/").pop()?.split("?")[0] : undefined),
+    }))
+    .filter((img) => !!img.url);
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -178,9 +188,9 @@ export default function ProjectEditPage() {
     setImageSlots(imageSlots.filter(s => s.id !== slotId));
   };
 
-  const updateImageSlot = (slotId: string, file: File | null) => {
+  const updateImageSlot = (slotId: string, file: File | null, previewUrl?: string) => {
     setHasImageChanges(true);
-    setImageSlots(imageSlots.map(s => s.id === slotId ? { ...s, file, existingUrl: file ? undefined : s.existingUrl } : s));
+    setImageSlots(imageSlots.map(s => s.id === slotId ? { ...s, file, previewUrl, existingUrl: file ? undefined : s.existingUrl } : s));
   };
 
   const addImageSlot = () => {
@@ -486,7 +496,16 @@ export default function ProjectEditPage() {
                     <ImageUpload 
                       accept="image" 
                       value={slot.existingUrl}
-                      onChange={(f) => updateImageSlot(slot.id, f)} 
+                      onChange={(f, p) => updateImageSlot(slot.id, f, p || undefined)} 
+                      onViewImage={() => {
+                        const url = slot.existingUrl || slot.previewUrl;
+                        if (!url) return;
+                        const idx = galleryImages.findIndex((img) => img.url === url);
+                        if (idx !== -1) {
+                          setViewerIndex(idx);
+                          setViewerOpen(true);
+                        }
+                      }}
                       previewClassName="w-full aspect-video"
                     />
                     <div className="flex justify-between items-center gap-1">
@@ -739,6 +758,13 @@ export default function ProjectEditPage() {
         </div>
 
       </form>
+
+      <ImageViewerModal
+        isOpen={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        images={galleryImages}
+        initialIndex={viewerIndex}
+      />
     </>
   );
 }

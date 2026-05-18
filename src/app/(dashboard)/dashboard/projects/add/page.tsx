@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BulletListInput } from "@/components/dashboard/bullet-list-input";
 import { MultiSelectSkill } from "@/components/dashboard/multi-select-skill";
 import { ImageUpload } from "@/components/dashboard/image-upload";
+import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
 import { ProjectService } from "@/src/services/project.service";
 import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
@@ -67,7 +68,16 @@ export default function ProjectAddPage() {
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
   
   // Image states
-  const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null }[]>([{ id: Date.now().toString(), file: null }]);
+  const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null; previewUrl?: string }[]>([{ id: Date.now().toString(), file: null }]);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+
+  const galleryImages = imageSlots
+    .map((slot) => ({
+      url: slot.previewUrl || "",
+      name: slot.file?.name || undefined,
+    }))
+    .filter((img) => !!img.url);
 
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting, isValid } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -105,8 +115,8 @@ export default function ProjectAddPage() {
     setImageSlots(imageSlots.filter(s => s.id !== id));
   };
 
-  const updateImageSlot = (id: string, file: File | null) => {
-    setImageSlots(imageSlots.map(s => s.id === id ? { ...s, file } : s));
+  const updateImageSlot = (id: string, file: File | null, previewUrl?: string) => {
+    setImageSlots(imageSlots.map(s => s.id === id ? { ...s, file, previewUrl } : s));
   };
 
   const addImageSlot = () => {
@@ -337,7 +347,16 @@ export default function ProjectAddPage() {
                   </div>
                   <ImageUpload 
                     accept="image" 
-                    onChange={(f) => updateImageSlot(slot.id, f)} 
+                    onChange={(f, p) => updateImageSlot(slot.id, f, p || undefined)} 
+                    onViewImage={() => {
+                      const url = slot.previewUrl;
+                      if (!url) return;
+                      const idx = galleryImages.findIndex((img) => img.url === url);
+                      if (idx !== -1) {
+                        setViewerIndex(idx);
+                        setViewerOpen(true);
+                      }
+                    }}
                     previewClassName="w-full aspect-video"
                   />
                   <div className="flex justify-between items-center gap-1">
@@ -512,6 +531,13 @@ export default function ProjectAddPage() {
         </div>
 
       </form>
+
+      <ImageViewerModal
+        isOpen={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        images={galleryImages}
+        initialIndex={viewerIndex}
+      />
     </>
   );
 }
