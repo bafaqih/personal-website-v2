@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Pencil, Trash2, Loader2 } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Pencil, Trash2, Loader2, Plus } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 
 interface ImageViewerModalProps {
@@ -271,7 +271,11 @@ export function ImageViewerModal({
             </div>
             <div className="space-y-1">
               <h4 className="font-semibold text-neutral-900 dark:text-white text-base">No Profile Picture</h4>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">Click the Edit button below to upload a photo.</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                {images.length === 0 
+                  ? "Click the Add Profile Picture button below to upload a picture."
+                  : "Click the Edit button below to upload a picture."}
+              </p>
             </div>
           </div>
         )}
@@ -337,10 +341,12 @@ export function ImageViewerModal({
               >
                 {isEditLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
+                ) : images.length === 0 ? (
+                  <Plus className="w-4 h-4 text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200" />
                 ) : (
                   <Pencil className="w-4 h-4 text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200" />
                 )}
-                <span>Edit</span>
+                <span>{images.length === 0 ? "Add Profile Picture" : "Edit"}</span>
               </button>
             )}
             

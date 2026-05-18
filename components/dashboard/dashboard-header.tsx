@@ -54,6 +54,24 @@ export function DashboardHeader({
       .then(setProfile)
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    const handleProfileUpdate = () => {
+      setLoading(true);
+      AuthService.getProfile()
+        .then((updatedProfile) => {
+          if (updatedProfile) {
+            setProfile(updatedProfile);
+            setImageStatus("idle");
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    };
+
+    window.addEventListener("profile-update", handleProfileUpdate);
+    return () => {
+      window.removeEventListener("profile-update", handleProfileUpdate);
+    };
   }, []);
 
   const handleLogout = async () => {

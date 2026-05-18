@@ -94,8 +94,8 @@ export default function ProfilePage() {
       setProfile(updated);
       setIsEditModalOpen(false);
       toast.success("Profile updated successfully");
-      // Reload to update header (or use a global state if available)
-      window.location.reload();
+      // Synchronize changes globally
+      window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
       toast.error("Failed to update profile");
     } finally {
@@ -126,9 +126,10 @@ export default function ProfilePage() {
       });
 
       setProfile(updated);
-      toast.success("Profile picture updated successfully");
       setIsViewerOpen(false);
-      window.location.reload();
+      toast.success("Profile picture updated successfully");
+      // Synchronize changes globally
+      window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
       toast.error("Failed to upload image");
     } finally {
@@ -146,9 +147,11 @@ export default function ProfilePage() {
       });
 
       setProfile(updated);
-      toast.success("Profile picture deleted successfully");
+      setIsDeleteOpen(false);
       setIsViewerOpen(false);
-      window.location.reload();
+      toast.success("Profile picture deleted successfully");
+      // Synchronize changes globally
+      window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
       toast.error("Failed to delete profile picture");
     } finally {
