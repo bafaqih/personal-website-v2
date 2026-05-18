@@ -177,35 +177,35 @@ export default function ProfilePage() {
                 <button
                   onClick={() => setIsViewerOpen(true)}
                   disabled={isUploading || isDeletingImage || loading}
-                  className="relative h-32 w-32 border-4 border-neutral-50 dark:border-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
+                  className="relative h-32 w-32 p-1 bg-neutral-50 dark:bg-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
                   title="View profile picture"
                 >
-                  <div className="w-full h-full relative">
+                  <div className="w-full h-full relative rounded-xl overflow-hidden isolate">
                     {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
                     {!loading && (
-                      <Avatar className={cn("h-full w-full rounded-2xl", showSkeleton && "invisible")}>
+                      <Avatar className={cn("h-full w-full rounded-xl", showSkeleton && "invisible")}>
                         <AvatarImage
                           src={profile?.photo_url || undefined}
                           alt={profile?.full_name}
-                          className="object-cover rounded-2xl h-full w-full"
+                          className="object-cover rounded-xl h-full w-full"
                           onLoadingStatusChange={(status) => {
                             setImageStatus(status);
                           }}
                         />
-                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-2xl flex items-center justify-center h-full w-full">
+                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full">
                           <UserIcon className="h-10 w-10 text-white dark:text-neutral-900" />
                         </AvatarFallback>
                       </Avatar>
                     )}
 
                     {showSkeleton && (
-                      <Skeleton className="absolute inset-0 h-full w-full rounded-2xl" />
+                      <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
                     )}
 
                     {/* Hover overlay / Uploading state */}
                     {!showSkeleton && (
                       <div className={cn(
-                        "absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-2xl",
+                        "absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-xl",
                         isUploading || isDeletingImage ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                       )}>
                         {isUploading ? (
