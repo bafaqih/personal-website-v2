@@ -110,6 +110,21 @@ export default function SkillsListPage() {
         columns={columns}
         loading={loading}
         searchPlaceholder="Search skills..."
+        filters={[
+          {
+            key: "is_active",
+            label: "Status",
+            options: [
+              { label: "Active", value: true },
+              { label: "Inactive", value: false },
+            ],
+          },
+          {
+            key: "category_id",
+            label: "Category",
+            getLabel: (item) => item.category?.name_en || "-",
+          },
+        ]}
         actions={(skill) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

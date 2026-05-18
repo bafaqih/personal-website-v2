@@ -46,6 +46,16 @@ export default function OrganizationsPage() {
     <><PageHeader title="Organizations" icon={Users} description="Manage organization experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Organizations" }]}
         actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Organization</Button></Link>} />
       <DataTable data={items} columns={columns} loading={loading} searchPlaceholder="Search organizations..."
+        filters={[
+          {
+            key: "is_published",
+            label: "Status",
+            options: [
+              { label: "Published", value: true },
+              { label: "Draft", value: false },
+            ],
+          },
+        ]}
         actions={(o) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

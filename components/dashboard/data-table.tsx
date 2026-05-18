@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Filter, RotateCcw } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 
 export interface Column<T> {
@@ -20,6 +20,13 @@ export interface Column<T> {
   render?: (item: T) => React.ReactNode;
   searchable?: boolean;
   className?: string;
+}
+
+export interface TableFilterConfig {
+  key: string;
+  label: string;
+  options?: { label: string; value: any }[];
+  getLabel?: (item: any) => string;
 }
 
 interface DataTableProps<T> {
@@ -31,10 +38,11 @@ interface DataTableProps<T> {
   emptyMessage?: string;
   className?: string;
   loading?: boolean;
+  filters?: TableFilterConfig[];
 }
 
 /**
- * Reusable data table with search filtering and pagination.
+ * Reusable data table with search filtering, pagination, and dynamic popup filters.
  * Follows B&W minimalist design with subtle borders.
  */
 export function DataTable<T>({
@@ -46,19 +54,113 @@ export function DataTable<T>({
   emptyMessage = "No data found.",
   className,
   loading = false,
+  filters = [],
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // Filter data by search term across searchable columns
+  // Filter States
+  const [activeFilters, setActiveFilters] = useState<Record<string, any>>({});
+  const [pendingFilters, setPendingFilters] = useState<Record<string, any>>({});
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isMultiFilter = filters.length > 1;
+
+  // Sync pending filters when opening dropdown
+  useEffect(() => {
+    if (isFilterOpen) {
+      setPendingFilters(activeFilters);
+    }
+  }, [isFilterOpen, activeFilters]);
+
+  // Click outside listener to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Compute filters with dynamic options resolved from data
+  const computedFilters = useMemo(() => {
+    if (!filters || filters.length === 0) return [];
+
+    return filters.map((filterConfig) => {
+      if (filterConfig.options) {
+        return {
+          ...filterConfig,
+          options: [{ label: "All", value: undefined }, ...filterConfig.options],
+        };
+      }
+
+      // Extract unique values from actual data
+      const uniqueValues = Array.from(
+        new Set(
+          data
+            .map((item) => (item as Record<string, any>)[filterConfig.key])
+            .filter((val) => val !== undefined && val !== null && val !== "")
+        )
+      );
+
+      const dynamicOptions = uniqueValues.map((val) => {
+        const matchingItem = data.find(
+          (item) => (item as Record<string, any>)[filterConfig.key] === val
+        );
+        const label = filterConfig.getLabel
+          ? filterConfig.getLabel(matchingItem)
+          : String(val);
+        return { label, value: val };
+      });
+
+      // Sort alphabetically by label
+      dynamicOptions.sort((a, b) => a.label.localeCompare(b.label));
+
+      return {
+        ...filterConfig,
+        options: [{ label: "All", value: undefined }, ...dynamicOptions],
+      };
+    });
+  }, [data, filters]);
+
+  // Count active filters
+  const activeFilterCount = useMemo(() => {
+    return Object.values(activeFilters).filter(
+      (val) => val !== undefined && val !== null && val !== ""
+    ).length;
+  }, [activeFilters]);
+
+  // Filter data by search term and active filters
   const filteredData = useMemo(() => {
-    if (!search.trim()) return data;
+    let result = data;
+
+    // Apply active filters
+    if (filters && filters.length > 0) {
+      Object.entries(activeFilters).forEach(([key, val]) => {
+        if (val === undefined || val === null || val === "") return;
+        result = result.filter((item) => {
+          const itemValue = (item as Record<string, any>)[key];
+          
+          if (typeof itemValue === "boolean") {
+            return itemValue === (val === true || val === "true");
+          }
+          
+          return String(itemValue ?? "") === String(val);
+        });
+      });
+    }
+
+    // Apply search filter
+    if (!search.trim()) return result;
     const term = search.toLowerCase();
     const searchableKeys = columns
       .filter((col) => col.searchable !== false)
       .map((col) => col.key);
 
-    return data.filter((item) =>
+    return result.filter((item) =>
       searchableKeys.some((key) => {
         const value = (item as Record<string, unknown>)[key];
         return String(value ?? "")
@@ -66,7 +168,7 @@ export function DataTable<T>({
           .includes(term);
       })
     );
-  }, [data, search, columns]);
+  }, [data, search, columns, filters, activeFilters]);
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / pageSize);
@@ -77,18 +179,163 @@ export function DataTable<T>({
 
   return (
     <div className={cn("space-y-4", className)}>
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-        <Input
-          placeholder={searchPlaceholder}
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          className="pl-9"
-        />
+      {/* Search and Filters top bar */}
+      <div className="flex items-center justify-between gap-4">
+        {/* Search */}
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <Input
+            placeholder={searchPlaceholder}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="pl-9 bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800"
+          />
+        </div>
+
+        {/* Filter Trigger and Dropdown */}
+        {filters && filters.length > 0 && (
+          <div className="relative" ref={dropdownRef}>
+            <Button
+              variant={activeFilterCount > 0 ? "default" : "outline"}
+              size="sm"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={cn(
+                "h-9 px-3 gap-2 text-xs font-medium transition-all duration-200 cursor-pointer border",
+                activeFilterCount > 0
+                  ? "bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white hover:bg-neutral-800 dark:hover:bg-neutral-200"
+                  : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200 dark:bg-neutral-950 dark:hover:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800"
+              )}
+            >
+              <Filter className="h-3.5 w-3.5" />
+              <span>Filter</span>
+              {activeFilterCount > 0 && (
+                <span className={cn(
+                  "flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold transition-colors",
+                  activeFilterCount > 0
+                    ? "bg-white text-neutral-950 dark:bg-neutral-950 dark:text-white"
+                    : "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                )}>
+                  {activeFilterCount}
+                </span>
+              )}
+            </Button>
+
+            {/* Dropdown panel */}
+            {isFilterOpen && computedFilters.length > 0 && (
+              <div className="absolute right-0 top-full mt-2 z-50 w-80 rounded-lg border border-neutral-200 bg-white p-4 shadow-lg dark:border-white/10 dark:bg-popover transition-all duration-200">
+                <div className="space-y-4">
+                  {/* Header */}
+                  <div className="flex items-center justify-between pb-2 border-b border-neutral-100 dark:border-white/10">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                      Filters
+                    </span>
+                    {activeFilterCount > 0 && (
+                      <button
+                        onClick={() => {
+                          setActiveFilters({});
+                          setPendingFilters({});
+                          setIsFilterOpen(false);
+                          setPage(1);
+                        }}
+                        className="text-[10px] flex items-center gap-1 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
+                      >
+                        <RotateCcw className="h-3 w-3" />
+                        Clear all
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Filter Content */}
+                  <div className="space-y-4 max-h-64 overflow-y-auto pr-1">
+                    {computedFilters.map((filter) => {
+                      const currentValue = isMultiFilter
+                        ? pendingFilters[filter.key]
+                        : activeFilters[filter.key];
+
+                      return (
+                        <div key={filter.key} className="space-y-2">
+                          <span className="text-[11px] font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-wider block">
+                            {filter.label}
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {filter.options?.map((opt) => {
+                              const isSelected =
+                                currentValue === opt.value ||
+                                (currentValue === undefined && opt.value === undefined);
+
+                              return (
+                                <button
+                                  key={String(opt.label) + String(opt.value)}
+                                  type="button"
+                                  onClick={() => {
+                                    const nextValue = opt.value;
+                                    if (isMultiFilter) {
+                                      setPendingFilters((prev) => ({
+                                        ...prev,
+                                        [filter.key]: nextValue,
+                                      }));
+                                    } else {
+                                      setActiveFilters((prev) => ({
+                                        ...prev,
+                                        [filter.key]: nextValue,
+                                      }));
+                                      setPage(1);
+                                    }
+                                  }}
+                                  className={cn(
+                                    "px-2.5 py-1 text-xs rounded-full border transition-all duration-150 cursor-pointer",
+                                    isSelected
+                                      ? "bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white font-medium"
+                                      : "bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:border-white/10"
+                                  )}
+                                >
+                                  {opt.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer (Apply/Reset) for > 1 filter */}
+                  {isMultiFilter && (
+                    <div className="flex items-center gap-2 pt-2 border-t border-neutral-100 dark:border-white/10 w-full">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setActiveFilters({});
+                          setPendingFilters({});
+                          setIsFilterOpen(false);
+                          setPage(1);
+                        }}
+                        className="flex-1 h-8 text-xs bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-700 dark:bg-transparent dark:hover:bg-white/5 dark:border-white/10 dark:text-neutral-300 cursor-pointer"
+                      >
+                        Reset
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setActiveFilters(pendingFilters);
+                          setIsFilterOpen(false);
+                          setPage(1);
+                        }}
+                        className="flex-1 h-8 text-xs bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 cursor-pointer"
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Table */}
@@ -208,3 +455,4 @@ export function DataTable<T>({
     </div>
   );
 }
+

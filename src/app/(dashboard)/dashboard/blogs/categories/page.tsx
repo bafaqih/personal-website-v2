@@ -154,6 +154,16 @@ export default function BlogCategoriesPage() {
         searchPlaceholder="Search categories..."
         loading={loading}
         emptyMessage={loading ? "Loading categories..." : "No categories found."}
+        filters={[
+          {
+            key: "is_active",
+            label: "Status",
+            options: [
+              { label: "Active", value: true },
+              { label: "Inactive", value: false },
+            ],
+          },
+        ]}
         actions={(cat) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

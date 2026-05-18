@@ -154,6 +154,16 @@ export default function BlogTypesPage() {
         searchPlaceholder="Search types..."
         loading={loading}
         emptyMessage={loading ? "Loading types..." : "No types found."}
+        filters={[
+          {
+            key: "is_active",
+            label: "Status",
+            options: [
+              { label: "Active", value: true },
+              { label: "Inactive", value: false },
+            ],
+          },
+        ]}
         actions={(type) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

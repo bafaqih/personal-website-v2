@@ -136,6 +136,26 @@ export default function BlogsListPage() {
         columns={columns}
         loading={loading}
         searchPlaceholder="Search blogs..."
+        filters={[
+          {
+            key: "is_published",
+            label: "Status",
+            options: [
+              { label: "Published", value: true },
+              { label: "Draft", value: false },
+            ],
+          },
+          {
+            key: "type_id",
+            label: "Type",
+            getLabel: (item) => item.type?.name_en || "-",
+          },
+          {
+            key: "category_id",
+            label: "Category",
+            getLabel: (item) => item.category?.name_en || "-",
+          },
+        ]}
         actions={(b) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

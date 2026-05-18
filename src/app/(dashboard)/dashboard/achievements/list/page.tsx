@@ -111,6 +111,26 @@ export default function AchievementsListPage() {
         columns={columns} 
         loading={loading}
         searchPlaceholder="Search achievements..."
+        filters={[
+          {
+            key: "is_published",
+            label: "Status",
+            options: [
+              { label: "Published", value: true },
+              { label: "Draft", value: false },
+            ],
+          },
+          {
+            key: "type_id",
+            label: "Type",
+            getLabel: (item) => item.type?.name_en || "-",
+          },
+          {
+            key: "category_id",
+            label: "Category",
+            getLabel: (item) => item.category?.name_en || "-",
+          },
+        ]}
         actions={(a) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

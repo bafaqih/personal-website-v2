@@ -64,6 +64,26 @@ export default function CareersPage() {
       <PageHeader title="Careers" icon={Briefcase} description="Manage work experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Careers" }]}
         actions={<Link href="/dashboard/careers/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Career</Button></Link>} />
       <DataTable data={careers} columns={columns} loading={loading} searchPlaceholder="Search careers..."
+        filters={[
+          {
+            key: "is_published",
+            label: "Status",
+            options: [
+              { label: "Published", value: true },
+              { label: "Draft", value: false },
+            ],
+          },
+          {
+            key: "type_en",
+            label: "Type",
+            getLabel: (item) => item.type_en || "-",
+          },
+          {
+            key: "model_en",
+            label: "Model",
+            getLabel: (item) => item.model_en || "-",
+          },
+        ]}
         actions={(c) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
