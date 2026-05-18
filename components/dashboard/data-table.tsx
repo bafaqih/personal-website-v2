@@ -343,11 +343,13 @@ export function DataTable<T>({
         <Table>
           <TableHeader className="bg-neutral-100/60 dark:bg-neutral-900/60 border-b border-neutral-200 dark:border-white/10">
             <TableRow className="hover:bg-transparent border-none">
-              {columns.map((col) => (
+              {columns.map((col, colIndex) => (
                 <TableHead
                   key={col.key}
                   className={cn(
                     "text-xs font-semibold! uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5",
+                    colIndex === 0 && "pl-6",
+                    colIndex === columns.length - 1 && !actions && "pr-6",
                     col.className
                   )}
                 >
@@ -355,7 +357,7 @@ export function DataTable<T>({
                 </TableHead>
               ))}
               {actions && (
-                <TableHead className="w-[100px] text-xs font-semibold! uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5">
+                <TableHead className="w-[100px] text-xs font-semibold! uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5 pr-6">
                   Actions
                 </TableHead>
               )}
@@ -365,13 +367,20 @@ export function DataTable<T>({
             {loading ? (
               Array.from({ length: 10 }).map((_, i) => (
                 <TableRow key={i} className="border-b border-neutral-100 dark:border-white/5 last:border-none">
-                  {columns.map((col) => (
-                    <TableCell key={col.key} className="py-4">
+                  {columns.map((col, colIndex) => (
+                    <TableCell 
+                      key={col.key} 
+                      className={cn(
+                        "py-4",
+                        colIndex === 0 && "pl-6",
+                        colIndex === columns.length - 1 && !actions && "pr-6"
+                      )}
+                    >
                       <div className="h-4 w-full animate-pulse rounded bg-neutral-100 dark:bg-white/10" />
                     </TableCell>
                   ))}
                   {actions && (
-                    <TableCell className="py-4">
+                    <TableCell className="py-4 pr-6">
                       <div className="h-8 w-8 animate-pulse rounded bg-neutral-100 dark:bg-white/10" />
                     </TableCell>
                   )}
@@ -381,7 +390,7 @@ export function DataTable<T>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length + (actions ? 1 : 0)}
-                  className="py-12 text-center text-sm text-neutral-500"
+                  className="py-12 text-center text-sm text-neutral-500 pl-6 pr-6"
                 >
                   {emptyMessage}
                 </TableCell>
@@ -400,6 +409,8 @@ export function DataTable<T>({
                         className={cn(
                           "py-3.5 text-neutral-700 dark:text-neutral-300",
                           isPrimary && "font-medium text-neutral-950 dark:text-white",
+                          colIndex === 0 && "pl-6",
+                          colIndex === columns.length - 1 && !actions && "pr-6",
                           col.className
                         )}
                       >
@@ -410,48 +421,68 @@ export function DataTable<T>({
                     );
                   })}
                   {actions && (
-                    <TableCell className="py-3.5">{actions(item)}</TableCell>
+                    <TableCell className="py-3.5 pr-6">{actions(item)}</TableCell>
                   )}
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-      </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Showing {(page - 1) * pageSize + 1}-
-            {Math.min(page * pageSize, filteredData.length)} of{" "}
-            {filteredData.length}
+        {/* Footer section inside the table box container */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-200 dark:border-white/10 px-6 py-3.5 bg-white dark:bg-neutral-950">
+          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            Showing {filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1} to {Math.min(page * pageSize, filteredData.length)} of {filteredData.length} data
           </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="h-8 w-8"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              {page} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="h-8 w-8"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => {
+                  const pageNumber = i + 1;
+                  const isCurrent = page === pageNumber;
+                  return (
+                    <Button
+                      key={pageNumber}
+                      variant={isCurrent ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setPage(pageNumber)}
+                      className={cn(
+                        "h-8 w-8 rounded-md p-0 text-xs font-semibold cursor-pointer",
+                        isCurrent
+                          ? "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+                          : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                      )}
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
