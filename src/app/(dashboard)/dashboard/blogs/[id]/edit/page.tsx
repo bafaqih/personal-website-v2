@@ -227,7 +227,7 @@ export default function BlogEditPage() {
                     <Skeleton className="h-10 w-full" />
                   ) : (
                     <Select 
-                      onValueChange={(v) => setValue("type_id", v)} 
+                      onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
                       value={watch("type_id")}
                     >
                       <SelectTrigger>
@@ -247,7 +247,7 @@ export default function BlogEditPage() {
                     <Skeleton className="h-10 w-full" />
                   ) : (
                     <Select 
-                      onValueChange={(v) => setValue("category_id", v)} 
+                      onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
                       value={watch("category_id")}
                     >
                       <SelectTrigger>

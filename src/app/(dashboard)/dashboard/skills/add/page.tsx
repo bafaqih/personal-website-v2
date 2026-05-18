@@ -77,7 +77,7 @@ export default function SkillAddPage() {
             </div>
             <div className="space-y-2">
               <Label>Category</Label>
-              <Select onValueChange={(v) => setValue("category_id", v)} value={watch("category_id")}>
+              <Select onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("category_id")}>
                 <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (

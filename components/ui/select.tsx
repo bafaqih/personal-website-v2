@@ -31,6 +31,28 @@ function getTextContent(node: React.ReactNode): string {
   return ""
 }
 
+function findItemLabel(children: React.ReactNode, targetValue: string): string {
+  let foundLabel = ""
+  
+  function search(node: React.ReactNode) {
+    if (!node) return
+    if (React.isValidElement(node)) {
+      if ((node.props as any).value === targetValue) {
+        foundLabel = getTextContent((node.props as any).children)
+        return
+      }
+      if ((node.props as any).children) {
+        React.Children.forEach((node.props as any).children, search)
+      }
+    } else if (Array.isArray(node)) {
+      node.forEach(search)
+    }
+  }
+
+  React.Children.forEach(children, search)
+  return foundLabel
+}
+
 function Select({
   children,
   value,
@@ -56,6 +78,15 @@ function Select({
       onValueChange(val)
     }
     setOpen(false)
+  }
+
+  // Resolve matching label from children tree synchronously at render-time
+  const matchedLabel = useMemo(() => findItemLabel(children, activeValue), [children, activeValue])
+  const [prevMatchedLabel, setPrevMatchedLabel] = useState("")
+  
+  if (matchedLabel !== prevMatchedLabel) {
+    setPrevMatchedLabel(matchedLabel)
+    setSelectedLabel(matchedLabel)
   }
 
   // Reset search when opening/closing
@@ -281,13 +312,6 @@ function SelectItem({
   const { value: selectedValue, onValueChange, search, setSelectedLabel } = context
 
   const label = getTextContent(children)
-
-  // Sync selected label
-  useEffect(() => {
-    if (selectedValue === value && label) {
-      setSelectedLabel(label)
-    }
-  }, [selectedValue, value, label, setSelectedLabel])
 
   // Filter out items based on search query
   if (search && label && !label.toLowerCase().includes(search.toLowerCase())) {

@@ -94,7 +94,7 @@ export default function SkillEditPage() {
               {loading ? (
                 <Skeleton className="h-10 w-full" />
               ) : (
-                <Select onValueChange={(v) => setValue("category_id", v)} value={watch("category_id")}>
+                <Select onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("category_id")}>
                   <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name_en}</SelectItem>))}

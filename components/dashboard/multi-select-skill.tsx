@@ -68,11 +68,7 @@ export function MultiSelectSkill({ options, selected, onChange, placeholder = "S
     <div className="relative w-full" ref={containerRef}>
       <div
         className="flex min-h-9 w-full cursor-pointer flex-wrap items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow,background-color] outline-none dark:bg-input/30 dark:hover:bg-input/50"
-        onMouseDown={(e) => {
-          if (e.target === searchInputRef.current) return;
-          e.preventDefault();
-          setOpen(!open);
-        }}
+        onClick={() => setOpen(!open)}
       >
         <div className="flex flex-wrap items-center gap-1.5 flex-1">
           {selected.length === 0 && !open && <span className="text-muted-foreground">{placeholder}</span>}
@@ -84,8 +80,10 @@ export function MultiSelectSkill({ options, selected, onChange, placeholder = "S
                 {option.name}
                 <div
                   className="ml-1 cursor-pointer rounded-full p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={(e) => removeOption(e, id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeOption(e, id);
+                  }}
                 >
                   <X className="h-3 w-3" />
                 </div>

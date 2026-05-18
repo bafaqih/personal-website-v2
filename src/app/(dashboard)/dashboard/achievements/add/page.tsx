@@ -150,7 +150,7 @@ export default function AchievementAddPage() {
                 <div className="space-y-2">
                   <Label>Type</Label>
                   <Select 
-                    onValueChange={(v) => setValue("type_id", v, { shouldValidate: true })} 
+                    onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
                     value={watch("type_id")}
                   >
                     <SelectTrigger>
@@ -167,7 +167,7 @@ export default function AchievementAddPage() {
                 <div className="space-y-2">
                   <Label>Category</Label>
                   <Select 
-                    onValueChange={(v) => setValue("category_id", v, { shouldValidate: true })} 
+                    onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
                     value={watch("category_id")}
                   >
                     <SelectTrigger>

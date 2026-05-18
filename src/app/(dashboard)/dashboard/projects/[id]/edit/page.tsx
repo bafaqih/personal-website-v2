@@ -397,7 +397,7 @@ export default function ProjectEditPage() {
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
-                  <Select onValueChange={(v) => setValue("type_id", v, { shouldDirty: true })} value={watch("type_id")}>
+                  <Select onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("type_id")}>
                     <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                     <SelectContent>
                       {types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>)}
@@ -410,7 +410,7 @@ export default function ProjectEditPage() {
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
-                  <Select onValueChange={(v) => setValue("category_id", v, { shouldDirty: true })} value={watch("category_id")}>
+                  <Select onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("category_id")}>
                     <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                     <SelectContent>
                       {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>)}
