@@ -98,7 +98,10 @@ export function TagsInput({
             className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[120px]"
           />
         </div>
-        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+        <ChevronDown className={cn(
+          "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+          open && "rotate-180"
+        )} />
       </div>
 
       {open && (
