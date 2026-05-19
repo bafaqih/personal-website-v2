@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X, ExternalLink, FileText, Loader2 } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 interface PdfViewerModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function PdfViewerModal({
   pdfUrl,
   fileName = "CV-Resume.pdf",
 }: PdfViewerModalProps) {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
 
   // Close on Escape key press
@@ -75,7 +77,7 @@ export function PdfViewerModal({
             "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
             "transition-all duration-200 cursor-pointer outline-none group"
           )}
-          title="Close viewer"
+          title={t("common.pdf_viewer.close")}
         >
           <X className="w-5 h-5 stroke-[2.5]" />
         </button>
@@ -114,7 +116,7 @@ export function PdfViewerModal({
                 "border-neutral-200 hover:bg-neutral-100 text-neutral-600",
                 "dark:border-neutral-800 dark:hover:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
               )}
-              title="Open in new tab"
+              title={t("common.pdf_viewer.open_tab")}
             >
               <ExternalLink className="w-4 h-4" />
             </a>
@@ -127,7 +129,7 @@ export function PdfViewerModal({
           {isLoading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-100 dark:bg-neutral-950 z-10 transition-opacity">
               <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
-              <span className="text-xs text-neutral-500 font-medium">Loading document...</span>
+              <span className="text-xs text-neutral-500 font-medium">{t("common.pdf_viewer.loading")}</span>
             </div>
           )}
 

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import type { LookupItem } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 interface LookupManagementProps {
   title: string;
@@ -35,6 +36,7 @@ export function LookupManagement({
   updateItem,
   deleteItem,
 }: LookupManagementProps) {
+  const { t } = useLanguage();
   const [items, setItems] = useState<LookupItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export function LookupManagement({
     setLoading(true);
     fetchItems()
       .then(setItems)
-      .catch(() => toast.error("Failed to load data"))
+      .catch(() => toast.error(t("common.lookup.load_failed")))
       .finally(() => setLoading(false));
   };
 
@@ -60,26 +62,26 @@ export function LookupManagement({
     if (!newNameId.trim() || !newNameEn.trim()) return;
     try {
       await createItem({ name_id: newNameId, name_en: newNameEn, is_active: true });
-      toast.success("Item created");
+      toast.success(t("common.lookup.created"));
       setAddMode(false); setNewNameId(""); setNewNameEn("");
       fetch();
-    } catch { toast.error("Failed to create"); }
+    } catch { toast.error(t("common.lookup.create_failed")); }
   };
 
   const handleEdit = async (id: string) => {
     try {
       await updateItem(id, { name_id: editNameId, name_en: editNameEn });
-      toast.success("Item updated");
+      toast.success(t("common.lookup.updated"));
       setEditId(null);
       fetch();
-    } catch { toast.error("Failed to update"); }
+    } catch { toast.error(t("common.lookup.update_failed")); }
   };
 
   const handleToggle = async (id: string, is_active: boolean) => {
     try {
       await updateItem(id, { is_active });
       fetch();
-    } catch { toast.error("Failed to update status"); }
+    } catch { toast.error(t("common.lookup.update_status_failed")); }
   };
 
   const handleDelete = async () => {
@@ -87,9 +89,9 @@ export function LookupManagement({
     setDeleting(true);
     try {
       await deleteItem(deleteId);
-      toast.success("Item deleted");
+      toast.success(t("common.lookup.deleted"));
       fetch();
-    } catch { toast.error("Failed to delete"); }
+    } catch { toast.error(t("common.lookup.delete_failed")); }
     finally { setDeleting(false); setDeleteId(null); }
   };
 
@@ -102,7 +104,7 @@ export function LookupManagement({
         actions={
           !addMode ? (
             <Button onClick={() => setAddMode(true)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
-              <Plus className="mr-2 h-4 w-4" /> Add
+              <Plus className="mr-2 h-4 w-4" /> {t("common.lookup.add")}
             </Button>
           ) : undefined
         }
@@ -112,8 +114,8 @@ export function LookupManagement({
         <CardContent className="p-4">
           {addMode && (
             <div className="mb-4 flex items-center gap-3 rounded-lg border border-dashed border-neutral-300 p-3 dark:border-white/20">
-              <Input placeholder="Name (ID)" value={newNameId} onChange={(e) => setNewNameId(e.target.value)} className="max-w-[200px]" />
-              <Input placeholder="Name (EN)" value={newNameEn} onChange={(e) => setNewNameEn(e.target.value)} className="max-w-[200px]" />
+              <Input placeholder={t("common.lookup.placeholder_id")} value={newNameId} onChange={(e) => setNewNameId(e.target.value)} className="max-w-[200px]" />
+              <Input placeholder={t("common.lookup.placeholder_en")} value={newNameEn} onChange={(e) => setNewNameEn(e.target.value)} className="max-w-[200px]" />
               <Button size="icon" variant="ghost" onClick={handleAdd} className="h-8 w-8 text-green-600"><Check className="h-4 w-4" /></Button>
               <Button size="icon" variant="ghost" onClick={() => { setAddMode(false); setNewNameId(""); setNewNameEn(""); }} className="h-8 w-8"><X className="h-4 w-4" /></Button>
             </div>
@@ -149,7 +151,7 @@ export function LookupManagement({
               </div>
             ))}
             {!loading && items.length === 0 && (
-              <p className="py-8 text-center text-sm text-neutral-500">No items yet.</p>
+              <p className="py-8 text-center text-sm text-neutral-500">{t("common.lookup.no_items")}</p>
             )}
           </div>
         </CardContent>

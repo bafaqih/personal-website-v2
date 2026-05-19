@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { Check, ChevronDown, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 interface SkillOption {
   id: string;
@@ -17,7 +18,9 @@ interface MultiSelectSkillProps {
   placeholder?: string;
 }
 
-export function MultiSelectSkill({ options, selected, onChange, placeholder = "Select skills..." }: MultiSelectSkillProps) {
+export function MultiSelectSkill({ options, selected, onChange, placeholder }: MultiSelectSkillProps) {
+  const { t } = useLanguage();
+  const activePlaceholder = placeholder || t("common.multi_select.select_skills");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,7 +74,7 @@ export function MultiSelectSkill({ options, selected, onChange, placeholder = "S
         onClick={() => setOpen(!open)}
       >
         <div className="flex flex-wrap items-center gap-1.5 flex-1">
-          {selected.length === 0 && !open && <span className="text-muted-foreground">{placeholder}</span>}
+          {selected.length === 0 && !open && <span className="text-muted-foreground">{activePlaceholder}</span>}
           {selected.map((id) => {
             const option = options.find((o) => o.id === id);
             if (!option) return null;
@@ -96,7 +99,7 @@ export function MultiSelectSkill({ options, selected, onChange, placeholder = "S
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={selected.length === 0 ? placeholder : ""}
+              placeholder={selected.length === 0 ? activePlaceholder : ""}
               className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[120px] text-neutral-900 dark:text-white"
               onClick={(e) => e.stopPropagation()}
             />
@@ -111,9 +114,9 @@ export function MultiSelectSkill({ options, selected, onChange, placeholder = "S
       {open && (
         <div className="absolute top-full z-50 mt-1 max-h-60 w-full overflow-y-auto overflow-x-hidden rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
           {options.length === 0 ? (
-            <div className="p-2 text-center text-sm text-muted-foreground">No options found.</div>
+            <div className="p-2 text-center text-sm text-muted-foreground">{t("common.multi_select.no_options")}</div>
           ) : filteredOptions.length === 0 ? (
-            <div className="p-2 text-center text-sm text-muted-foreground">No results found.</div>
+            <div className="p-2 text-center text-sm text-muted-foreground">{t("common.multi_select.no_results")}</div>
           ) : (
             filteredOptions.map((option) => {
               const isSelected = selected.includes(option.id);

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Pencil, Trash2, Loader2, Plus } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 interface ImageViewerModalProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export function ImageViewerModal({
   isEditLoading = false,
   isDeleteLoading = false,
 }: ImageViewerModalProps) {
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [mounted, setMounted] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
@@ -202,7 +204,7 @@ export function ImageViewerModal({
             "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
             "transition-all duration-200 cursor-pointer outline-none group"
           )}
-          title="Close viewer"
+          title={t("common.image_viewer.close")}
         >
           <X className="w-5 h-5 stroke-[2.5]" />
         </button>
@@ -222,7 +224,7 @@ export function ImageViewerModal({
               "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
               "transition-all duration-200 cursor-pointer outline-none group"
             )}
-            title="Previous image"
+            title={t("common.image_viewer.prev")}
           >
             <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -243,7 +245,7 @@ export function ImageViewerModal({
               "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
               "transition-all duration-200 cursor-pointer outline-none group"
             )}
-            title="Next image"
+            title={t("common.image_viewer.next")}
           >
             <ChevronRight className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -270,11 +272,11 @@ export function ImageViewerModal({
               <ImageIcon className="w-16 h-16 stroke-[1.5]" />
             </div>
             <div className="space-y-1">
-              <h4 className="font-semibold text-neutral-900 dark:text-white text-base">No Profile Picture</h4>
+              <h4 className="font-semibold text-neutral-900 dark:text-white text-base">{t("common.image_viewer.no_pic")}</h4>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 {images.length === 0 
-                  ? "Click the Add Profile Picture button below to upload a picture."
-                  : "Click the Edit button below to upload a picture."}
+                  ? t("common.image_viewer.add_pic_desc")
+                  : t("common.image_viewer.edit_pic_desc")}
               </p>
             </div>
           </div>
@@ -308,7 +310,7 @@ export function ImageViewerModal({
                       ? "ring-2 ring-neutral-900 dark:ring-white border-transparent opacity-100"
                       : "opacity-40 hover:opacity-85"
                   )}
-                  title={`View image ${idx + 1}`}
+                  title={t("common.image_viewer.view_index", { index: (idx + 1).toString() })}
                 >
                   <img
                     src={url}
@@ -346,7 +348,7 @@ export function ImageViewerModal({
                 ) : (
                   <Pencil className="w-4 h-4 text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200" />
                 )}
-                <span>{images.length === 0 ? "Add Profile Picture" : "Edit"}</span>
+                <span>{images.length === 0 ? t("common.image_viewer.add_pic_btn") : t("common.image_viewer.edit")}</span>
               </button>
             )}
             
@@ -364,7 +366,7 @@ export function ImageViewerModal({
                 )}
               >
                 <Trash2 className="w-4 h-4" />
-                <span>Delete</span>
+                <span>{t("common.image_viewer.delete")}</span>
               </button>
             )}
           </div>

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { ChevronDown, Tag as TagIcon, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/src/app/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 interface TagsInputProps {
   value: string[];
@@ -16,8 +17,10 @@ export function TagsInput({
   value = [],
   onChange,
   suggestions = [],
-  placeholder = "Add tags...",
+  placeholder,
 }: TagsInputProps) {
+  const { t } = useLanguage();
+  const activePlaceholder = placeholder || t("common.tags_input.placeholder");
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,7 +100,7 @@ export function TagsInput({
             }}
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
-            placeholder={value.length === 0 ? placeholder : ""}
+            placeholder={value.length === 0 ? activePlaceholder : ""}
             className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[120px]"
           />
         </div>
@@ -110,9 +113,9 @@ export function TagsInput({
       {open && (
         <div className="absolute top-full z-50 mt-1 max-h-60 w-full overflow-y-auto overflow-x-hidden rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 p-1">
           {suggestions.length === 0 ? (
-            <div className="p-2 text-center text-sm text-muted-foreground">No options found.</div>
+            <div className="p-2 text-center text-sm text-muted-foreground">{t("common.tags_input.no_options")}</div>
           ) : filteredSuggestions.length === 0 ? (
-            <div className="p-2 text-center text-sm text-muted-foreground">No results found.</div>
+            <div className="p-2 text-center text-sm text-muted-foreground">{t("common.tags_input.no_results")}</div>
           ) : (
             filteredSuggestions.map((suggestion) => (
               <div

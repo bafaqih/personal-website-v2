@@ -4,8 +4,8 @@ import { Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useLanguage } from "@/context/language-context";
 
 /**
  * Theme toggle button — switches between light and dark mode.
@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
  */
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   const toggleTheme = () => {
@@ -36,7 +37,7 @@ export function ThemeToggle() {
         </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom">
-        <p>{resolvedTheme === "dark" ? "Light Mode" : "Dark Mode"}</p>
+        <p>{resolvedTheme === "dark" ? t("header.theme_light") : t("header.theme_dark")}</p>
       </TooltipContent>
     </Tooltip>
   );

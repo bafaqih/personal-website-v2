@@ -58,6 +58,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/src/app/lib/utils";
 import { useCallback, useState } from "react";
+import { useLanguage } from "@/context/language-context";
 
 /**
  * Custom CSS for syntax highlighting (Highlight.js / Lowlight)
@@ -105,9 +106,11 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   content,
   onChange,
-  placeholder = "Start writing...",
+  placeholder,
   className,
 }: RichTextEditorProps) {
+  const { t } = useLanguage();
+  const activePlaceholder = placeholder || t("common.editor.placeholder");
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -130,7 +133,7 @@ export function RichTextEditor({
         },
       }),
       Placeholder.configure({
-        placeholder,
+        placeholder: activePlaceholder,
         emptyEditorClass: "is-editor-empty before:content-[attr(data-placeholder)] before:text-neutral-400 before:float-left before:pointer-events-none before:h-0",
       }),
       Table.configure({
@@ -241,22 +244,22 @@ export function RichTextEditor({
       const file = input.files?.[0];
       if (!file) return;
       
-      const loadingToast = toast.loading("Uploading image...");
+      const loadingToast = toast.loading(t("common.editor.uploading"));
       try {
         const { StorageService } = await import("@/src/services/storage.service");
         const { STORAGE_PATHS } = await import("@/src/lib/constants");
         
         const result = await StorageService.uploadImage(STORAGE_PATHS.BLOGS, file);
         editor.chain().focus().setImage({ src: result.publicUrl }).run();
-        toast.success("Image uploaded successfully", { id: loadingToast });
+        toast.success(t("common.editor.upload_success"), { id: loadingToast });
       } catch (error) {
         console.error("Image upload failed:", error);
-        toast.error("Failed to upload image", { id: loadingToast });
+        toast.error(t("common.editor.upload_failed"), { id: loadingToast });
       }
     };
     
     input.click();
-  }, [editor]);
+  }, [editor, t]);
 
   if (!editor) return null;
 
@@ -301,21 +304,21 @@ export function RichTextEditor({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           active={editor.isActive("heading", { level: 1 })}
-          title="Heading 1"
+          title={t("common.editor.heading_1")}
         >
           <Heading1 className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           active={editor.isActive("heading", { level: 2 })}
-          title="Heading 2"
+          title={t("common.editor.heading_2")}
         >
           <Heading2 className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           active={editor.isActive("heading", { level: 3 })}
-          title="Heading 3"
+          title={t("common.editor.heading_3")}
         >
           <Heading3 className="h-4 w-4" />
         </ToolbarButton>
@@ -325,28 +328,28 @@ export function RichTextEditor({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive("bold")}
-          title="Bold"
+          title={t("common.editor.bold")}
         >
           <Bold className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           active={editor.isActive("italic")}
-          title="Italic"
+          title={t("common.editor.italic")}
         >
           <Italic className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           active={editor.isActive("strike")}
-          title="Strikethrough"
+          title={t("common.editor.strikethrough")}
         >
           <Strikethrough className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleCode().run()}
           active={editor.isActive("code")}
-          title="Code"
+          title={t("common.editor.code")}
         >
           <Code className="h-4 w-4" />
         </ToolbarButton>
@@ -356,35 +359,35 @@ export function RichTextEditor({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           active={editor.isActive("bulletList")}
-          title="Bullet List"
+          title={t("common.editor.bullet_list")}
         >
           <List className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           active={editor.isActive("orderedList")}
-          title="Ordered List"
+          title={t("common.editor.ordered_list")}
         >
           <ListOrdered className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           active={editor.isActive("blockquote")}
-          title="Blockquote"
+          title={t("common.editor.blockquote")}
         >
           <Quote className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           active={editor.isActive("codeBlock")}
-          title="Code Block"
+          title={t("common.editor.code_block")}
         >
           <Terminal className="h-4 w-4" />
         </ToolbarButton>
 
         <ToolbarButton
           onClick={addYoutubeVideo}
-          title="Embed YouTube Video"
+          title={t("common.editor.youtube")}
         >
           <YoutubeIcon className="h-4 w-4" />
         </ToolbarButton>
@@ -394,28 +397,28 @@ export function RichTextEditor({
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
           active={editor.isActive({ textAlign: "left" })}
-          title="Align Left"
+          title={t("common.editor.align_left")}
         >
           <AlignLeft className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
           active={editor.isActive({ textAlign: "center" })}
-          title="Align Center"
+          title={t("common.editor.align_center")}
         >
           <AlignCenter className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
           active={editor.isActive({ textAlign: "right" })}
-          title="Align Right"
+          title={t("common.editor.align_right")}
         >
           <AlignRight className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("justify").run()}
           active={editor.isActive({ textAlign: "justify" })}
-          title="Justify"
+          title={t("common.editor.justify")}
         >
           <AlignJustify className="h-4 w-4" />
         </ToolbarButton>
@@ -424,7 +427,7 @@ export function RichTextEditor({
 
         <ToolbarButton
           onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-          title="Insert Table (3x3)"
+          title={t("common.editor.insert_table")}
         >
           <Grid3X3 className="h-4 w-4" />
         </ToolbarButton>
@@ -433,19 +436,19 @@ export function RichTextEditor({
           <>
             <ToolbarButton
               onClick={() => editor.chain().focus().addRowAfter().run()}
-              title="Add Row"
+              title={t("common.editor.add_row")}
             >
               <Rows className="h-4 w-4" />
             </ToolbarButton>
             <ToolbarButton
               onClick={() => editor.chain().focus().addColumnAfter().run()}
-              title="Add Column"
+              title={t("common.editor.add_column")}
             >
               <Columns className="h-4 w-4" />
             </ToolbarButton>
             <ToolbarButton
               onClick={() => editor.chain().focus().deleteTable().run()}
-              title="Delete Table"
+              title={t("common.editor.delete_table")}
               className="text-red-500 hover:text-red-600 hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />
@@ -455,10 +458,10 @@ export function RichTextEditor({
 
         <div className="mx-1 h-6 w-px bg-neutral-200 dark:bg-white/10" />
 
-        <ToolbarButton onClick={addLink} active={editor.isActive("link")} title="Add Link">
+        <ToolbarButton onClick={addLink} active={editor.isActive("link")} title={t("common.editor.add_link")}>
           <Link className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={addImage} title="Add Image">
+        <ToolbarButton onClick={addImage} title={t("common.editor.add_image")}>
           <ImageIcon className="h-4 w-4" />
         </ToolbarButton>
 
@@ -466,7 +469,7 @@ export function RichTextEditor({
 
         <ToolbarButton
           onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
-          title="Clear Formatting"
+          title={t("common.editor.clear_formatting")}
         >
           <RemoveFormatting className="h-4 w-4" />
         </ToolbarButton>
@@ -474,13 +477,13 @@ export function RichTextEditor({
         <div className="ml-auto flex items-center gap-0.5">
           <ToolbarButton
             onClick={() => editor.chain().focus().undo().run()}
-            title="Undo"
+            title={t("common.editor.undo")}
           >
             <Undo className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().redo().run()}
-            title="Redo"
+            title={t("common.editor.redo")}
           >
             <Redo className="h-4 w-4" />
           </ToolbarButton>
@@ -503,23 +506,23 @@ export function RichTextEditor({
         <div className="flex items-center gap-1 rounded-lg border border-neutral-200 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-neutral-900">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            title="Heading 1"
+            title={t("common.editor.heading_1")}
           >
             <Heading1 className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            title="Heading 2"
+            title={t("common.editor.heading_2")}
           >
             <Heading2 className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            title="Bullet List"
+            title={t("common.editor.bullet_list")}
           >
             <List className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton onClick={addImage} title="Add Image">
+          <ToolbarButton onClick={addImage} title={t("common.editor.add_image")}>
             <ImageIcon className="h-4 w-4" />
           </ToolbarButton>
         </div>
@@ -533,25 +536,25 @@ export function RichTextEditor({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive("bold")}
-          title="Bold"
+          title={t("common.editor.bold")}
         >
           <Bold className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           active={editor.isActive("italic")}
-          title="Italic"
+          title={t("common.editor.italic")}
         >
           <Italic className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           active={editor.isActive("strike")}
-          title="Strikethrough"
+          title={t("common.editor.strikethrough")}
         >
           <Strikethrough className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={addLink} active={editor.isActive("link")} title="Add Link">
+        <ToolbarButton onClick={addLink} active={editor.isActive("link")} title={t("common.editor.add_link")}>
           <Link className="h-4 w-4" />
         </ToolbarButton>
       </BubbleMenu>
@@ -560,7 +563,7 @@ export function RichTextEditor({
       <Dialog open={isLinkModalOpen} onOpenChange={setIsLinkModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add / Edit Link</DialogTitle>
+            <DialogTitle>{t("common.editor.link_title")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
@@ -581,13 +584,13 @@ export function RichTextEditor({
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsLinkModalOpen(false)}>
-              Cancel
+              {t("common.editor.cancel")}
             </Button>
             <Button 
               onClick={handleLinkSubmit}
               className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
             >
-              Apply Link
+              {t("common.editor.apply_link")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -597,7 +600,7 @@ export function RichTextEditor({
       <Dialog open={isYoutubeModalOpen} onOpenChange={setIsYoutubeModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Embed YouTube Video</DialogTitle>
+            <DialogTitle>{t("common.editor.embed_youtube")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
@@ -618,13 +621,13 @@ export function RichTextEditor({
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsYoutubeModalOpen(false)}>
-              Cancel
+              {t("common.editor.cancel")}
             </Button>
             <Button 
               onClick={handleYoutubeSubmit}
               className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
             >
-              Embed Video
+              {t("common.editor.embed_video")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -633,8 +636,8 @@ export function RichTextEditor({
       {/* Footer Info (Word Count) */}
       <div className="flex items-center justify-end border-t border-neutral-200 p-2 text-[10px] text-neutral-500 dark:border-white/10">
         <div className="flex gap-3">
-          <span>{editor.storage.characterCount.words()} words</span>
-          <span>{editor.storage.characterCount.characters()} characters</span>
+          <span>{t("common.editor.words", { count: editor.storage.characterCount.words().toString() })}</span>
+          <span>{t("common.editor.characters", { count: editor.storage.characterCount.characters().toString() })}</span>
         </div>
       </div>
     </div>

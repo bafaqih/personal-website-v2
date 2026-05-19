@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Upload, X, FileText, Image as ImageIcon, Eye } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
+import { useLanguage } from "@/context/language-context";
 import {
   ACCEPTED_IMAGE_TYPES,
   ACCEPTED_PDF_TYPES,
@@ -37,6 +38,7 @@ export function ImageUpload({
   previewClassName,
   disabled = false,
 }: ImageUploadProps) {
+  const { t } = useLanguage();
   const [preview, setPreview] = useState<string | null>(value || null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -76,7 +78,7 @@ export function ImageUpload({
       // Validate type
       if (!acceptedTypes.includes(file.type)) {
         setError(
-          `Invalid file type. Accepted: ${accept === "pdf" ? "PDF" : "JPG, PNG, WebP, SVG"}`
+          t("common.image_upload.invalid_type", { types: accept === "pdf" ? "PDF" : "JPG, PNG, WebP, SVG" })
         );
         return;
       }
@@ -84,7 +86,7 @@ export function ImageUpload({
       // Validate size
       if (file.size > MAX_FILE_SIZE) {
         setError(
-          `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Max: 5MB`
+          t("common.image_upload.file_too_large", { size: (file.size / 1024 / 1024).toFixed(1), max: "5" })
         );
         return;
       }
@@ -105,7 +107,7 @@ export function ImageUpload({
         onChange(file, url);
       }
     },
-    [accept, acceptedTypes, onChange]
+    [accept, acceptedTypes, onChange, t]
   );
 
   const handleDrop = useCallback(
@@ -158,7 +160,7 @@ export function ImageUpload({
                     className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
                   >
                     <Eye className="h-5 w-5" />
-                    <span className="text-[10px] font-medium tracking-wide">View Image</span>
+                    <span className="text-[10px] font-medium tracking-wide">{t("common.image_upload.view_image")}</span>
                   </div>
                 )}
               </div>
@@ -183,7 +185,7 @@ export function ImageUpload({
                     className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
                   >
                     <Eye className="h-5 w-5" />
-                    <span className="text-[10px] font-medium tracking-wide">View Image</span>
+                    <span className="text-[10px] font-medium tracking-wide">{t("common.image_upload.view_image")}</span>
                   </div>
                 )}
               </div>
@@ -212,7 +214,7 @@ export function ImageUpload({
                 )
               ) : (
                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
-                  {fileName || "File uploaded"}
+                  {fileName || t("common.image_upload.file_uploaded")}
                 </span>
               )}
             </div>
@@ -263,15 +265,16 @@ export function ImageUpload({
             <Upload className="mb-2 h-8 w-8 text-neutral-400" />
           )}
           <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-            Drop file here or{" "}
+            {t("common.image_upload.drop_or_browse").split("{browse}")[0]}
             <span className="text-neutral-900 underline dark:text-white">
-              browse
+              {t("common.image_upload.browse")}
             </span>
+            {t("common.image_upload.drop_or_browse").split("{browse}")[1]}
           </p>
           <p className="mt-1 text-xs text-neutral-400">
             {accept === "pdf"
-              ? "PDF only, max 5MB"
-              : "JPG, PNG, WebP, SVG — max 5MB"}
+              ? t("common.image_upload.pdf_limit")
+              : t("common.image_upload.image_limit")}
           </p>
         </label>
       )}

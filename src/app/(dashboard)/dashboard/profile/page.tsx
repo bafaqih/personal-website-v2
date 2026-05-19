@@ -95,7 +95,7 @@ export default function ProfilePage() {
       });
       setProfile(updated);
       setIsEditModalOpen(false);
-      toast.success(language === "en" ? "Profile updated successfully" : "Profil berhasil diperbarui");
+      toast.success(t("profile.save_success"));
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
@@ -115,7 +115,10 @@ export default function ProfilePage() {
 
     // Validate size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error(language === "en" ? "Image size must be less than 5MB" : "Ukuran foto harus kurang dari 5MB");
+      toast.error(t("common.image_upload.file_too_large", { 
+        size: (file.size / (1024 * 1024)).toFixed(1),
+        max: "5"
+      }));
       return;
     }
 
@@ -129,7 +132,7 @@ export default function ProfilePage() {
 
       setProfile(updated);
       setIsViewerOpen(false);
-      toast.success(language === "en" ? "Profile picture updated successfully" : "Foto profil berhasil diperbarui");
+      toast.success(t("profile.photo_success"));
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
@@ -151,7 +154,7 @@ export default function ProfilePage() {
       setProfile(updated);
       setIsDeleteOpen(false);
       setIsViewerOpen(false);
-      toast.success(language === "en" ? "Profile picture deleted successfully" : "Foto profil berhasil dihapus");
+      toast.success(t("profile.photo_delete_success"));
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
@@ -166,7 +169,7 @@ export default function ProfilePage() {
       <PageHeader
         title={t("profile.title")}
         icon={UserIcon}
-        description={language === "en" ? "Manage your account settings and profile information." : "Kelola pengaturan akun dan informasi profil Anda."}
+        description={t("profile.description")}
         breadcrumbs={[
           { label: t("dashboard.title"), href: "/dashboard" },
           { label: t("profile.title") },
@@ -215,17 +218,17 @@ export default function ProfilePage() {
                         {isUploading ? (
                           <>
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            <span className="text-[10px] font-medium tracking-wide">{language === "en" ? "Uploading..." : "Mengunggah..."}</span>
+                            <span className="text-[10px] font-medium tracking-wide">{t("profile.uploading")}</span>
                           </>
                         ) : isDeletingImage ? (
                           <>
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            <span className="text-[10px] font-medium tracking-wide">{language === "en" ? "Deleting..." : "Menghapus..."}</span>
+                            <span className="text-[10px] font-medium tracking-wide">{t("common.deleting")}</span>
                           </>
                         ) : (
                           <>
                             <Eye className="h-5 w-5" />
-                            <span className="text-[10px] font-medium tracking-wide">{language === "en" ? "View Image" : "Lihat Foto"}</span>
+                            <span className="text-[10px] font-medium tracking-wide">{t("profile.view_image")}</span>
                           </>
                         )}
                       </div>
@@ -287,13 +290,13 @@ export default function ProfilePage() {
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <InfoCard
-                  label={language === "en" ? "Full Name" : "Nama Lengkap"}
+                  label={t("profile.full_name")}
                   value={profile?.full_name || "-"}
                   icon={<UserIcon className="h-5 w-5 text-neutral-400" />}
                   loading={loading}
                 />
                 <InfoCard
-                  label={language === "en" ? "Username" : "Nama Pengguna"}
+                  label={t("profile.username")}
                   value={profile?.username || "-"}
                   icon={<AtSign className="h-5 w-5 text-neutral-400" />}
                   loading={loading}
@@ -327,28 +330,26 @@ export default function ProfilePage() {
           <DialogHeader>
             <DialogTitle>{t("profile.edit_profile")}</DialogTitle>
             <DialogDescription>
-              {language === "en" 
-                ? "Make changes to your profile here. Click save when you're done." 
-                : "Ubah informasi profil Anda di sini. Klik simpan setelah selesai."}
+              {t("profile.edit_profile_desc")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="fullname">{language === "en" ? "Full Name" : "Nama Lengkap"}</Label>
+              <Label htmlFor="fullname">{t("profile.full_name")}</Label>
               <Input
                 id="fullname"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder={language === "en" ? "Enter your full name" : "Masukkan nama lengkap Anda"}
+                placeholder={t("profile.fullname_placeholder")}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="username">{language === "en" ? "Username" : "Nama Pengguna"}</Label>
+              <Label htmlFor="username">{t("profile.username")}</Label>
               <Input
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder={language === "en" ? "Enter username" : "Masukkan nama pengguna"}
+                placeholder={t("profile.username_placeholder")}
               />
             </div>
             <div className="grid gap-2">
@@ -358,7 +359,7 @@ export default function ProfilePage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={language === "en" ? "Enter email address" : "Masukkan alamat surel"}
+                placeholder={t("profile.email_placeholder")}
               />
             </div>
           </div>
@@ -407,7 +408,7 @@ export default function ProfilePage() {
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleDeleteImage}
-        itemName={language === "en" ? "profile picture" : "foto profil"}
+        itemName={t("profile.profile_picture")}
         loading={isDeletingImage}
       />
     </div>
