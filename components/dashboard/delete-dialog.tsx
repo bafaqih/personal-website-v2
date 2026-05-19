@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, X } from "lucide-react";
+import { useLanguage } from "@/context/language-context";
 
 interface DeleteDialogProps {
   open: boolean;
@@ -34,14 +35,12 @@ export function DeleteDialog({
   itemName,
   loading = false,
 }: DeleteDialogProps) {
-  const capitalizedItemName = itemName
-    ? itemName.charAt(0).toUpperCase() + itemName.slice(1)
-    : "";
+  const { t } = useLanguage();
 
-  const displayTitle = title || (itemName ? `Delete ${capitalizedItemName}?` : "Delete Confirmation");
+  const displayTitle = title || t("common.delete_title");
   const displayDescription = description || (itemName
-    ? `Are you sure you want to delete this ${itemName.toLowerCase()}? This action cannot be undone.`
-    : "Are you sure you want to permanently delete this item? This action cannot be undone.");
+    ? `${t("common.delete_warning", { item: itemName.toLowerCase() })} ${t("common.delete_warning_desc")}`
+    : `${t("common.delete_warning", { item: "item" })} ${t("common.delete_warning_desc")}`);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -57,7 +56,7 @@ export function DeleteDialog({
             disabled={loading}
             className="gap-1.5 cursor-pointer"
           >
-            <X className="h-4 w-4" /> Cancel
+            <X className="h-4 w-4" /> {t("common.cancel")}
           </Button>
           <Button
             variant="destructive"
@@ -68,12 +67,12 @@ export function DeleteDialog({
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Deleting...
+                {t("common.deleting")}
               </>
             ) : (
               <>
                 <Trash2 className="h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </>
             )}
           </Button>

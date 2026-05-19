@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,31 +19,33 @@ import { BulletListInput } from "@/components/dashboard/bullet-list-input";
 import { EducationService } from "@/src/services/education.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
-
-const schema = z.object({
-  school: z.string().min(1, "School name is required"),
-  location: z.string().optional(),
-  url: z.string().nullable().optional(),
-  level_major_id: z.string().min(1, "Level/Major (ID) is required"),
-  level_major_en: z.string().min(1, "Level/Major (EN) is required"),
-  gpa: z.string().optional().nullable(),
-  max_gpa: z.string().optional().nullable(),
-  start_date: z.string().min(1, "Start Date is required"),
-  end_date: z.string().optional(),
-  detail_points_id: z.array(z.string()).optional(),
-  detail_points_en: z.array(z.string()).optional(),
-  is_published: z.boolean(),
-});
-
-type FormData = z.infer<typeof schema>;
+import { useLanguage } from "@/context/language-context";
 
 export default function EducationEditPage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const { id } = useParams() as { id: string };
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const schema = useMemo(() => z.object({
+    school: z.string().min(1, t("common.required_field")),
+    location: z.string().optional(),
+    url: z.string().nullable().optional(),
+    level_major_id: z.string().min(1, t("common.required_field")),
+    level_major_en: z.string().min(1, t("common.required_field")),
+    gpa: z.string().optional().nullable(),
+    max_gpa: z.string().optional().nullable(),
+    start_date: z.string().min(1, t("common.required_field")),
+    end_date: z.string().optional(),
+    detail_points_id: z.array(z.string()).optional(),
+    detail_points_en: z.array(z.string()).optional(),
+    is_published: z.boolean(),
+  }), [t]);
+
+  type FormData = z.infer<typeof schema>;
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -70,9 +72,9 @@ export default function EducationEditPage() {
           is_published: e.is_published
         });
       })
-      .catch(() => toast.error("Failed to load education"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
-  }, [id, reset]);
+  }, [id, reset, t]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -93,22 +95,22 @@ export default function EducationEditPage() {
       };
 
       await EducationService.update(id, payload);
-      toast.success("Education updated successfully");
+      toast.success(t("educations.saved_success"));
       router.push("/dashboard/educations");
     } catch (e: unknown) {
-      toast.error("Failed to update", { description: e instanceof Error ? e.message : undefined });
+      toast.error(t("educations.saved_failed"), { description: e instanceof Error ? e.message : undefined });
     }
   };
 
   return (
     <>
       <PageHeader
-        title="Edit Education"
+        title={t("educations.edit_education")}
         icon={GraduationCap}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Educations", href: "/dashboard/educations" },
-          { label: "Edit" }
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("educations.title"), href: "/dashboard/educations" },
+          { label: t("common.edit") }
         ]}
       />
       <Card className="w-full border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
@@ -116,7 +118,7 @@ export default function EducationEditPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>School</Label>
+                <Label>{t("educations.school")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -125,7 +127,7 @@ export default function EducationEditPage() {
                 {errors.school && <p className="text-xs text-red-500">{errors.school.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Location</Label>
+                <Label>{t("common.location")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -136,7 +138,7 @@ export default function EducationEditPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>School URL</Label>
+                <Label>{t("educations.school")} URL</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -147,7 +149,7 @@ export default function EducationEditPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Level / Major (ID)</Label>
+                <Label>{t("educations.level_major")} (ID)</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -156,7 +158,7 @@ export default function EducationEditPage() {
                 {errors.level_major_id && <p className="text-xs text-red-500">{errors.level_major_id.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Level / Major (EN)</Label>
+                <Label>{t("educations.level_major")} (EN)</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -168,7 +170,7 @@ export default function EducationEditPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>GPA</Label>
+                <Label>{t("educations.gpa")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -176,7 +178,7 @@ export default function EducationEditPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Max GPA</Label>
+                <Label>{t("educations.form_max_gpa")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -187,7 +189,7 @@ export default function EducationEditPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Start Date</Label>
+                <Label>{t("educations.form_start_date")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -196,7 +198,12 @@ export default function EducationEditPage() {
                 {errors.start_date && <p className="text-xs text-red-500">{errors.start_date.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>End Date</Label>
+                <div className="flex flex-col gap-1">
+                  <Label>{t("educations.form_end_date")}</Label>
+                  <span className="text-[10px] text-neutral-500 dark:text-neutral-400">
+                    {t("educations.form_end_date_desc")}
+                  </span>
+                </div>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -207,7 +214,7 @@ export default function EducationEditPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Detail Points (ID)</Label>
+                <Label>{t("educations.form_detail_points")} (ID)</Label>
                 {loading ? (
                   <Skeleton className="h-[200px] w-full rounded-lg" />
                 ) : (
@@ -215,12 +222,12 @@ export default function EducationEditPage() {
                     id="detail_id"
                     value={watch("detail_points_id")}
                     onChange={(val) => setValue("detail_points_id", val, { shouldValidate: true, shouldDirty: true })}
-                    placeholder="Ceritakan aktivitas, beasiswa, atau pengalaman studi..."
+                    placeholder={t("educations.form_desc_placeholder")}
                   />
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Detail Points (EN)</Label>
+                <Label>{t("educations.form_detail_points")} (EN)</Label>
                 {loading ? (
                   <Skeleton className="h-[200px] w-full rounded-lg" />
                 ) : (
@@ -228,14 +235,14 @@ export default function EducationEditPage() {
                     id="detail_en"
                     value={watch("detail_points_en")}
                     onChange={(val) => setValue("detail_points_en", val, { shouldValidate: true, shouldDirty: true })}
-                    placeholder="Describe your activities, scholarships, or study experiences..."
+                    placeholder={t("educations.form_desc_placeholder")}
                   />
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>School Logo</Label>
+              <Label>{t("educations.form_logo")}</Label>
               {loading ? (
                 <Skeleton className="h-[120px] w-full rounded-xl" />
               ) : (
@@ -253,7 +260,7 @@ export default function EducationEditPage() {
               ) : (
                 <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
               )}
-              <Label>Published</Label>
+              <Label>{t("common.publish")}</Label>
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
@@ -264,14 +271,14 @@ export default function EducationEditPage() {
                 </>
               ) : (
                 <>
-                  <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
-                    <X className="h-4 w-4" /> Cancel
+                  <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+                    <X className="h-4 w-4" /> {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                     {isSubmitting ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                      <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                     ) : (
-                      <><Save className="h-4 w-4" /> Save Changes</>
+                      <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
                     )}
                   </Button>
                 </>

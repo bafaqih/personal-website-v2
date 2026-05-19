@@ -3,7 +3,9 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { cn } from "@/src/app/lib/utils";
 import { ThemeProvider } from "@/components/dashboard/theme-provider";
+import { LanguageProvider } from "@/context/language-context";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 
 /**
  * Root layout for the admin dashboard route group.
- * No i18n — English only. Wraps with ThemeProvider for dark/light mode.
+ * Wraps with ThemeProvider for dark/light mode and LanguageProvider for translation support.
  */
 export default function DashboardRootLayout({
   children,
@@ -31,7 +33,11 @@ export default function DashboardRootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <LanguageProvider>
+            <TooltipProvider>
+              {children}
+            </TooltipProvider>
+          </LanguageProvider>
           <Toaster
             position="top-right"
             duration={5000}

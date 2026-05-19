@@ -28,6 +28,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { AuthService } from "@/src/services/auth.service";
 import type { BlogType, BlogCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -42,6 +43,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function BlogAddPage() {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const [types, setTypes] = useState<BlogType[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -101,10 +103,10 @@ export default function BlogAddPage() {
         await BlogService.syncTags(blog.id, tags);
       }
       
-      toast.success("Blog post created successfully");
+      toast.success(t("blogs.saved_success"));
       router.push("/dashboard/blogs/list");
     } catch (e: unknown) {
-      toast.error("Failed to create blog post", { 
+      toast.error(t("blogs.saved_failed"), { 
         description: e instanceof Error ? e.message : "An unexpected error occurred" 
       });
     }
@@ -113,12 +115,12 @@ export default function BlogAddPage() {
   return (
     <>
       <PageHeader 
-        title="Add Blog" 
+        title={t("blogs.add_blog")} 
         icon={FileText}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Blogs", href: "/dashboard/blogs/list" }, 
-          { label: "Add" }
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("blogs.title"), href: "/dashboard/blogs/list" }, 
+          { label: t("common.add") }
         ]} 
       />
       
@@ -128,7 +130,9 @@ export default function BlogAddPage() {
             <CardContent className="p-6 space-y-8">
               {/* Thumbnail Section - Large Banner Style */}
               <div className="space-y-3">
-                <Label className="text-base font-semibold text-neutral-900 dark:text-white">Thumbnail Blog</Label>
+                <Label className="text-base font-semibold text-neutral-900 dark:text-white">
+                  {language === "en" ? "Thumbnail Blog" : "Thumbnail Artikel"}
+                </Label>
                 <div className="max-w-2xl">
                   <ImageUpload 
                     accept="image" 
@@ -140,7 +144,7 @@ export default function BlogAddPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Title (ID)</Label>
+                  <Label>{language === "en" ? "Title (ID)" : "Judul (ID)"}</Label>
                   <Input 
                     {...register("title_id")} 
                     placeholder="e.g., Cara membuat aplikasi Next.js" 
@@ -148,7 +152,7 @@ export default function BlogAddPage() {
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Title (EN)</Label>
+                  <Label>{language === "en" ? "Title (EN)" : "Judul (EN)"}</Label>
                   <Input 
                     {...register("title_en")} 
                     placeholder="e.g., How to build a Next.js application" 
@@ -170,38 +174,38 @@ export default function BlogAddPage() {
                     value={watch("tags") || []} 
                     onChange={(tags) => setValue("tags", tags)} 
                     suggestions={existingTags}
-                    placeholder="Type tag and press space/enter..."
+                    placeholder={language === "en" ? "Type tag and press space/enter..." : "Ketik tag lalu tekan spasi/enter..."}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Type</Label>
+                  <Label>{t("blogs.form_type")}</Label>
                   <Select 
                     onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
                     value={watch("type_id")}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select post type" />
+                      <SelectValue placeholder={language === "en" ? "Select post type" : "Pilih tipe artikel"} />
                     </SelectTrigger>
                     <SelectContent>
-                      {types.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
+                      {types.map((tItem) => (
+                        <SelectItem key={tItem.id} value={tItem.id}>{tItem[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label>{t("blogs.form_category")}</Label>
                   <Select 
                     onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
                     value={watch("category_id")}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={language === "en" ? "Select category" : "Pilih kategori"} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
+                        <SelectItem key={c.id} value={c.id}>{c[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -210,11 +214,11 @@ export default function BlogAddPage() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Content (ID)</Label>
+                  <Label>{language === "en" ? "Content (ID)" : "Konten (ID)"}</Label>
                   <RichTextEditor content={contentId} onChange={setContentId} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Content (EN)</Label>
+                  <Label>{language === "en" ? "Content (EN)" : "Konten (EN)"}</Label>
                   <RichTextEditor content={contentEn} onChange={setContentEn} />
                 </div>
               </div>
@@ -224,22 +228,22 @@ export default function BlogAddPage() {
                   checked={watch("is_published")} 
                   onCheckedChange={(v) => setValue("is_published", v)} 
                 />
-                <Label>Published</Label>
+                <Label>{t("common.status")}</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" 
                   variant="outline" 
-                  onClick={() => router.back()} className="gap-1.5">
-                  <X className="h-4 w-4" /> Cancel
+                  onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+                  <X className="h-4 w-4" /> {t("common.cancel")}
                 </Button>
                 <Button type="submit" 
                   disabled={isSubmitting} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                   {isSubmitting ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Creating...</>
+                    <><Loader2 className="h-4 w-4 animate-spin" /> {language === "en" ? "Creating..." : "Membuat..."}</>
                   ) : (
-                    <><Plus className="h-4 w-4" /> Create Blog</>
+                    <><Plus className="h-4 w-4" /> {t("blogs.add_blog")}</>
                   )}
                 </Button>
               </div>

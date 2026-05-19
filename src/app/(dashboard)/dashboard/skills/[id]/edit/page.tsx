@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,17 +20,11 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SkillCategory } from "@/src/types/database";
-
-const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  category_id: z.string().min(1, "Category is required"),
-  is_active: z.boolean(),
-});
-
-type FormData = z.infer<typeof schema>;
+import { useLanguage } from "@/context/language-context";
 
 export default function SkillEditPage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const params = useParams();
   const id = params.id as string;
   const [categories, setCategories] = useState<SkillCategory[]>([]);
@@ -38,6 +32,14 @@ export default function SkillEditPage() {
   const [currentIconUrl, setCurrentIconUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const schema = useMemo(() => z.object({
+    name: z.string().min(1, t("common.required_field")),
+    category_id: z.string().min(1, t("common.required_field")),
+    is_active: z.boolean(),
+  }), [t]);
+
+  type FormData = z.infer<typeof schema>;
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -51,9 +53,9 @@ export default function SkillEditPage() {
         setCurrentIconUrl(skill.icon_url);
         reset({ name: skill.name, category_id: skill.category_id, is_active: skill.is_active });
       })
-      .catch(() => toast.error("Failed to load skill"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
-  }, [id, reset]);
+  }, [id, reset, t]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -63,47 +65,51 @@ export default function SkillEditPage() {
         icon_url = result.publicUrl;
       }
       await SkillService.update(id, { ...data, icon_url });
-      toast.success("Skill updated");
+      toast.success(t("skills.saved_success"));
       router.push("/dashboard/skills/list");
     } catch (error: unknown) {
-      toast.error("Failed to update", { description: error instanceof Error ? error.message : undefined });
+      toast.error(t("skills.saved_failed"), { description: error instanceof Error ? error.message : undefined });
     }
   };
 
   return (
     <>
       <PageHeader
-        title="Edit Skill"
+        title={t("skills.edit_skill")}
         icon={Code2}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Skills", href: "/dashboard/skills/list" },
-          { label: "Edit" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("skills.title"), href: "/dashboard/skills/list" },
+          { label: t("common.edit") },
         ]}
       />
       <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label>Name</Label>
+              <Label>{t("skills.name")}</Label>
               {loading ? <Skeleton className="h-10 w-full" /> : <Input {...register("name")} />}
               {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label>Category</Label>
+              <Label>{t("skills.category")}</Label>
               {loading ? (
                 <Skeleton className="h-10 w-full" />
               ) : (
                 <Select onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("category_id")}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t("skills.form_category")} /></SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name_en}</SelectItem>))}
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {(cat[`name_${language}` as keyof typeof cat] as string) || cat.name_en}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               )}
             </div>
             <div className="space-y-2">
-              <Label>Icon</Label>
+              <Label>{t("skills.icon")}</Label>
               {loading ? (
                 <Skeleton className="h-[120px] w-full rounded-xl" />
               ) : (
@@ -116,7 +122,7 @@ export default function SkillEditPage() {
               ) : (
                 <Switch checked={watch("is_active")} onCheckedChange={(v) => setValue("is_active", v)} />
               )}
-              <Label>Active</Label>
+              <Label>{t("skills.active")}</Label>
             </div>
             <div className="flex justify-end gap-3">
               {loading ? (
@@ -126,17 +132,17 @@ export default function SkillEditPage() {
                 </>
               ) : (
                 <>
-                  <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
-                    <X className="h-4 w-4" /> Cancel
+                  <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+                    <X className="h-4 w-4" /> {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                        <Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}
                       </>
                     ) : (
                       <>
-                        <Save className="h-4 w-4" /> Save Changes
+                        <Save className="h-4 w-4" /> {t("common.save_changes")}
                       </>
                     )}
                   </Button>

@@ -26,8 +26,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SkillService } from "@/src/services/skill.service";
 import type { SkillCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 export default function SkillCategoriesPage() {
+  const { t, language } = useLanguage();
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -47,7 +49,7 @@ export default function SkillCategoriesPage() {
     setLoading(true);
     SkillService.getCategories()
       .then(setCategories)
-      .catch(() => toast.error("Failed to load categories"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -71,7 +73,7 @@ export default function SkillCategoriesPage() {
 
   const handleModalSubmit = async () => {
     if (!formData.name_id.trim() || !formData.name_en.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error(t("skills.fill_all_fields"));
       return;
     }
     
@@ -79,15 +81,15 @@ export default function SkillCategoriesPage() {
     try {
       if (editingCategory) {
         await SkillService.updateCategory(editingCategory.id, formData);
-        toast.success("Category updated");
+        toast.success(t("skills.saved_category_success"));
       } else {
         await SkillService.createCategory(formData);
-        toast.success("Category created");
+        toast.success(t("skills.saved_category_success"));
       }
       setIsModalOpen(false);
       fetchCategories();
     } catch {
-      toast.error(editingCategory ? "Failed to update category" : "Failed to create category");
+      toast.error(t("skills.saved_category_failed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,10 +100,10 @@ export default function SkillCategoriesPage() {
     setDeleting(true);
     try {
       await SkillService.deleteCategory(deleteId);
-      toast.success("Category deleted");
+      toast.success(t("skills.deleted_category_success"));
       fetchCategories();
     } catch {
-      toast.error("Failed to delete category");
+      toast.error(t("skills.deleted_category_failed"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -111,20 +113,20 @@ export default function SkillCategoriesPage() {
   const columns: Column<SkillCategory>[] = [
     {
       key: "name_en",
-      header: "Name (EN)",
+      header: t("skills.name_en"),
       className: "font-medium",
     },
     {
       key: "name_id",
-      header: "Name (ID)",
+      header: t("skills.name_id"),
       render: (cat) => <Badge variant="secondary">{cat.name_id}</Badge>,
     },
     {
       key: "is_active",
-      header: "Status",
+      header: t("skills.status"),
       render: (cat) => (
         <Badge variant={cat.is_active ? "default" : "secondary"}>
-          {cat.is_active ? "Active" : "Inactive"}
+          {cat.is_active ? t("skills.active") : t("skills.inactive")}
         </Badge>
       ),
     },
@@ -133,17 +135,17 @@ export default function SkillCategoriesPage() {
   return (
     <>
       <PageHeader
-        title="Skill Categories"
+        title={t("skills.categories")}
         icon={Code2}
-        description="Manage skill category classifications."
+        description={t("skills.category_description")}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Skills" },
-          { label: "Categories" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("skills.title"), href: "/dashboard/skills/list" },
+          { label: t("sidebar.Categories") },
         ]}
         actions={
-          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-            <Plus className="h-4 w-4" /> Add Category
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Plus className="h-4 w-4" /> {t("skills.add_category")}
           </Button>
         }
       />
@@ -152,15 +154,15 @@ export default function SkillCategoriesPage() {
         data={categories}
         columns={columns}
         loading={loading}
-        searchPlaceholder="Search categories..."
-        emptyMessage={loading ? "Loading categories..." : "No categories found."}
+        searchPlaceholder={t("skills.search_categories")}
+        emptyMessage={loading ? t("common.saving") : undefined}
         filters={[
           {
             key: "is_active",
-            label: "Status",
+            label: t("skills.status"),
             options: [
-              { label: "Active", value: true },
-              { label: "Inactive", value: false },
+              { label: t("skills.active"), value: true },
+              { label: t("skills.inactive"), value: false },
             ],
           },
         ]}
@@ -175,7 +177,7 @@ export default function SkillCategoriesPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" onClick={() => openEditModal(cat)}>
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {t("common.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem 
                 variant="destructive"
@@ -183,7 +185,7 @@ export default function SkillCategoriesPage() {
                 onClick={() => setDeleteId(cat.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -193,11 +195,11 @@ export default function SkillCategoriesPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
+            <DialogTitle>{editingCategory ? t("skills.edit_category") : t("skills.add_category")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label>Name (EN)</Label>
+              <Label>{t("skills.name_en")}</Label>
               <Input
                 placeholder="e.g., Programming Languages"
                 value={formData.name_en}
@@ -205,7 +207,7 @@ export default function SkillCategoriesPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label>Name (ID)</Label>
+              <Label>{t("skills.name_id")}</Label>
               <Input
                 placeholder="e.g., Bahasa Pemrograman"
                 value={formData.name_id}
@@ -217,22 +219,22 @@ export default function SkillCategoriesPage() {
                 checked={formData.is_active}
                 onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
               />
-              <Label>Active</Label>
+              <Label>{t("skills.active")}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5">
-              <X className="h-4 w-4" /> Cancel
+            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5 cursor-pointer">
+              <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
             <Button onClick={handleModalSubmit}
               disabled={isSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
               {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingCategory ? (
-                <><Save className="h-4 w-4" /> Save Changes</>
+                <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
               ) : (
-                <><Plus className="h-4 w-4" /> Create Category</>
+                <><Plus className="h-4 w-4" /> {t("skills.add_category")}</>
               )}
             </Button>
           </DialogFooter>
@@ -244,7 +246,7 @@ export default function SkillCategoriesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        itemName="category"
+        itemName={language === "en" ? "category" : "kategori"}
       />
     </>
   );

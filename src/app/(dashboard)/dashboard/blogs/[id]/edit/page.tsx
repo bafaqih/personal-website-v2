@@ -28,6 +28,7 @@ import { BlogService } from "@/src/services/blog.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { BlogType, BlogCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -42,6 +43,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function BlogEditPage() {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const { id } = useParams() as { id: string };
   const [types, setTypes] = useState<BlogType[]>([]);
@@ -97,9 +99,9 @@ export default function BlogEditPage() {
           tags: currentTags
         });
       })
-      .catch(() => toast.error("Failed to load blog post data"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
-  }, [id, reset]);
+  }, [id, reset, t]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -122,10 +124,10 @@ export default function BlogEditPage() {
       // Sync tags
       await BlogService.syncTags(id, tags || []);
 
-      toast.success("Blog post updated successfully");
+      toast.success(t("blogs.saved_success"));
       router.push("/dashboard/blogs/list");
     } catch (e: unknown) {
-      toast.error("Failed to update blog post", { 
+      toast.error(t("blogs.saved_failed"), { 
         description: e instanceof Error ? e.message : "An unexpected error occurred" 
       });
     }
@@ -134,12 +136,12 @@ export default function BlogEditPage() {
   return (
     <>
       <PageHeader 
-        title="Edit Blog" 
+        title={t("blogs.edit_blog")} 
         icon={FileText}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Blogs", href: "/dashboard/blogs/list" }, 
-          { label: "Edit" }
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("blogs.title"), href: "/dashboard/blogs/list" }, 
+          { label: t("common.edit") }
         ]} 
       />
       
@@ -149,7 +151,9 @@ export default function BlogEditPage() {
             <CardContent className="p-6 space-y-8">
               {/* Thumbnail Section - Large Banner Style */}
               <div className="space-y-3">
-                <Label className="text-base font-semibold text-neutral-900 dark:text-white">Thumbnail Blog</Label>
+                <Label className="text-base font-semibold text-neutral-900 dark:text-white">
+                  {language === "en" ? "Thumbnail Blog" : "Thumbnail Artikel"}
+                </Label>
                 <div className="max-w-2xl">
                   {loading ? (
                     <Skeleton className="aspect-video w-full rounded-xl" />
@@ -169,7 +173,7 @@ export default function BlogEditPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Title (ID)</Label>
+                  <Label>{language === "en" ? "Title (ID)" : "Judul (ID)"}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -181,7 +185,7 @@ export default function BlogEditPage() {
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Title (EN)</Label>
+                  <Label>{language === "en" ? "Title (EN)" : "Judul (EN)"}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -216,13 +220,13 @@ export default function BlogEditPage() {
                         setValue("tags", tags, { shouldDirty: true });
                       }} 
                       suggestions={existingTags}
-                      placeholder="Type tag and press space/enter..."
+                      placeholder={language === "en" ? "Type tag and press space/enter..." : "Ketik tag lalu tekan spasi/enter..."}
                     />
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Type</Label>
+                  <Label>{t("blogs.form_type")}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -231,18 +235,18 @@ export default function BlogEditPage() {
                       value={watch("type_id")}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select post type" />
+                        <SelectValue placeholder={language === "en" ? "Select post type" : "Pilih tipe artikel"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {types.map((t) => (
-                          <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
+                        {types.map((tItem) => (
+                          <SelectItem key={tItem.id} value={tItem.id}>{tItem[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label>{t("blogs.form_category")}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -251,11 +255,11 @@ export default function BlogEditPage() {
                       value={watch("category_id")}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder={language === "en" ? "Select category" : "Pilih kategori"} />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
+                          <SelectItem key={c.id} value={c.id}>{c[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -265,7 +269,7 @@ export default function BlogEditPage() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Content (ID)</Label>
+                  <Label>{language === "en" ? "Content (ID)" : "Konten (ID)"}</Label>
                   {loading ? (
                     <Skeleton className="h-[300px] w-full rounded-xl" />
                   ) : (
@@ -273,7 +277,7 @@ export default function BlogEditPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label>Content (EN)</Label>
+                  <Label>{language === "en" ? "Content (EN)" : "Konten (EN)"}</Label>
                   {loading ? (
                     <Skeleton className="h-[300px] w-full rounded-xl" />
                   ) : (
@@ -291,7 +295,7 @@ export default function BlogEditPage() {
                     onCheckedChange={(v) => setValue("is_published", v)} 
                   />
                 )}
-                <Label>Published</Label>
+                <Label>{t("common.status")}</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
@@ -304,16 +308,16 @@ export default function BlogEditPage() {
                   <>
                     <Button type="button" 
                       variant="outline" 
-                      onClick={() => router.back()} className="gap-1.5">
-                      <X className="h-4 w-4" /> Cancel
+                      onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+                      <X className="h-4 w-4" /> {t("common.cancel")}
                     </Button>
                     <Button type="submit" 
                       disabled={isSaveDisabled} 
-                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                       {isSubmitting ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                        <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                       ) : (
-                        <><Save className="h-4 w-4" /> Save Changes</>
+                        <><Save className="h-4 w-4" /> {t("common.save")}</>
                       )}
                     </Button>
                   </>

@@ -25,6 +25,7 @@ import { AchievementService } from "@/src/services/achievement.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { AchievementType, AchievementCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 const schema = z.object({
   title_id: z.string().min(1, "Title (ID) is required"),
@@ -40,6 +41,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function AchievementAddPage() {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const [types, setTypes] = useState<AchievementType[]>([]);
   const [categories, setCategories] = useState<AchievementCategory[]>([]);
@@ -82,10 +84,10 @@ export default function AchievementAddPage() {
         credential_url: data.credential_url || null
       });
       
-      toast.success("Achievement created successfully");
+      toast.success(t("achievements.saved_success"));
       router.push("/dashboard/achievements/list");
     } catch (e: unknown) {
-      toast.error("Failed to create achievement", { 
+      toast.error(t("achievements.saved_failed"), { 
         description: e instanceof Error ? e.message : "An unexpected error occurred" 
       });
     }
@@ -94,12 +96,12 @@ export default function AchievementAddPage() {
   return (
     <>
       <PageHeader 
-        title="Add Achievement" 
+        title={t("achievements.add_achievement")} 
         icon={Trophy}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Achievements", href: "/dashboard/achievements/list" }, 
-          { label: "Add" }
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("achievements.title"), href: "/dashboard/achievements/list" }, 
+          { label: t("common.add") }
         ]} 
       />
       
@@ -109,7 +111,7 @@ export default function AchievementAddPage() {
             <CardContent className="p-6 space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Title (ID)</Label>
+                  <Label>{language === "en" ? "Title (ID)" : "Judul (ID)"}</Label>
                   <Input 
                     {...register("title_id")} 
                     placeholder="Judul sertifikat..."
@@ -117,7 +119,7 @@ export default function AchievementAddPage() {
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Title (EN)</Label>
+                  <Label>{language === "en" ? "Title (EN)" : "Judul (EN)"}</Label>
                   <Input 
                     {...register("title_en")} 
                     placeholder="Certificate title..."
@@ -128,7 +130,7 @@ export default function AchievementAddPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Publisher</Label>
+                  <Label>{t("achievements.publisher")}</Label>
                   <Input 
                     {...register("publisher")} 
                     placeholder="e.g., Google, Microsoft, Udemy"
@@ -136,7 +138,7 @@ export default function AchievementAddPage() {
                   {errors.publisher && <p className="text-xs text-red-500">{errors.publisher.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Issue Date</Label>
+                  <Label>{t("achievements.issue_date")}</Label>
                   <Input 
                     type="date" 
                     {...register("issue_date")} 
@@ -148,34 +150,34 @@ export default function AchievementAddPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Type</Label>
+                  <Label>{t("projects.type")}</Label>
                   <Select 
                     onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
                     value={watch("type_id")}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={language === "en" ? "Select type" : "Pilih tipe"} />
                     </SelectTrigger>
                     <SelectContent>
-                      {types.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
+                      {types.map((tItem) => (
+                        <SelectItem key={tItem.id} value={tItem.id}>{tItem[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   {errors.type_id && <p className="text-xs text-red-500">{errors.type_id.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label>{t("projects.category")}</Label>
                   <Select 
                     onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
                     value={watch("category_id")}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={language === "en" ? "Select category" : "Pilih kategori"} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
+                        <SelectItem key={c.id} value={c.id}>{c[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -184,7 +186,7 @@ export default function AchievementAddPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Credential URL</Label>
+                <Label>{t("achievements.credential_url")}</Label>
                 <Input 
                   {...register("credential_url")} 
                   placeholder="https://verify.example.com/certificate/123" 
@@ -192,7 +194,7 @@ export default function AchievementAddPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Certificate Image</Label>
+                <Label>{t("achievements.image")}</Label>
                 <ImageUpload 
                   accept="image" 
                   onChange={(f) => setImageFile(f)} 
@@ -204,22 +206,22 @@ export default function AchievementAddPage() {
                   checked={watch("is_published")} 
                   onCheckedChange={(v) => setValue("is_published", v)} 
                 />
-                <Label>Published</Label>
+                <Label>{t("common.status")}</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" 
                   variant="outline" 
-                  onClick={() => router.back()} className="gap-1.5">
-                  <X className="h-4 w-4" /> Cancel
+                  onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+                  <X className="h-4 w-4" /> {t("common.cancel")}
                 </Button>
                 <Button type="submit" 
                   disabled={isSubmitting || !isValid} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                   {isSubmitting ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Creating...</>
+                    <><Loader2 className="h-4 w-4 animate-spin" /> {language === "en" ? "Creating..." : "Membuat..."}</>
                   ) : (
-                    <><Plus className="h-4 w-4" /> Create Achievement</>
+                    <><Plus className="h-4 w-4" /> {t("achievements.add_achievement")}</>
                   )}
                 </Button>
               </div>

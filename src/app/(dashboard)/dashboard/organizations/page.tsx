@@ -1,7 +1,17 @@
 "use client";
-import { useEffect, useState } from "react"; import Link from "next/link"; import { Plus, Pencil, Trash2, Users, MoreHorizontal } from "lucide-react"; import { toast } from "sonner";
-import { PageHeader } from "@/components/dashboard/page-header"; import { DataTable, type Column } from "@/components/dashboard/data-table"; import { DeleteDialog } from "@/components/dashboard/delete-dialog"; import { Button } from "@/components/ui/button"; import { Badge } from "@/components/ui/badge";
-import { OrganizationService } from "@/src/services/organization.service"; import type { Organization } from "@/src/types/database";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Plus, Pencil, Trash2, Users, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/dashboard/page-header";
+import { DataTable, type Column } from "@/components/dashboard/data-table";
+import { DeleteDialog } from "@/components/dashboard/delete-dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { OrganizationService } from "@/src/services/organization.service";
+import type { Organization } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function OrganizationsPage() {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -19,40 +30,89 @@ export default function OrganizationsPage() {
     setLoading(true);
     OrganizationService.getAll()
       .then(setItems)
-      .catch(() => toast.error("Failed"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
+
   useEffect(() => { fetchData(); }, []);
-  const handleDelete = async () => { if (!deleteId) return; setDeleting(true); try { await OrganizationService.delete(deleteId); toast.success("Deleted"); fetchData(); } catch { toast.error("Failed"); } finally { setDeleting(false); setDeleteId(null); } };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      await OrganizationService.delete(deleteId);
+      toast.success(t("organizations.deleted_success"));
+      fetchData();
+    } catch {
+      toast.error(t("organizations.deleted_failed"));
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
+  };
+
   const columns: Column<Organization>[] = [
-    { key: "organization", header: "Organization", className: "font-medium" }, { key: "role_en", header: "Role" },
+    { key: "organization", header: t("organizations.organization"), className: "font-medium" },
+    { 
+      key: `role_${language}`, 
+      header: t("organizations.role"),
+      render: (o) => <span>{(o[`role_${language}` as keyof Organization] as string) || "-"}</span>
+    },
     { 
       key: "start_date", 
-      header: "Period", 
+      header: t("organizations.period"), 
       render: (o) => {
         const formatDate = (dateStr: string) => 
-          new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+          new Date(dateStr).toLocaleDateString(language === "en" ? "en-GB" : "id-ID", { day: "2-digit", month: "short", year: "numeric" });
           
         const isPresent = !o.end_date || new Date(o.end_date) > new Date();
         const start = formatDate(o.start_date);
-        const end = isPresent ? "Present" : formatDate(o.end_date as string);
+        const end = isPresent ? t("careers.present") : formatDate(o.end_date as string);
         
         return <span className="text-sm">{start} - {end}</span>;
       } 
     },
-    { key: "is_published", header: "Status", render: (o) => <Badge variant={o.is_published ? "default" : "secondary"}>{o.is_published ? "Published" : "Draft"}</Badge> },
+    { 
+      key: "is_published", 
+      header: t("organizations.status"), 
+      render: (o) => (
+        <Badge variant={o.is_published ? "default" : "secondary"}>
+          {o.is_published ? t("common.published") : t("common.draft")}
+        </Badge>
+      ) 
+    },
   ];
+
   return (
-    <><PageHeader title="Organizations" icon={Users} description="Manage organization experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Organizations" }]}
-        actions={<Link href="/dashboard/organizations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Organization</Button></Link>} />
-      <DataTable data={items} columns={columns} loading={loading} searchPlaceholder="Search organizations..."
+    <>
+      <PageHeader 
+        title={t("organizations.title")} 
+        icon={Users} 
+        description={t("organizations.description")} 
+        breadcrumbs={[
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("organizations.title") }
+        ]}
+        actions={
+          <Link href="/dashboard/organizations/add">
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+              <Plus className="h-4 w-4" /> {t("organizations.add_organization")}
+            </Button>
+          </Link>
+        } 
+      />
+      <DataTable 
+        data={items} 
+        columns={columns} 
+        loading={loading} 
+        searchPlaceholder={t("organizations.search_placeholder")}
         filters={[
           {
             key: "is_published",
-            label: "Status",
+            label: t("organizations.status"),
             options: [
-              { label: "Published", value: true },
-              { label: "Draft", value: false },
+              { label: t("common.published"), value: true },
+              { label: t("common.draft"), value: false },
             ],
           },
         ]}
@@ -68,7 +128,7 @@ export default function OrganizationsPage() {
               <Link href={`/dashboard/organizations/${o.id}/edit`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem 
@@ -77,11 +137,19 @@ export default function OrganizationsPage() {
                 onClick={() => setDeleteId(o.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )} />
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} itemName="organization" /></>
+        )} 
+      />
+      <DeleteDialog 
+        open={!!deleteId} 
+        onOpenChange={() => setDeleteId(null)} 
+        onConfirm={handleDelete} 
+        loading={deleting} 
+        itemName={language === "en" ? "organization" : "organisasi"} 
+      />
+    </>
   );
 }

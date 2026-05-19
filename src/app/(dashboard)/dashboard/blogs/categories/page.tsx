@@ -26,8 +26,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BlogService } from "@/src/services/blog.service";
 import type { BlogCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 export default function BlogCategoriesPage() {
+  const { t, language } = useLanguage();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -47,7 +49,7 @@ export default function BlogCategoriesPage() {
     setLoading(true);
     BlogService.getCategories()
       .then(setCategories)
-      .catch(() => toast.error("Failed to load categories"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -71,7 +73,7 @@ export default function BlogCategoriesPage() {
 
   const handleModalSubmit = async () => {
     if (!formData.name_id.trim() || !formData.name_en.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error(language === "en" ? "Please fill in all fields" : "Mohon isi semua field");
       return;
     }
     
@@ -79,15 +81,15 @@ export default function BlogCategoriesPage() {
     try {
       if (editingCategory) {
         await BlogService.updateCategory(editingCategory.id, formData);
-        toast.success("Category updated");
+        toast.success(t("blogs.saved_success"));
       } else {
         await BlogService.createCategory(formData);
-        toast.success("Category created");
+        toast.success(t("blogs.saved_success"));
       }
       setIsModalOpen(false);
       fetchCategories();
     } catch {
-      toast.error(editingCategory ? "Failed to update category" : "Failed to create category");
+      toast.error(t("blogs.saved_failed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,10 +100,10 @@ export default function BlogCategoriesPage() {
     setDeleting(true);
     try {
       await BlogService.deleteCategory(deleteId);
-      toast.success("Category deleted");
+      toast.success(t("blogs.deleted_success"));
       fetchCategories();
     } catch {
-      toast.error("Failed to delete category");
+      toast.error(t("blogs.deleted_failed"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -111,20 +113,20 @@ export default function BlogCategoriesPage() {
   const columns: Column<BlogCategory>[] = [
     {
       key: "name_en",
-      header: "Name (EN)",
+      header: language === "en" ? "Name (EN)" : "Nama (EN)",
       className: "font-medium",
     },
     {
       key: "name_id",
-      header: "Name (ID)",
+      header: language === "en" ? "Name (ID)" : "Nama (ID)",
       render: (cat) => <Badge variant="secondary">{cat.name_id}</Badge>,
     },
     {
       key: "is_active",
-      header: "Status",
+      header: t("common.status"),
       render: (cat) => (
         <Badge variant={cat.is_active ? "default" : "secondary"}>
-          {cat.is_active ? "Active" : "Inactive"}
+          {cat.is_active ? (language === "en" ? "Active" : "Aktif") : (language === "en" ? "Inactive" : "Nonaktif")}
         </Badge>
       ),
     },
@@ -133,17 +135,17 @@ export default function BlogCategoriesPage() {
   return (
     <>
       <PageHeader
-        title="Blog Categories"
+        title={t("blogs.categories")}
         icon={FileText}
-        description="Manage blog post category classifications."
+        description={language === "en" ? "Manage blog post category classifications." : "Kelola klasifikasi kategori artikel blog."}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Blogs" },
-          { label: "Categories" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("blogs.title"), href: "/dashboard/blogs/list" },
+          { label: t("projects.categories") },
         ]}
         actions={
-          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-            <Plus className="h-4 w-4" /> Add Category
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Plus className="h-4 w-4" /> {t("blogs.add_category")}
           </Button>
         }
       />
@@ -151,16 +153,16 @@ export default function BlogCategoriesPage() {
       <DataTable
         data={categories}
         columns={columns}
-        searchPlaceholder="Search categories..."
+        searchPlaceholder={language === "en" ? "Search categories..." : "Cari kategori..."}
         loading={loading}
-        emptyMessage={loading ? "Loading categories..." : "No categories found."}
+        emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {
             key: "is_active",
-            label: "Status",
+            label: t("common.status"),
             options: [
-              { label: "Active", value: true },
-              { label: "Inactive", value: false },
+              { label: language === "en" ? "Active" : "Aktif", value: true },
+              { label: language === "en" ? "Inactive" : "Nonaktif", value: false },
             ],
           },
         ]}
@@ -175,7 +177,7 @@ export default function BlogCategoriesPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" onClick={() => openEditModal(cat)}>
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {t("common.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem 
                 variant="destructive"
@@ -183,7 +185,7 @@ export default function BlogCategoriesPage() {
                 onClick={() => setDeleteId(cat.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -193,11 +195,11 @@ export default function BlogCategoriesPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
+            <DialogTitle>{editingCategory ? t("blogs.edit_category") : t("blogs.add_category")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label>Name (EN)</Label>
+              <Label>{language === "en" ? "Name (EN)" : "Nama (EN)"}</Label>
               <Input
                 placeholder="e.g., Programming"
                 value={formData.name_en}
@@ -205,7 +207,7 @@ export default function BlogCategoriesPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label>Name (ID)</Label>
+              <Label>{language === "en" ? "Name (ID)" : "Nama (ID)"}</Label>
               <Input
                 placeholder="e.g., Pemrograman"
                 value={formData.name_id}
@@ -217,22 +219,22 @@ export default function BlogCategoriesPage() {
                 checked={formData.is_active}
                 onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
               />
-              <Label>Active</Label>
+              <Label>{language === "en" ? "Active" : "Aktif"}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5">
-              <X className="h-4 w-4" /> Cancel
+            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5 cursor-pointer">
+              <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
             <Button onClick={handleModalSubmit}
               disabled={isSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
               {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> {editingCategory ? "Saving..." : "Creating..."}</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingCategory ? (
-                <><Save className="h-4 w-4" /> Save Changes</>
+                <><Save className="h-4 w-4" /> {t("common.save")}</>
               ) : (
-                <><Plus className="h-4 w-4" /> Create Category</>
+                <><Plus className="h-4 w-4" /> {t("blogs.add_category")}</>
               )}
             </Button>
           </DialogFooter>
@@ -244,7 +246,7 @@ export default function BlogCategoriesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        itemName="category"
+        itemName={language === "en" ? "category" : "kategori"}
       />
     </>
   );

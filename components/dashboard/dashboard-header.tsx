@@ -15,6 +15,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, User, PanelLeft, PanelLeftClose } from "lucide-react";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
+import { LanguageToggle } from "@/components/dashboard/language-toggle";
+import { useLanguage } from "@/context/language-context";
 import { AuthService } from "@/src/services/auth.service";
 import type { Profile } from "@/src/types/database";
 import { cn } from "@/src/app/lib/utils";
@@ -33,7 +35,7 @@ interface DashboardHeaderProps {
 
 /**
  * Dashboard header with glassmorphism background.
- * Contains: mobile menu toggle, theme toggle, and user profile dropdown.
+ * Contains: mobile menu toggle, language toggle, theme toggle, and user profile dropdown.
  */
 export function DashboardHeader({
   sidebarCollapsed,
@@ -41,6 +43,7 @@ export function DashboardHeader({
   onMobileMenuToggle,
 }: DashboardHeaderProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -119,7 +122,7 @@ export function DashboardHeader({
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p>{sidebarCollapsed ? "Expand" : "Collapse"}</p>
+                <p>{sidebarCollapsed ? t("header.expand") : t("header.collapse")}</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -127,6 +130,7 @@ export function DashboardHeader({
 
         {/* Right side */}
         <div className="flex items-center gap-3">
+          <LanguageToggle />
           <ThemeToggle />
 
           {/* Profile dropdown */}
@@ -189,7 +193,7 @@ export function DashboardHeader({
                   className="cursor-pointer"
                 >
                   <User className="mr-2 h-4 w-4" />
-                  My Profile
+                  {t("header.my_profile")}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   variant="destructive"
@@ -197,12 +201,12 @@ export function DashboardHeader({
                   className="cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  {t("header.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <TooltipContent side="bottom">
-              <p>Profile</p>
+              <p>{t("header.profile")}</p>
             </TooltipContent>
           </Tooltip>
         </div>

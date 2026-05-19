@@ -17,8 +17,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/context/language-context";
 
 export default function AchievementsListPage() {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export default function AchievementsListPage() {
     setLoading(true);
     AchievementService.getAll()
       .then(setItems)
-      .catch(() => toast.error("Failed to load achievements"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -41,10 +43,10 @@ export default function AchievementsListPage() {
     setDeleting(true);
     try {
       await AchievementService.delete(deleteId);
-      toast.success("Achievement deleted successfully");
+      toast.success(t("achievements.deleted_success"));
       fetchData();
     } catch {
-      toast.error("Failed to delete achievement");
+      toast.error(t("achievements.deleted_failed"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -53,34 +55,39 @@ export default function AchievementsListPage() {
 
   const columns: Column<Achievement>[] = [
     { 
-      key: "title_en", 
-      header: "Title",
-      className: "font-medium"
+      key: language === "en" ? "title_en" : "title_id", 
+      header: language === "en" ? "Title" : "Judul",
+      className: "font-medium",
+      render: (a) => (
+        <span>
+          {language === "en" ? a.title_en : a.title_id}
+        </span>
+      )
     },
     { 
       key: "publisher", 
-      header: "Publisher" 
+      header: t("achievements.publisher") 
     },
     { 
       key: "type_id", 
-      header: "Type", 
-      render: (a) => <Badge variant="secondary">{a.type?.name_en || "-"}</Badge> 
+      header: t("projects.type"), 
+      render: (a) => <Badge variant="secondary">{a.type?.[language === "en" ? "name_en" : "name_id"] || "-"}</Badge> 
     },
     { 
       key: "issue_date", 
-      header: "Date", 
+      header: language === "en" ? "Date" : "Tanggal", 
       render: (a) => (
         <span className="text-sm">
-          {a.issue_date ? new Date(a.issue_date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
+          {a.issue_date ? new Date(a.issue_date).toLocaleDateString(language === "en" ? "en-GB" : "id-ID", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
         </span>
       ) 
     },
     { 
       key: "is_published", 
-      header: "Status", 
+      header: t("common.status"), 
       render: (a) => (
         <Badge variant={a.is_published ? "default" : "secondary"}>
-          {a.is_published ? "Published" : "Draft"}
+          {a.is_published ? t("common.published") : t("common.draft")}
         </Badge>
       ) 
     },
@@ -89,18 +96,18 @@ export default function AchievementsListPage() {
   return (
     <>
       <PageHeader 
-        title="Achievements" 
+        title={t("achievements.title")} 
         icon={Trophy}
-        description="Manage certifications and awards." 
+        description={t("achievements.description")} 
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Achievements" }, 
-          { label: "List" }
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("achievements.title") }, 
+          { label: t("sidebar.List") }
         ]}
         actions={
           <Link href="/dashboard/achievements/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-              <Plus className="h-4 w-4" /> Add Achievement
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+              <Plus className="h-4 w-4" /> {t("achievements.add_achievement")}
             </Button>
           </Link>
         } 
@@ -110,25 +117,26 @@ export default function AchievementsListPage() {
         data={items} 
         columns={columns} 
         loading={loading}
-        searchPlaceholder="Search achievements..."
+        searchPlaceholder={t("achievements.search_placeholder")}
+        emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {
             key: "is_published",
-            label: "Status",
+            label: t("common.status"),
             options: [
-              { label: "Published", value: true },
-              { label: "Draft", value: false },
+              { label: t("common.published"), value: true },
+              { label: t("common.draft"), value: false },
             ],
           },
           {
             key: "type_id",
-            label: "Type",
-            getLabel: (item) => item.type?.name_en || "-",
+            label: t("projects.type"),
+            getLabel: (item) => item.type?.[language === "en" ? "name_en" : "name_id"] || "-",
           },
           {
             key: "category_id",
-            label: "Category",
-            getLabel: (item) => item.category?.name_en || "-",
+            label: t("projects.category"),
+            getLabel: (item) => item.category?.[language === "en" ? "name_en" : "name_id"] || "-",
           },
         ]}
         actions={(a) => (
@@ -143,7 +151,7 @@ export default function AchievementsListPage() {
               <Link href={`/dashboard/achievements/${a.id}/edit`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem 
@@ -152,7 +160,7 @@ export default function AchievementsListPage() {
                 onClick={() => setDeleteId(a.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -164,7 +172,7 @@ export default function AchievementsListPage() {
         onOpenChange={() => setDeleteId(null)} 
         onConfirm={handleDelete} 
         loading={deleting} 
-        itemName="achievement"
+        itemName={language === "en" ? "achievement" : "pencapaian"}
       />
     </>
   );

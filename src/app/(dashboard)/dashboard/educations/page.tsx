@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EducationService } from "@/src/services/education.service";
 import type { Education } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,53 +20,100 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function EducationsPage() {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<Education[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+
   const fetchData = () => {
     setLoading(true);
     EducationService.getAll()
       .then(setItems)
-      .catch(() => toast.error("Failed to load"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
+
   useEffect(() => { fetchData(); }, []);
-  const handleDelete = async () => { if (!deleteId) return; setDeleting(true); try { await EducationService.delete(deleteId); toast.success("Deleted"); fetchData(); } catch { toast.error("Failed"); } finally { setDeleting(false); setDeleteId(null); } };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      await EducationService.delete(deleteId);
+      toast.success(t("common.success"));
+      fetchData();
+    } catch {
+      toast.error(t("common.failed"));
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
+  };
 
   const columns: Column<Education>[] = [
-    { key: "school", header: "School", className: "font-medium" },
-    { key: "level_major_en", header: "Level / Major" },
-    { key: "gpa", header: "GPA", render: (e) => <span>{e.gpa ? `${Number(e.gpa).toFixed(2)}/${e.max_gpa ? Number(e.max_gpa).toFixed(2) : '4.00'}` : "-"}</span> },
+    { key: "school", header: t("educations.school"), className: "font-medium" },
+    { 
+      key: `level_major_${language}`, 
+      header: t("educations.level_major"),
+      render: (e) => <span>{(e[`level_major_${language}` as keyof Education] as string) || "-"}</span>
+    },
+    { key: "gpa", header: t("educations.gpa"), render: (e) => <span>{e.gpa ? `${Number(e.gpa).toFixed(2)}/${e.max_gpa ? Number(e.max_gpa).toFixed(2) : "4.00"}` : "-"}</span> },
     { 
       key: "start_date", 
-      header: "Period", 
+      header: t("educations.period"), 
       render: (e) => {
         const formatDate = (dateStr: string) => 
-          new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+          new Date(dateStr).toLocaleDateString(language === "en" ? "en-GB" : "id-ID", { day: "2-digit", month: "short", year: "numeric" });
           
         const isPresent = !e.end_date || new Date(e.end_date) > new Date();
         const start = formatDate(e.start_date);
-        const end = isPresent ? "Present" : formatDate(e.end_date as string);
+        const end = isPresent ? t("educations.present") : formatDate(e.end_date as string);
         
         return <span className="text-sm">{start} - {end}</span>;
       } 
     },
-    { key: "is_published", header: "Status", render: (e) => <Badge variant={e.is_published ? "default" : "secondary"}>{e.is_published ? "Published" : "Draft"}</Badge> },
+    { 
+      key: "is_published", 
+      header: t("educations.status"), 
+      render: (e) => (
+        <Badge variant={e.is_published ? "default" : "secondary"}>
+          {e.is_published ? t("common.published") : t("common.draft")}
+        </Badge>
+      ) 
+    },
   ];
 
   return (
     <>
-      <PageHeader title="Educations" icon={GraduationCap} description="Manage education records." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Educations" }]}
-        actions={<Link href="/dashboard/educations/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Education</Button></Link>} />
-      <DataTable data={items} columns={columns} loading={loading} searchPlaceholder="Search educations..."
+      <PageHeader 
+        title={t("educations.title")} 
+        icon={GraduationCap} 
+        description={t("educations.description")} 
+        breadcrumbs={[
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("educations.title") }
+        ]}
+        actions={
+          <Link href="/dashboard/educations/add">
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+              <Plus className="h-4 w-4" /> {t("educations.add_education")}
+            </Button>
+          </Link>
+        } 
+      />
+      <DataTable 
+        data={items} 
+        columns={columns} 
+        loading={loading} 
+        searchPlaceholder={t("educations.search_placeholder")}
         filters={[
           {
             key: "is_published",
-            label: "Status",
+            label: t("educations.status"),
             options: [
-              { label: "Published", value: true },
-              { label: "Draft", value: false },
+              { label: t("common.published"), value: true },
+              { label: t("common.draft"), value: false },
             ],
           },
         ]}
@@ -81,7 +129,7 @@ export default function EducationsPage() {
               <Link href={`/dashboard/educations/${e.id}/edit`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem 
@@ -90,12 +138,19 @@ export default function EducationsPage() {
                 onClick={() => setDeleteId(e.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )} />
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} itemName="education" />
+        )} 
+      />
+      <DeleteDialog 
+        open={!!deleteId} 
+        onOpenChange={() => setDeleteId(null)} 
+        onConfirm={handleDelete} 
+        loading={deleting} 
+        itemName={language === "en" ? "education" : "pendidikan"} 
+      />
     </>
   );
 }

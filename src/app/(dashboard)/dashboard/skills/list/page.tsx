@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SkillService } from "@/src/services/skill.service";
 import type { Skill } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function SkillsListPage() {
+  const { t, language } = useLanguage();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export default function SkillsListPage() {
     setLoading(true);
     SkillService.getAll()
       .then(setSkills)
-      .catch(() => toast.error("Failed to load skills"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -40,16 +42,20 @@ export default function SkillsListPage() {
     setDeleting(true);
     try {
       await SkillService.delete(deleteId);
-      toast.success("Skill deleted");
+      toast.success(t("skills.deleted_success"));
       fetchSkills();
-    } catch { toast.error("Failed to delete"); }
-    finally { setDeleting(false); setDeleteId(null); }
+    } catch {
+      toast.error(t("skills.deleted_failed"));
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
   };
 
   const columns: Column<Skill>[] = [
     {
       key: "icon_url",
-      header: "Icon",
+      header: t("skills.icon"),
       searchable: false,
       className: "w-[60px]",
       render: (skill) =>
@@ -66,20 +72,22 @@ export default function SkillsListPage() {
           <div className="h-7 w-7 rounded bg-neutral-100 dark:bg-white/10" />
         ),
     },
-    { key: "name", header: "Name" },
+    { key: "name", header: t("skills.name") },
     {
       key: "category_id",
-      header: "Category",
+      header: t("skills.category"),
       render: (skill) => (
-        <Badge variant="secondary">{skill.category?.name_en || "-"}</Badge>
+        <Badge variant="secondary">
+          {(skill.category?.[`name_${language}` as keyof typeof skill.category] as string) || "-"}
+        </Badge>
       ),
     },
     {
       key: "is_active",
-      header: "Status",
+      header: t("skills.status"),
       render: (skill) => (
         <Badge variant={skill.is_active ? "default" : "secondary"}>
-          {skill.is_active ? "Active" : "Inactive"}
+          {skill.is_active ? t("skills.active") : t("skills.inactive")}
         </Badge>
       ),
     },
@@ -88,18 +96,18 @@ export default function SkillsListPage() {
   return (
     <>
       <PageHeader
-        title="Skills"
+        title={t("skills.title")}
         icon={Code2}
-        description="Manage your technical skills."
+        description={t("skills.description")}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Skills" },
-          { label: "List" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("skills.title") },
+          { label: t("sidebar.List") },
         ]}
         actions={
           <Link href="/dashboard/skills/add">
             <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-              <Plus className="h-4 w-4" /> Add Skill
+              <Plus className="h-4 w-4" /> {t("skills.add_skill")}
             </Button>
           </Link>
         }
@@ -109,20 +117,20 @@ export default function SkillsListPage() {
         data={skills}
         columns={columns}
         loading={loading}
-        searchPlaceholder="Search skills..."
+        searchPlaceholder={t("skills.search_placeholder")}
         filters={[
           {
             key: "is_active",
-            label: "Status",
+            label: t("skills.status"),
             options: [
-              { label: "Active", value: true },
-              { label: "Inactive", value: false },
+              { label: t("skills.active"), value: true },
+              { label: t("skills.inactive"), value: false },
             ],
           },
           {
             key: "category_id",
-            label: "Category",
-            getLabel: (item) => item.category?.name_en || "-",
+            label: t("skills.category"),
+            getLabel: (item) => (item.category?.[`name_${language}` as keyof typeof item.category] as string) || "-",
           },
         ]}
         actions={(skill) => (
@@ -137,7 +145,7 @@ export default function SkillsListPage() {
               <Link href={`/dashboard/skills/${skill.id}/edit`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem 
@@ -146,14 +154,20 @@ export default function SkillsListPage() {
                 onClick={() => setDeleteId(skill.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
       />
 
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} itemName="skill" />
+      <DeleteDialog 
+        open={!!deleteId} 
+        onOpenChange={() => setDeleteId(null)} 
+        onConfirm={handleDelete} 
+        loading={deleting} 
+        itemName={t("skills.title").toLowerCase()} 
+      />
     </>
   );
 }

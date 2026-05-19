@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ContactService } from "@/src/services/contact.service";
 import type { Contact } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 const schema = z.object({
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
@@ -28,6 +29,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function ContactPage() {
+  const { t, language } = useLanguage();
   const [contact, setContact] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -66,23 +68,23 @@ export default function ContactPage() {
           reset(initialData);
         }
       })
-      .catch(() => toast.error("Failed to load contact information"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
-  }, [reset]);
+  }, [reset, t]);
 
   const onSubmit = async (data: FormData) => {
     try {
       if (contact) {
         await ContactService.update(contact.id, data);
-        toast.success("Contact information updated successfully");
+        toast.success(t("contact.saved_success"));
       } else {
         const newContact = await ContactService.create(data);
         setContact(newContact);
-        toast.success("Contact information created successfully");
+        toast.success(t("contact.saved_success"));
       }
       reset(data); 
     } catch (e: unknown) {
-      toast.error("Failed to update contact information", { 
+      toast.error(t("contact.saved_failed"), { 
         description: e instanceof Error ? e.message : "An unexpected error occurred" 
       });
     }
@@ -90,20 +92,20 @@ export default function ContactPage() {
 
   const onInvalid = (errors: any) => {
     console.error("Form Errors:", errors);
-    toast.error("Validation Error", {
-      description: "Please check your inputs, especially the email format."
+    toast.error(language === "en" ? "Validation Error" : "Kesalahan Validasi", {
+      description: language === "en" ? "Please check your inputs, especially the email format." : "Silakan periksa input Anda, terutama format email."
     });
   };
 
   return (
     <>
       <PageHeader 
-        title="Contact" 
+        title={t("contact.title")} 
         icon={Mail}
-        description="Edit your contact information and social links."
+        description={language === "en" ? "Edit your contact information and social links." : "Ubah informasi kontak dan tautan sosial Anda."}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Contact" }
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("contact.title") }
         ]} 
       />
       
@@ -141,13 +143,13 @@ export default function ContactPage() {
 
               {/* Location */}
               <div className="space-y-2">
-                <Label>Location</Label>
+                <Label>{language === "en" ? "Location" : "Lokasi"}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
                   <Input 
                     {...register("location")} 
-                    placeholder="e.g., Jakarta, Indonesia" 
+                    placeholder={language === "en" ? "e.g., Jakarta, Indonesia" : "misal: Jakarta, Indonesia"} 
                   />
                 )}
               </div>
@@ -209,11 +211,11 @@ export default function ContactPage() {
                 ) : (
                   <Button type="submit" 
                     disabled={isSubmitting || !isDirty} 
-                    className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                    className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                     {isSubmitting ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                      <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                     ) : (
-                      <><Save className="h-4 w-4" /> Save Changes</>
+                      <><Save className="h-4 w-4" /> {t("common.save")}</>
                     )}
                   </Button>
                 )}

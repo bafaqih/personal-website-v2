@@ -26,6 +26,7 @@ import { AchievementService } from "@/src/services/achievement.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { AchievementType, AchievementCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 const schema = z.object({
   title_id: z.string().min(1, "Title (ID) is required"),
@@ -41,6 +42,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function AchievementEditPage() {
+  const { t, language } = useLanguage();
   const router = useRouter();
   const { id } = useParams() as { id: string };
   const [types, setTypes] = useState<AchievementType[]>([]);
@@ -81,11 +83,11 @@ export default function AchievementEditPage() {
         is_published: achievement.is_published
       });
     }).catch(() => {
-      toast.error("Failed to load achievement data");
+      toast.error(t("common.failed"));
     }).finally(() => {
       setLoading(false);
     });
-  }, [id, reset]);
+  }, [id, reset, t]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -101,10 +103,10 @@ export default function AchievementEditPage() {
         credential_url: data.credential_url || null
       });
       
-      toast.success("Achievement updated successfully");
+      toast.success(t("achievements.saved_success"));
       router.push("/dashboard/achievements/list");
     } catch (e: unknown) {
-      toast.error("Failed to update achievement", { 
+      toast.error(t("achievements.saved_failed"), { 
         description: e instanceof Error ? e.message : "An unexpected error occurred" 
       });
     }
@@ -113,12 +115,12 @@ export default function AchievementEditPage() {
   return (
     <>
       <PageHeader 
-        title="Edit Achievement" 
+        title={t("achievements.edit_achievement")} 
         icon={Trophy}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" }, 
-          { label: "Achievements", href: "/dashboard/achievements/list" }, 
-          { label: "Edit" }
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("achievements.title"), href: "/dashboard/achievements/list" }, 
+          { label: t("common.edit") }
         ]} 
       />
       
@@ -128,7 +130,7 @@ export default function AchievementEditPage() {
             <CardContent className="p-6 space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Title (ID)</Label>
+                  <Label>{language === "en" ? "Title (ID)" : "Judul (ID)"}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -140,7 +142,7 @@ export default function AchievementEditPage() {
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Title (EN)</Label>
+                  <Label>{language === "en" ? "Title (EN)" : "Judul (EN)"}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -155,7 +157,7 @@ export default function AchievementEditPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Publisher</Label>
+                  <Label>{t("achievements.publisher")}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -167,7 +169,7 @@ export default function AchievementEditPage() {
                   {errors.publisher && <p className="text-xs text-red-500">{errors.publisher.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Issue Date</Label>
+                  <Label>{t("achievements.issue_date")}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -183,7 +185,7 @@ export default function AchievementEditPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Type</Label>
+                  <Label>{t("projects.type")}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -192,11 +194,11 @@ export default function AchievementEditPage() {
                       value={watch("type_id")}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder={language === "en" ? "Select type" : "Pilih tipe"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {types.map((t) => (
-                          <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>
+                        {types.map((tItem) => (
+                          <SelectItem key={tItem.id} value={tItem.id}>{tItem[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -204,7 +206,7 @@ export default function AchievementEditPage() {
                   {errors.type_id && <p className="text-xs text-red-500">{errors.type_id.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label>{t("projects.category")}</Label>
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
@@ -213,11 +215,11 @@ export default function AchievementEditPage() {
                       value={watch("category_id")}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder={language === "en" ? "Select category" : "Pilih kategori"} />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>
+                          <SelectItem key={c.id} value={c.id}>{c[language === "en" ? "name_en" : "name_id"]}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -227,7 +229,7 @@ export default function AchievementEditPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Credential URL</Label>
+                <Label>{t("achievements.credential_url")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -239,7 +241,7 @@ export default function AchievementEditPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Certificate Image</Label>
+                <Label>{t("achievements.image")}</Label>
                 {loading ? (
                   <Skeleton className="h-[120px] w-full rounded-xl" />
                 ) : (
@@ -248,9 +250,6 @@ export default function AchievementEditPage() {
                     value={currentImageUrl || undefined}
                     onChange={(f) => {
                       setImageFile(f);
-                      if (!f && !currentImageUrl) {
-                        // Handled by ImageUpload component internal state usually
-                      }
                     }} 
                   />
                 )}
@@ -265,7 +264,7 @@ export default function AchievementEditPage() {
                     onCheckedChange={(v) => setValue("is_published", v, { shouldDirty: true })} 
                   />
                 )}
-                <Label>Published</Label>
+                <Label>{t("common.status")}</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
@@ -278,16 +277,16 @@ export default function AchievementEditPage() {
                   <>
                     <Button type="button" 
                       variant="outline" 
-                      onClick={() => router.back()} className="gap-1.5">
-                      <X className="h-4 w-4" /> Cancel
+                      onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+                      <X className="h-4 w-4" /> {t("common.cancel")}
                     </Button>
                     <Button type="submit" 
                       disabled={isSubmitting || !isValid || (!isDirty && !imageFile)} 
-                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                       {isSubmitting ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                        <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                       ) : (
-                        <><Save className="h-4 w-4" /> Save Changes</>
+                        <><Save className="h-4 w-4" /> {t("common.save")}</>
                       )}
                     </Button>
                   </>

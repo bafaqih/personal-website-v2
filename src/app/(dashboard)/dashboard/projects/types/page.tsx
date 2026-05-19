@@ -26,8 +26,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ProjectService } from "@/src/services/project.service";
 import type { ProjectType } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 export default function ProjectTypesPage() {
+  const { t, language } = useLanguage();
   const [types, setTypes] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -47,7 +49,7 @@ export default function ProjectTypesPage() {
     setLoading(true);
     ProjectService.getTypes()
       .then(setTypes)
-      .catch(() => toast.error("Failed to load types"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -71,7 +73,7 @@ export default function ProjectTypesPage() {
 
   const handleModalSubmit = async () => {
     if (!formData.name_id.trim() || !formData.name_en.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error(t("skills.fill_all_fields"));
       return;
     }
     
@@ -79,15 +81,15 @@ export default function ProjectTypesPage() {
     try {
       if (editingType) {
         await ProjectService.updateType(editingType.id, formData);
-        toast.success("Type updated");
+        toast.success(t("projects.type_saved"));
       } else {
         await ProjectService.createType(formData);
-        toast.success("Type created");
+        toast.success(t("projects.type_saved"));
       }
       setIsModalOpen(false);
       fetchTypes();
     } catch {
-      toast.error(editingType ? "Failed to update type" : "Failed to create type");
+      toast.error(t("common.failed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,10 +100,10 @@ export default function ProjectTypesPage() {
     setDeleting(true);
     try {
       await ProjectService.deleteType(deleteId);
-      toast.success("Type deleted");
+      toast.success(t("projects.type_deleted"));
       fetchTypes();
     } catch {
-      toast.error("Failed to delete type");
+      toast.error(t("common.failed"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -111,20 +113,20 @@ export default function ProjectTypesPage() {
   const columns: Column<ProjectType>[] = [
     {
       key: "name_en",
-      header: "Name (EN)",
+      header: t("skills.name_en"),
       className: "font-medium",
     },
     {
       key: "name_id",
-      header: "Name (ID)",
+      header: t("skills.name_id"),
       render: (type) => <Badge variant="secondary">{type.name_id}</Badge>,
     },
     {
       key: "is_active",
-      header: "Status",
+      header: t("projects.status"),
       render: (type) => (
         <Badge variant={type.is_active ? "default" : "secondary"}>
-          {type.is_active ? "Active" : "Inactive"}
+          {type.is_active ? t("skills.active") : t("skills.inactive")}
         </Badge>
       ),
     },
@@ -133,17 +135,17 @@ export default function ProjectTypesPage() {
   return (
     <>
       <PageHeader
-        title="Project Types"
+        title={t("projects.types")}
         icon={FolderTree}
-        description="Manage project type classifications."
+        description={t("projects.type_description")}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Projects" },
-          { label: "Types" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("projects.title"), href: "/dashboard/projects" },
+          { label: t("projects.types") },
         ]}
         actions={
-          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-            <Plus className="h-4 w-4" /> Add Type
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Plus className="h-4 w-4" /> {t("projects.add_type")}
           </Button>
         }
       />
@@ -152,15 +154,15 @@ export default function ProjectTypesPage() {
         data={types}
         columns={columns}
         loading={loading}
-        searchPlaceholder="Search types..."
-        emptyMessage={loading ? "Loading types..." : "No types found."}
+        searchPlaceholder={t("projects.search_types")}
+        emptyMessage={loading ? (language === "en" ? "Loading types..." : "Memuat tipe...") : (language === "en" ? "No types found." : "Tipe tidak ditemukan.")}
         filters={[
           {
             key: "is_active",
-            label: "Status",
+            label: t("projects.status"),
             options: [
-              { label: "Active", value: true },
-              { label: "Inactive", value: false },
+              { label: t("skills.active"), value: true },
+              { label: t("skills.inactive"), value: false },
             ],
           },
         ]}
@@ -175,7 +177,7 @@ export default function ProjectTypesPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" onClick={() => openEditModal(type)}>
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {t("common.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem 
                 variant="destructive"
@@ -183,7 +185,7 @@ export default function ProjectTypesPage() {
                 onClick={() => setDeleteId(type.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -193,11 +195,11 @@ export default function ProjectTypesPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingType ? "Edit Type" : "Add Type"}</DialogTitle>
+            <DialogTitle>{editingType ? t("projects.edit_type") : t("projects.add_type")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label>Name (EN)</Label>
+              <Label>{t("skills.name_en")}</Label>
               <Input
                 placeholder="e.g., Client Work"
                 value={formData.name_en}
@@ -205,7 +207,7 @@ export default function ProjectTypesPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label>Name (ID)</Label>
+              <Label>{t("skills.name_id")}</Label>
               <Input
                 placeholder="e.g., Proyek Klien"
                 value={formData.name_id}
@@ -217,22 +219,22 @@ export default function ProjectTypesPage() {
                 checked={formData.is_active}
                 onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
               />
-              <Label>Active</Label>
+              <Label>{t("skills.active")}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5">
-              <X className="h-4 w-4" /> Cancel
+            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5 cursor-pointer">
+              <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
             <Button onClick={handleModalSubmit}
               disabled={isSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
               {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> {editingType ? "Saving..." : "Creating..."}</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingType ? (
-                <><Save className="h-4 w-4" /> Save Changes</>
+                <><Save className="h-4 w-4" /> {t("common.save")}</>
               ) : (
-                <><Plus className="h-4 w-4" /> Create Type</>
+                <><Plus className="h-4 w-4" /> {t("projects.add_type")}</>
               )}
             </Button>
           </DialogFooter>
@@ -244,7 +246,7 @@ export default function ProjectTypesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        itemName="type"
+        itemName={language === "en" ? "type" : "tipe"}
       />
     </>
   );

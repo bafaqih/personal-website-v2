@@ -10,7 +10,8 @@ import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProjectService } from "@/src/services/project.service";
-import type { Project } from "@/src/types/database";
+import type { Project, ProjectType, ProjectCategory } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function ProjectsListPage() {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export default function ProjectsListPage() {
     setLoading(true);
     ProjectService.getAll()
       .then(setItems)
-      .catch(() => toast.error("Failed to load projects"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -41,10 +43,10 @@ export default function ProjectsListPage() {
     setDeleting(true);
     try {
       await ProjectService.delete(deleteId);
-      toast.success("Project deleted successfully");
+      toast.success(t("projects.deleted_success"));
       fetchData();
     } catch {
-      toast.error("Failed to delete project");
+      toast.error(t("projects.deleted_failed"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -53,38 +55,39 @@ export default function ProjectsListPage() {
 
   const columns: Column<Project>[] = [
     { 
-      key: "title_en", 
-      header: "Title" 
+      key: `title_${language}`, 
+      header: t("projects.form_title"),
+      render: (p) => <span>{(p[`title_${language}` as keyof Project] as string) || "-"}</span>
     },
     {
       key: "project_date",
-      header: "Date",
+      header: t("projects.form_date"),
       render: (p) => (
         <span className="text-sm">
-          {p.project_date ? new Date(p.project_date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
+          {p.project_date ? new Date(p.project_date).toLocaleDateString(language === "en" ? "en-GB" : "id-ID", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
         </span>
       )
     },
     {
       key: "type_id",
-      header: "Type",
+      header: t("projects.type"),
       render: (p) => (
-        <Badge variant="secondary">{p.type?.name_en || "-"}</Badge>
+        <Badge variant="secondary">{(p.type?.[`name_${language}` as keyof ProjectType] as string) || "-"}</Badge>
       )
     },
     {
       key: "category_id",
-      header: "Category",
+      header: t("projects.category"),
       render: (p) => (
-        <Badge variant="secondary">{p.category?.name_en || "-"}</Badge>
+        <Badge variant="secondary">{(p.category?.[`name_${language}` as keyof ProjectCategory] as string) || "-"}</Badge>
       )
     },
     {
       key: "is_published",
-      header: "Status",
+      header: t("projects.status"),
       render: (p) => (
         <Badge variant={p.is_published ? "default" : "secondary"}>
-          {p.is_published ? "Published" : "Draft"}
+          {p.is_published ? t("common.published") : t("common.draft")}
         </Badge>
       )
     },
@@ -93,18 +96,18 @@ export default function ProjectsListPage() {
   return (
     <>
       <PageHeader
-        title="Projects"
+        title={t("projects.title")}
         icon={FolderKanban}
-        description="Manage your portfolio and showcase your work."
+        description={t("projects.description")}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Projects" },
-          { label: "List" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("projects.title") },
+          { label: t("common.all") },
         ]}
         actions={
           <Link href="/dashboard/projects/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-              <Plus className="h-4 w-4" /> Add Project
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+              <Plus className="h-4 w-4" /> {t("projects.add_project")}
             </Button>
           </Link>
         }
@@ -114,25 +117,25 @@ export default function ProjectsListPage() {
         data={items}
         columns={columns}
         loading={loading}
-        searchPlaceholder="Search projects..."
+        searchPlaceholder={t("projects.search_placeholder")}
         filters={[
           {
             key: "is_published",
-            label: "Status",
+            label: t("projects.status"),
             options: [
-              { label: "Published", value: true },
-              { label: "Draft", value: false },
+              { label: t("common.published"), value: true },
+              { label: t("common.draft"), value: false },
             ],
           },
           {
             key: "type_id",
-            label: "Type",
-            getLabel: (item) => item.type?.name_en || "-",
+            label: t("projects.type"),
+            getLabel: (item) => (item.type?.[`name_${language}` as keyof ProjectType] as string) || "-",
           },
           {
             key: "category_id",
-            label: "Category",
-            getLabel: (item) => item.category?.name_en || "-",
+            label: t("projects.category"),
+            getLabel: (item) => (item.category?.[`name_${language}` as keyof ProjectCategory] as string) || "-",
           },
         ]}
         actions={(p) => (
@@ -147,7 +150,7 @@ export default function ProjectsListPage() {
               <Link href={`/dashboard/projects/${p.id}/edit`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem 
@@ -156,7 +159,7 @@ export default function ProjectsListPage() {
                 onClick={() => setDeleteId(p.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -168,7 +171,7 @@ export default function ProjectsListPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        itemName="project"
+        itemName={language === "en" ? "project" : "proyek"}
       />
     </>
   );

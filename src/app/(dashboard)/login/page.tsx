@@ -16,18 +16,11 @@ import { AuthService } from "@/src/services/auth.service";
 import { toast } from "sonner";
 import { cn } from "@/src/app/lib/utils";
 import Link from "next/link";
+import { useLanguage } from "@/context/language-context";
+import { motion } from "framer-motion";
 
 import logoBlack from "@/src/assets/images/fadilbaf-black.svg";
 import logoWhite from "@/src/assets/images/fadilbaf-white.svg";
-
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
-
-import { motion } from "framer-motion";
 
 /**
  * Admin login page — clean centered card with glassmorphism.
@@ -36,10 +29,18 @@ import { motion } from "framer-motion";
 export default function LoginPage() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { t, language } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  const loginSchema = z.object({
+    email: z.string().email(language === "en" ? "Invalid email address" : "Format email tidak valid"),
+    password: z.string().min(6, language === "en" ? "Password must be at least 6 characters" : "Kata sandi minimal harus 6 karakter"),
+  });
+
+  type LoginForm = z.infer<typeof loginSchema>;
 
   const {
     register,
@@ -52,12 +53,12 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginForm) => {
     try {
       await AuthService.signIn(data.email, data.password);
-      toast.success("Welcome back!");
+      toast.success(t("login.welcome_back"));
       router.push("/dashboard");
     } catch (error: unknown) {
       const message =
-        error instanceof Error ? error.message : "Login failed";
-      toast.error("Login Failed", { description: message });
+        error instanceof Error ? error.message : t("login.login_failed");
+      toast.error(t("login.login_failed"), { description: message });
     }
   };
 
@@ -72,7 +73,8 @@ export default function LoginPage() {
   const logo = resolvedTheme === "dark" ? logoWhite : logoBlack;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 dark:bg-neutral-950">
+    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 dark:bg-neutral-950 relative">
+
       {/* Background pattern */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-neutral-200/50 blur-3xl dark:bg-white/5" />
@@ -101,14 +103,14 @@ export default function LoginPage() {
               />
             )}
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              Sign in to admin dashboard
+              {t("login.title")}
             </p>
           </CardHeader>
 
           <CardContent className="px-8 pb-6 pt-4">
             <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("login.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -123,7 +125,7 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("login.password")}</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -157,12 +159,12 @@ export default function LoginPage() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Signing in...
+                      {t("login.signing_in")}
                     </>
                   ) : (
                     <>
                       <LogIn className="h-4 w-4" />
-                      <span className="font-semibold">Sign In</span>
+                      <span className="font-semibold">{t("login.sign_in")}</span>
                     </>
                   )}
                 </Button>
@@ -173,7 +175,7 @@ export default function LoginPage() {
                     className="flex items-center text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                   >
                     <ArrowLeft className="mr-1 h-4 w-4" />
-                    Back to Home
+                    {t("login.back_to_home")}
                   </Link>
                 </div>
               </div>

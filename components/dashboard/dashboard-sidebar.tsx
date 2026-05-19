@@ -13,6 +13,7 @@ import { cn } from "@/src/app/lib/utils";
 import { DASHBOARD_NAV, type NavItem } from "@/src/lib/constants";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useLanguage } from "@/context/language-context";
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +35,7 @@ interface DashboardSidebarProps {
  */
 export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   // Track only ONE open menu at a time
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -49,8 +51,8 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
   const handleNavClick = (item: NavItem, e: React.MouseEvent) => {
     if (item.disabled) {
       e.preventDefault();
-      toast.info("Coming Soon", {
-        description: "This feature is under development.",
+      toast.info(t("common.coming_soon"), {
+        description: t("common.coming_soon_desc"),
       });
     } else {
       setOpenMenu(null);
@@ -94,6 +96,7 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
             {DASHBOARD_NAV.map((item) => {
               const hasChildren = !!item.children;
               const isOpen = openMenu === item.title;
+              const translatedTitle = t(`sidebar.${item.title}`);
 
               return (
                 <li key={item.title} className={cn(collapsed && "flex justify-center")}>
@@ -116,13 +119,13 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
                               collapsed ? "h-11 w-11 justify-center p-0" : "w-full px-3 py-2.5",
                               isActive(item.href)
                                 ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                               : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                             )}
                           >
                             <item.icon className="h-5 w-5 shrink-0" />
                             {!collapsed && (
                               <>
-                                <span className="flex-1 text-left">{item.title}</span>
+                                <span className="flex-1 text-left">{translatedTitle}</span>
                                 <ChevronDown
                                   className={cn(
                                     "h-4 w-4 shrink-0 transition-transform duration-200",
@@ -147,7 +150,7 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
                                       : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                                   )}
                                 >
-                                  {child.title}
+                                  {t(`sidebar.${child.title}`)}
                                 </Link>
                               </li>
                             ))}
@@ -170,13 +173,13 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
                           )}
                         >
                           <item.icon className="h-5 w-5 shrink-0" />
-                          {!collapsed && <span>{item.title}</span>}
+                          {!collapsed && <span>{translatedTitle}</span>}
                         </Link>
                       </TooltipTrigger>
                     )}
                     {collapsed && (
                       <TooltipContent side="right" sideOffset={10}>
-                        <p>{item.title}</p>
+                        <p>{translatedTitle}</p>
                       </TooltipContent>
                     )}
                   </Tooltip>

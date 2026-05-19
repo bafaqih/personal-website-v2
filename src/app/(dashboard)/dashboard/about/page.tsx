@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Save, User, AlertTriangle } from "lucide-react";
+import { Loader2, Save, User } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { About } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 const aboutSchema = z.object({
   description_id: z.string().nullable().optional(),
@@ -38,6 +39,7 @@ type AboutForm = z.infer<typeof aboutSchema>;
  * About page — inline edit for single-record about data.
  */
 export default function AboutPage() {
+  const { t } = useLanguage();
   const [about, setAbout] = useState<About | null>(null);
   const [loading, setLoading] = useState(true);
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -58,9 +60,9 @@ export default function AboutPage() {
         setAbout(data);
         if (data) reset(data as unknown as AboutForm);
       })
-      .catch(() => toast.error("Failed to load about data"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
-  }, [reset]);
+  }, [reset, t]);
 
   const onSubmit = async (data: AboutForm) => {
     if (!about) return;
@@ -71,31 +73,31 @@ export default function AboutPage() {
         cv_url = result.publicUrl;
       }
       await AboutService.update(about.id, { ...data, cv_url });
-      toast.success("About updated successfully");
+      toast.success(t("about.saved_success"));
       reset(data); // Mark as not dirty after successful save
       setCvFile(null);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Failed to update";
-      toast.error("Update Failed", { description: message });
+      const message = error instanceof Error ? error.message : t("about.saved_failed");
+      toast.error(t("about.saved_failed"), { description: message });
     }
   };
 
   const onInvalid = (errors: any) => {
     console.error("Form Validation Errors:", errors);
-    toast.error("Validation Error", {
-      description: "Please check all fields and try again.",
+    toast.error(t("common.failed"), {
+      description: t("common.required_field"),
     });
   };
 
   return (
     <>
       <PageHeader
-        title="About"
-        description="Edit your personal information and bio."
+        title={t("about.title")}
+        description={t("about.description")}
         icon={User}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "About" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("sidebar.About") },
         ]}
       />
 
@@ -104,7 +106,7 @@ export default function AboutPage() {
           <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Badge (ID)</Label>
+                <Label>{t("about.badge")} (ID)</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -112,7 +114,7 @@ export default function AboutPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Badge (EN)</Label>
+                <Label>{t("about.badge")} (EN)</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -123,7 +125,7 @@ export default function AboutPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Bio (ID)</Label>
+                <Label>{t("about.bio")} (ID)</Label>
                 {loading ? (
                   <Skeleton className="h-20 w-full" />
                 ) : (
@@ -131,7 +133,7 @@ export default function AboutPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Bio (EN)</Label>
+                <Label>{t("about.bio")} (EN)</Label>
                 {loading ? (
                   <Skeleton className="h-20 w-full" />
                 ) : (
@@ -142,7 +144,7 @@ export default function AboutPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Description (ID)</Label>
+                <Label>{t("about.desc")} (ID)</Label>
                 {loading ? (
                   <Skeleton className="h-24 w-full" />
                 ) : (
@@ -150,7 +152,7 @@ export default function AboutPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Description (EN)</Label>
+                <Label>{t("about.desc")} (EN)</Label>
                 {loading ? (
                   <Skeleton className="h-24 w-full" />
                 ) : (
@@ -161,7 +163,7 @@ export default function AboutPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Quotes (ID)</Label>
+                <Label>{t("about.quotes")} (ID)</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -169,7 +171,7 @@ export default function AboutPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Quotes (EN)</Label>
+                <Label>{t("about.quotes")} (EN)</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -180,7 +182,7 @@ export default function AboutPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Years of Experience</Label>
+                <Label>{t("about.experience")}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
@@ -188,7 +190,7 @@ export default function AboutPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>CV / Resume (PDF)</Label>
+                <Label>{t("about.cv")}</Label>
                 {loading ? (
                   <Skeleton className="h-32 w-full" />
                 ) : (
@@ -208,16 +210,16 @@ export default function AboutPage() {
               ) : (
                 <Button type="submit"
                   disabled={isSubmitting || (!isDirty && !cvFile)}
-                  className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5">
+                  className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5 cursor-pointer">
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Saving...
+                      {t("common.saving")}
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4" />
-                      Save Changes
+                      {t("common.save_changes")}
                     </>
                   )}
                 </Button>

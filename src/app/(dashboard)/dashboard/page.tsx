@@ -15,11 +15,13 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { StatisticsService } from "@/src/services/statistics.service";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/context/language-context";
 
 /**
  * Dashboard overview — displays stat cards with entity counts.
  */
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,8 +45,8 @@ export default function DashboardPage() {
   return (
     <>
       <PageHeader
-        title="Dashboard"
-        description="Overview of your website content."
+        title={t("dashboard.title")}
+        description={t("dashboard.description")}
         icon={LayoutDashboard}
       />
 
@@ -52,7 +54,7 @@ export default function DashboardPage() {
         {cards.map((card) => (
           <StatCard
             key={card.key}
-            title={card.title}
+            title={t(`sidebar.${card.title}`)}
             value={stats?.[card.key] ?? 0}
             icon={card.icon}
             loading={loading}

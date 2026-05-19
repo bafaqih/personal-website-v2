@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,45 +24,11 @@ import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { ProjectType, ProjectCategory } from "@/src/types/database";
-
-const schema = z.object({
-  slug: z.string().min(1, "Slug is required"),
-  title_id: z.string().min(1, "Title (ID) is required"),
-  title_en: z.string().min(1, "Title (EN) is required"),
-  bio_id: z.string().optional(),
-  bio_en: z.string().optional(),
-  type_id: z.string().optional(),
-  category_id: z.string().optional(),
-  project_date: z.string().optional(),
-  github_url: z.string().optional(),
-  live_url: z.string().optional(),
-  video_url: z.string().optional(),
-  overview_id: z.string().optional(),
-  overview_en: z.string().optional(),
-  challenge_intro_id: z.string().optional(),
-  challenge_intro_en: z.string().optional(),
-  challenge_points_id: z.array(z.string()).optional(),
-  challenge_points_en: z.array(z.string()).optional(),
-  result_intro_id: z.string().optional(),
-  result_intro_en: z.string().optional(),
-  result_points_id: z.array(z.string()).optional(),
-  result_points_en: z.array(z.string()).optional(),
-  lesson_intro_id: z.string().optional(),
-  lesson_intro_en: z.string().optional(),
-  lesson_points_id: z.array(z.string()).optional(),
-  lesson_points_en: z.array(z.string()).optional(),
-  responsibilities_id: z.array(z.string()).optional(),
-  responsibilities_en: z.array(z.string()).optional(),
-  features_id: z.array(z.string()).optional(),
-  features_en: z.array(z.string()).optional(),
-  skill_ids: z.array(z.string()).optional(),
-  is_published: z.boolean(),
-});
-
-type FormData = z.infer<typeof schema>;
+import { useLanguage } from "@/context/language-context";
 
 export default function ProjectAddPage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [types, setTypes] = useState<ProjectType[]>([]);
   const [categories, setCategories] = useState<ProjectCategory[]>([]);
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
@@ -78,6 +44,42 @@ export default function ProjectAddPage() {
       name: slot.file?.name || undefined,
     }))
     .filter((img) => !!img.url);
+
+  const schema = useMemo(() => z.object({
+    slug: z.string().min(1, t("common.required_field")),
+    title_id: z.string().min(1, t("common.required_field")),
+    title_en: z.string().min(1, t("common.required_field")),
+    bio_id: z.string().optional(),
+    bio_en: z.string().optional(),
+    type_id: z.string().optional(),
+    category_id: z.string().optional(),
+    project_date: z.string().optional(),
+    github_url: z.string().optional(),
+    live_url: z.string().optional(),
+    video_url: z.string().optional(),
+    overview_id: z.string().optional(),
+    overview_en: z.string().optional(),
+    challenge_intro_id: z.string().optional(),
+    challenge_intro_en: z.string().optional(),
+    challenge_points_id: z.array(z.string()).optional(),
+    challenge_points_en: z.array(z.string()).optional(),
+    result_intro_id: z.string().optional(),
+    result_intro_en: z.string().optional(),
+    result_points_id: z.array(z.string()).optional(),
+    result_points_en: z.array(z.string()).optional(),
+    lesson_intro_id: z.string().optional(),
+    lesson_intro_en: z.string().optional(),
+    lesson_points_id: z.array(z.string()).optional(),
+    lesson_points_en: z.array(z.string()).optional(),
+    responsibilities_id: z.array(z.string()).optional(),
+    responsibilities_en: z.array(z.string()).optional(),
+    features_id: z.array(z.string()).optional(),
+    features_en: z.array(z.string()).optional(),
+    skill_ids: z.array(z.string()).optional(),
+    is_published: z.boolean(),
+  }), [t]);
+
+  type FormData = z.infer<typeof schema>;
 
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting, isValid } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -207,22 +209,22 @@ export default function ProjectAddPage() {
 
       await ProjectService.create(coreData, uploadedImages, data.skill_ids, parsedResponsibilities, parsedFeatures);
 
-      toast.success("Project created successfully");
+      toast.success(t("projects.saved_success"));
       router.push("/dashboard/projects/list");
     } catch (e: unknown) {
-      toast.error("Failed to create project", { description: e instanceof Error ? e.message : undefined });
+      toast.error(t("projects.saved_failed"), { description: e instanceof Error ? e.message : undefined });
     }
   };
 
   return (
     <>
       <PageHeader
-        title="Add Project"
+        title={t("projects.add_project")}
         icon={FolderKanban}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Projects", href: "/dashboard/projects/list" },
-          { label: "Add" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("projects.title"), href: "/dashboard/projects/list" },
+          { label: t("common.add") },
         ]}
       />
       
@@ -231,7 +233,7 @@ export default function ProjectAddPage() {
         {/* Basic Information */}
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
-            <h3 className="font-semibold text-lg border-b pb-2">Basic Information</h3>
+            <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Basic Information" : "Informasi Dasar"}</h3>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>Slug</Label>
@@ -239,75 +241,75 @@ export default function ProjectAddPage() {
                 {errors.slug && <p className="text-xs text-red-500">{errors.slug.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Project Date</Label>
+                <Label>{t("projects.form_date")}</Label>
                 <Input type="date" {...register("project_date")} onClick={(e) => e.currentTarget.showPicker()} />
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Title (ID)</Label>
+                <Label>{t("projects.form_title")} (ID)</Label>
                 <Input {...register("title_id")} placeholder="Project title (ID)" />
                 {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Title (EN)</Label>
+                <Label>{t("projects.form_title")} (EN)</Label>
                 <Input {...register("title_en")} placeholder="Project title (EN)" />
                 {errors.title_en && <p className="text-xs text-red-500">{errors.title_en.message}</p>}
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Bio (ID)</Label>
+                <Label>{t("projects.form_subtitle")} (ID)</Label>
                 <Textarea {...register("bio_id")} rows={2} placeholder="Short bio (ID)..." />
               </div>
               <div className="space-y-2">
-                <Label>Bio (EN)</Label>
+                <Label>{t("projects.form_subtitle")} (EN)</Label>
                 <Textarea {...register("bio_en")} rows={2} placeholder="Short bio (EN)..." />
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Overview (ID)</Label>
+                <Label>{t("projects.form_desc")} (ID)</Label>
                 <Textarea {...register("overview_id")} rows={4} placeholder="Project overview (ID)..." />
               </div>
               <div className="space-y-2">
-                <Label>Overview (EN)</Label>
+                <Label>{t("projects.form_desc")} (EN)</Label>
                 <Textarea {...register("overview_en")} rows={4} placeholder="Project overview (EN)..." />
               </div>
             </div>
           </CardContent>
         </Card>
-
+ 
         {/* Classification & Links */}
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
-            <h3 className="font-semibold text-lg border-b pb-2">Classification & Links</h3>
+            <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Classification & Links" : "Klasifikasi & Tautan"}</h3>
             <div className="grid gap-6 md:grid-cols-3">
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t("projects.type")}</Label>
                 <Select onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("type_id")}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={language === "en" ? "Select type" : "Pilih tipe"} /></SelectTrigger>
                   <SelectContent>
-                    {types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name_en}</SelectItem>)}
+                    {types.map((t) => <SelectItem key={t.id} value={t.id}>{(t[`name_${language}` as keyof ProjectType] as string) || t.name_en}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Category</Label>
+                <Label>{t("projects.category")}</Label>
                 <Select onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} value={watch("category_id")}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={language === "en" ? "Select category" : "Pilih kategori"} /></SelectTrigger>
                   <SelectContent>
-                    {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name_en}</SelectItem>)}
+                    {categories.map((c) => <SelectItem key={c.id} value={c.id}>{(c[`name_${language}` as keyof ProjectCategory] as string) || c.name_en}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Skills / Tech Stack</Label>
+                <Label>{t("projects.form_tech")}</Label>
                 <MultiSelectSkill
                   options={activeSkills}
                   selected={watch("skill_ids") || []}
                   onChange={(val) => setValue("skill_ids", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Select technologies..."
+                  placeholder={language === "en" ? "Select technologies..." : "Pilih teknologi..."}
                 />
               </div>
             </div>
@@ -327,17 +329,21 @@ export default function ProjectAddPage() {
             </div>
           </CardContent>
         </Card>
-
+ 
         {/* Gallery */}
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="font-semibold text-lg">Project Gallery</h3>
-              <Button type="button" variant="outline" size="sm" onClick={addImageSlot} className="gap-1.5">
-                <Plus className="h-4 w-4" /> Add Image
+              <h3 className="font-semibold text-lg">{language === "en" ? "Project Gallery" : "Galeri Proyek"}</h3>
+              <Button type="button" variant="outline" size="sm" onClick={addImageSlot} className="gap-1.5 cursor-pointer">
+                <Plus className="h-4 w-4" /> {language === "en" ? "Add Image" : "Tambah Gambar"}
               </Button>
             </div>
-            <p className="text-sm text-neutral-500">The first image in the list will automatically become the project thumbnail.</p>
+            <p className="text-sm text-neutral-500">
+              {language === "en" 
+                ? "The first image in the list will automatically become the project thumbnail." 
+                : "Gambar pertama dalam daftar akan otomatis menjadi thumbnail proyek."}
+            </p>
             
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {imageSlots.map((slot, index) => (
@@ -361,14 +367,14 @@ export default function ProjectAddPage() {
                   />
                   <div className="flex justify-between items-center gap-1">
                     <div className="flex gap-1">
-                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 cursor-pointer" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
                         <ArrowUp className="h-4 w-4" />
                       </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 cursor-pointer" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
                         <ArrowDown className="h-4 w-4" />
                       </Button>
                     </div>
-                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
+                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 cursor-pointer" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -377,15 +383,15 @@ export default function ProjectAddPage() {
             </div>
           </CardContent>
         </Card>
-
+ 
         {/* Roles & Features */}
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
-            <h3 className="font-semibold text-lg border-b pb-2">Responsibilities & Key Features</h3>
+            <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Responsibilities & Key Features" : "Tanggung Jawab & Fitur Utama"}</h3>
             
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Responsibilities (ID)</Label>
+                <Label>{language === "en" ? "Responsibilities (ID)" : "Tanggung Jawab (ID)"}</Label>
                 <BulletListInput
                   id="resp_id"
                   value={watch("responsibilities_id")}
@@ -394,7 +400,7 @@ export default function ProjectAddPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Responsibilities (EN)</Label>
+                <Label>{language === "en" ? "Responsibilities (EN)" : "Tanggung Jawab (EN)"}</Label>
                 <BulletListInput
                   id="resp_en"
                   value={watch("responsibilities_en")}
@@ -403,19 +409,19 @@ export default function ProjectAddPage() {
                 />
               </div>
             </div>
-
+ 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Key Features (ID) <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
+                <Label>{language === "en" ? "Key Features (ID)" : "Fitur Utama (ID)"} <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
                 <BulletListInput
                   id="feat_id"
                   value={watch("features_id")}
                   onChange={(val) => setValue("features_id", val, { shouldValidate: true, shouldDirty: true })}
-                  placeholder="Login: Authentication feature (ID)..."
+                  placeholder="Login: Fitur autentikasi (ID)..."
                 />
               </div>
               <div className="space-y-2">
-                <Label>Key Features (EN) <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
+                <Label>{language === "en" ? "Key Features (EN)" : "Fitur Utama (EN)"} <code className="bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-xs text-primary">Title: Description</code></Label>
                 <BulletListInput
                   id="feat_en"
                   value={watch("features_en")}
@@ -426,112 +432,112 @@ export default function ProjectAddPage() {
             </div>
           </CardContent>
         </Card>
-
+ 
         {/* Deep Dives (Challenge, Result, Lesson) */}
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-8">
-            <h3 className="font-semibold text-lg border-b pb-2">Deep Dive Sections</h3>
+            <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Deep Dive Sections" : "Bagian Deep Dive"}</h3>
             
             {/* Challenge */}
             <div className="space-y-4">
-              <h4 className="font-medium text-primary">Challenge</h4>
+              <h4 className="font-medium text-primary">{language === "en" ? "Challenge" : "Tantangan"}</h4>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Challenge Intro (ID)</Label>
+                  <Label>{language === "en" ? "Challenge Intro (ID)" : "Pengantar Tantangan (ID)"}</Label>
                   <Textarea {...register("challenge_intro_id")} rows={2} placeholder="Challenge intro (ID)..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>Challenge Intro (EN)</Label>
+                  <Label>{language === "en" ? "Challenge Intro (EN)" : "Pengantar Tantangan (EN)"}</Label>
                   <Textarea {...register("challenge_intro_en")} rows={2} placeholder="Challenge intro (EN)..." />
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Challenge Points (ID)</Label>
+                  <Label>{language === "en" ? "Challenge Points (ID)" : "Poin Tantangan (ID)"}</Label>
                   <BulletListInput id="ch_pts_id" value={watch("challenge_points_id")} onChange={(v) => setValue("challenge_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (ID)..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>Challenge Points (EN)</Label>
+                  <Label>{language === "en" ? "Challenge Points (EN)" : "Poin Tantangan (EN)"}</Label>
                   <BulletListInput id="ch_pts_en" value={watch("challenge_points_en")} onChange={(v) => setValue("challenge_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Challenge points (EN)..." />
                 </div>
               </div>
             </div>
-
+ 
             {/* Result */}
             <div className="space-y-4">
-              <h4 className="font-medium text-primary">Result</h4>
+              <h4 className="font-medium text-primary">{language === "en" ? "Result" : "Hasil"}</h4>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Result Intro (ID)</Label>
+                  <Label>{language === "en" ? "Result Intro (ID)" : "Pengantar Hasil (ID)"}</Label>
                   <Textarea {...register("result_intro_id")} rows={2} placeholder="Result intro (ID)..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>Result Intro (EN)</Label>
+                  <Label>{language === "en" ? "Result Intro (EN)" : "Pengantar Hasil (EN)"}</Label>
                   <Textarea {...register("result_intro_en")} rows={2} placeholder="Result intro (EN)..." />
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Result Points (ID)</Label>
+                  <Label>{language === "en" ? "Result Points (ID)" : "Poin Hasil (ID)"}</Label>
                   <BulletListInput id="rs_pts_id" value={watch("result_points_id")} onChange={(v) => setValue("result_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (ID)..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>Result Points (EN)</Label>
+                  <Label>{language === "en" ? "Result Points (EN)" : "Poin Hasil (EN)"}</Label>
                   <BulletListInput id="rs_pts_en" value={watch("result_points_en")} onChange={(v) => setValue("result_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Result points (EN)..." />
                 </div>
               </div>
             </div>
-
+ 
             {/* Lesson */}
             <div className="space-y-4">
-              <h4 className="font-medium text-primary">Lesson Learned</h4>
+              <h4 className="font-medium text-primary">{language === "en" ? "Lesson Learned" : "Pelajaran yang Didapat"}</h4>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Lesson Intro (ID)</Label>
+                  <Label>{language === "en" ? "Lesson Intro (ID)" : "Pengantar Pelajaran (ID)"}</Label>
                   <Textarea {...register("lesson_intro_id")} rows={2} placeholder="Lesson intro (ID)..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>Lesson Intro (EN)</Label>
+                  <Label>{language === "en" ? "Lesson Intro (EN)" : "Pengantar Pelajaran (EN)"}</Label>
                   <Textarea {...register("lesson_intro_en")} rows={2} placeholder="Lesson intro (EN)..." />
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Lesson Points (ID)</Label>
+                  <Label>{language === "en" ? "Lesson Points (ID)" : "Poin Pelajaran (ID)"}</Label>
                   <BulletListInput id="ls_pts_id" value={watch("lesson_points_id")} onChange={(v) => setValue("lesson_points_id", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (ID)..." />
                 </div>
                 <div className="space-y-2">
-                  <Label>Lesson Points (EN)</Label>
+                  <Label>{language === "en" ? "Lesson Points (EN)" : "Poin Pelajaran (EN)"}</Label>
                   <BulletListInput id="ls_pts_en" value={watch("lesson_points_en")} onChange={(v) => setValue("lesson_points_en", v, { shouldValidate: true, shouldDirty: true })} placeholder="Lesson points (EN)..." />
                 </div>
               </div>
             </div>
-
+ 
           </CardContent>
         </Card>
-
+ 
         {/* Actions */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
-            <Label>Published</Label>
+            <Label>{t("common.publish")}</Label>
           </div>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
-              <X className="h-4 w-4" /> Cancel
+            <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5 cursor-pointer">
+              <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
-            <Button type="submit" disabled={isSubmitting || !isValid} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+            <Button type="submit" disabled={isSubmitting || !isValid} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
               {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Creating...</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : (
-                <><Plus className="h-4 w-4" /> Create Project</>
+                <><Plus className="h-4 w-4" /> {t("projects.add_project")}</>
               )}
             </Button>
           </div>
         </div>
-
+ 
       </form>
-
+ 
       <ImageViewerModal
         isOpen={viewerOpen}
         onClose={() => setViewerOpen(false)}

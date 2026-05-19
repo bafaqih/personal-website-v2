@@ -37,8 +37,10 @@ import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
 import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import { toast } from "sonner";
 import { cn } from "@/src/app/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 export default function ProfilePage() {
+  const { t, language } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -72,7 +74,7 @@ export default function ProfilePage() {
         setEmail(data.email);
       }
     } catch (error) {
-      toast.error("Failed to fetch profile");
+      toast.error(t("common.failed"));
     } finally {
       setLoading(false);
     }
@@ -93,11 +95,11 @@ export default function ProfilePage() {
       });
       setProfile(updated);
       setIsEditModalOpen(false);
-      toast.success("Profile updated successfully");
+      toast.success(language === "en" ? "Profile updated successfully" : "Profil berhasil diperbarui");
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
-      toast.error("Failed to update profile");
+      toast.error(t("common.failed"));
     } finally {
       setIsSaving(false);
     }
@@ -113,7 +115,7 @@ export default function ProfilePage() {
 
     // Validate size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size must be less than 5MB");
+      toast.error(language === "en" ? "Image size must be less than 5MB" : "Ukuran foto harus kurang dari 5MB");
       return;
     }
 
@@ -127,11 +129,11 @@ export default function ProfilePage() {
 
       setProfile(updated);
       setIsViewerOpen(false);
-      toast.success("Profile picture updated successfully");
+      toast.success(language === "en" ? "Profile picture updated successfully" : "Foto profil berhasil diperbarui");
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
-      toast.error("Failed to upload image");
+      toast.error(t("common.failed"));
     } finally {
       setIsUploading(false);
     }
@@ -149,11 +151,11 @@ export default function ProfilePage() {
       setProfile(updated);
       setIsDeleteOpen(false);
       setIsViewerOpen(false);
-      toast.success("Profile picture deleted successfully");
+      toast.success(language === "en" ? "Profile picture deleted successfully" : "Foto profil berhasil dihapus");
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
-      toast.error("Failed to delete profile picture");
+      toast.error(t("common.failed"));
     } finally {
       setIsDeletingImage(false);
     }
@@ -162,12 +164,12 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="My Profile"
+        title={t("profile.title")}
         icon={UserIcon}
-        description="Manage your account settings and profile information."
+        description={language === "en" ? "Manage your account settings and profile information." : "Kelola pengaturan akun dan informasi profil Anda."}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Profile" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("profile.title") },
         ]}
       />
 
@@ -213,17 +215,17 @@ export default function ProfilePage() {
                         {isUploading ? (
                           <>
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            <span className="text-[10px] font-medium tracking-wide">Uploading...</span>
+                            <span className="text-[10px] font-medium tracking-wide">{language === "en" ? "Uploading..." : "Mengunggah..."}</span>
                           </>
                         ) : isDeletingImage ? (
                           <>
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            <span className="text-[10px] font-medium tracking-wide">Deleting...</span>
+                            <span className="text-[10px] font-medium tracking-wide">{language === "en" ? "Deleting..." : "Menghapus..."}</span>
                           </>
                         ) : (
                           <>
                             <Eye className="h-5 w-5" />
-                            <span className="text-[10px] font-medium tracking-wide">View Image</span>
+                            <span className="text-[10px] font-medium tracking-wide">{language === "en" ? "View Image" : "Lihat Foto"}</span>
                           </>
                         )}
                       </div>
@@ -266,7 +268,7 @@ export default function ProfilePage() {
             <div className="border-t border-neutral-100 pt-8 dark:border-neutral-800">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                  Personal Information
+                  {t("profile.personal_info")}
                 </h3>
                 {loading ? (
                   <Skeleton className="h-9 w-28" />
@@ -275,23 +277,23 @@ export default function ProfilePage() {
                     variant="outline"
                     size="sm"
                     onClick={handleEditClick}
-                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
                   >
                     <Pencil className="h-4 w-4" />
-                    Edit Profile
+                    {t("profile.edit_profile")}
                   </Button>
                 )}
               </div>
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <InfoCard
-                  label="Full Name"
+                  label={language === "en" ? "Full Name" : "Nama Lengkap"}
                   value={profile?.full_name || "-"}
                   icon={<UserIcon className="h-5 w-5 text-neutral-400" />}
                   loading={loading}
                 />
                 <InfoCard
-                  label="Username"
+                  label={language === "en" ? "Username" : "Nama Pengguna"}
                   value={profile?.username || "-"}
                   icon={<AtSign className="h-5 w-5 text-neutral-400" />}
                   loading={loading}
@@ -307,10 +309,10 @@ export default function ProfilePage() {
               <div className="border-t border-neutral-100 mt-8 pt-8 dark:border-neutral-800 flex justify-start">
                 <Link href="/dashboard/profile/password/change">
                   <Button
-                    className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5"
+                    className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5 cursor-pointer"
                   >
                     <KeyRound className="h-4 w-4" />
-                    Change Password
+                    {t("profile.change_password")}
                   </Button>
                 </Link>
               </div>
@@ -323,28 +325,30 @@ export default function ProfilePage() {
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogTitle>{t("profile.edit_profile")}</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              {language === "en" 
+                ? "Make changes to your profile here. Click save when you're done." 
+                : "Ubah informasi profil Anda di sini. Klik simpan setelah selesai."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="fullname">Full Name</Label>
+              <Label htmlFor="fullname">{language === "en" ? "Full Name" : "Nama Lengkap"}</Label>
               <Input
                 id="fullname"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={language === "en" ? "Enter your full name" : "Masukkan nama lengkap Anda"}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{language === "en" ? "Username" : "Nama Pengguna"}</Label>
               <Input
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
+                placeholder={language === "en" ? "Enter username" : "Masukkan nama pengguna"}
               />
             </div>
             <div className="grid gap-2">
@@ -354,7 +358,7 @@ export default function ProfilePage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
+                placeholder={language === "en" ? "Enter email address" : "Masukkan alamat surel"}
               />
             </div>
           </div>
@@ -363,25 +367,25 @@ export default function ProfilePage() {
               variant="outline"
               onClick={() => setIsEditModalOpen(false)}
               disabled={isSaving}
-              className="gap-1.5"
+              className="gap-1.5 cursor-pointer"
             >
               <X className="h-4 w-4" />
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleSaveProfile}
               disabled={isSaving}
-              className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5"
+              className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5 cursor-pointer"
             >
               {isSaving ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Saving...
+                  {t("common.saving")}
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  Save Changes
+                  {t("common.save")}
                 </>
               )}
             </Button>
@@ -403,7 +407,7 @@ export default function ProfilePage() {
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleDeleteImage}
-        itemName="profile picture"
+        itemName={language === "en" ? "profile picture" : "foto profil"}
         loading={isDeletingImage}
       />
     </div>

@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Search, Filter, RotateCcw } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 export interface Column<T> {
   key: string;
@@ -48,14 +49,17 @@ interface DataTableProps<T> {
 export function DataTable<T>({
   data,
   columns,
-  searchPlaceholder = "Search...",
+  searchPlaceholder,
   pageSize = 10,
   actions,
-  emptyMessage = "No data found.",
+  emptyMessage,
   className,
   loading = false,
   filters = [],
 }: DataTableProps<T>) {
+  const { t } = useLanguage();
+  const actualPlaceholder = searchPlaceholder || t("common.search");
+  const actualEmptyMessage = emptyMessage || t("common.no_data");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -93,7 +97,7 @@ export function DataTable<T>({
       if (filterConfig.options) {
         return {
           ...filterConfig,
-          options: [{ label: "All", value: undefined }, ...filterConfig.options],
+          options: [{ label: t("common.all"), value: undefined }, ...filterConfig.options],
         };
       }
 
@@ -121,7 +125,7 @@ export function DataTable<T>({
 
       return {
         ...filterConfig,
-        options: [{ label: "All", value: undefined }, ...dynamicOptions],
+        options: [{ label: t("common.all"), value: undefined }, ...dynamicOptions],
       };
     });
   }, [data, filters]);
@@ -230,7 +234,7 @@ export function DataTable<T>({
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder={searchPlaceholder}
+            placeholder={actualPlaceholder}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -255,7 +259,7 @@ export function DataTable<T>({
               )}
             >
               <Filter className="h-3.5 w-3.5" />
-              <span>Filter</span>
+              <span>{t("common.filter")}</span>
               {activeFilterCount > 0 && (
                 <span className={cn(
                   "flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold transition-colors",
@@ -275,7 +279,7 @@ export function DataTable<T>({
                   {/* Header */}
                   <div className="flex items-center justify-between pb-2 border-b border-neutral-100 dark:border-white/10">
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-                      Filters
+                      {t("common.filters")}
                     </span>
                     {activeFilterCount > 0 && (
                       <button
@@ -288,7 +292,7 @@ export function DataTable<T>({
                         className="text-[10px] flex items-center gap-1 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
                       >
                         <RotateCcw className="h-3 w-3" />
-                        Clear all
+                        {t("common.clear_all")}
                       </button>
                     )}
                   </div>
@@ -361,7 +365,7 @@ export function DataTable<T>({
                         }}
                         className="flex-1 h-8 text-xs bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-700 dark:bg-transparent dark:hover:bg-white/5 dark:border-white/10 dark:text-neutral-300 cursor-pointer"
                       >
-                        Reset
+                        {t("common.reset")}
                       </Button>
                       <Button
                         size="sm"
@@ -372,7 +376,7 @@ export function DataTable<T>({
                         }}
                         className="flex-1 h-8 text-xs bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 cursor-pointer"
                       >
-                        Apply
+                        {t("common.apply")}
                       </Button>
                     </div>
                   )}
@@ -403,7 +407,7 @@ export function DataTable<T>({
               ))}
               {actions && (
                 <TableHead className="w-[100px] text-xs font-semibold! uppercase tracking-wider text-neutral-800 dark:text-neutral-200 py-3.5 pr-6">
-                  Actions
+                  {t("common.actions")}
                 </TableHead>
               )}
             </TableRow>
@@ -437,7 +441,7 @@ export function DataTable<T>({
                   colSpan={columns.length + (actions ? 1 : 0)}
                   className="py-12 text-center text-sm text-neutral-500 pl-6 pr-6"
                 >
-                  {emptyMessage}
+                  {actualEmptyMessage}
                 </TableCell>
               </TableRow>
             ) : (
@@ -477,7 +481,11 @@ export function DataTable<T>({
         {/* Footer section inside the table box container */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-200 dark:border-white/10 px-6 py-3.5 bg-white dark:bg-neutral-950">
           <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-            Showing {filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1} to {Math.min(page * pageSize, filteredData.length)} of {filteredData.length} data
+            {t("common.showing_info", {
+              start: String(filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1),
+              end: String(Math.min(page * pageSize, filteredData.length)),
+              total: String(filteredData.length),
+            })}
           </p>
 
           {totalPages > 1 && (

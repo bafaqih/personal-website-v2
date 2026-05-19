@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CareerService } from "@/src/services/career.service";
 import type { Career } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function CareersPage() {
+  const { t, language } = useLanguage();
   const [careers, setCareers] = useState<Career[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -26,62 +28,105 @@ export default function CareersPage() {
 
   const fetch = () => {
     setLoading(true);
-    CareerService.getAll().then(setCareers).catch(() => toast.error("Failed to load")).finally(() => setLoading(false));
+    CareerService.getAll()
+      .then(setCareers)
+      .catch(() => toast.error(t("common.failed")))
+      .finally(() => setLoading(false));
   };
   useEffect(() => { fetch(); }, []);
 
   const handleDelete = async () => {
     if (!deleteId) return;
     setDeleting(true);
-    try { await CareerService.delete(deleteId); toast.success("Deleted"); fetch(); }
-    catch { toast.error("Failed to delete"); }
-    finally { setDeleting(false); setDeleteId(null); }
+    try {
+      await CareerService.delete(deleteId);
+      toast.success(t("careers.deleted_success"));
+      fetch();
+    } catch {
+      toast.error(t("careers.deleted_failed"));
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
   };
 
   const columns: Column<Career>[] = [
-    { key: "company", header: "Company", className: "font-medium" },
-    { key: "role_en", header: "Role" },
-    { key: "type_en", header: "Type", render: (c) => <Badge variant="secondary">{c.type_en || "-"}</Badge> },
+    { key: "company", header: t("careers.company"), className: "font-medium" },
+    { 
+      key: `role_${language}`, 
+      header: t("careers.role") 
+    },
+    { 
+      key: `type_${language}`, 
+      header: t("careers.type"), 
+      render: (c) => <Badge variant="secondary">{(c[`type_${language}` as keyof Career] as string) || "-"}</Badge> 
+    },
     { 
       key: "start_date", 
-      header: "Period", 
+      header: t("careers.period"), 
       render: (c) => {
         const formatDate = (dateStr: string) => 
-          new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+          new Date(dateStr).toLocaleDateString(language === "en" ? "en-GB" : "id-ID", { day: "2-digit", month: "short", year: "numeric" });
           
         const isPresent = !c.end_date || new Date(c.end_date) > new Date();
         const start = formatDate(c.start_date);
-        const end = isPresent ? "Present" : formatDate(c.end_date as string);
+        const end = isPresent ? t("careers.present") : formatDate(c.end_date as string);
         
         return <span className="text-sm">{start} - {end}</span>;
       } 
     },
-    { key: "is_published", header: "Status", render: (c) => <Badge variant={c.is_published ? "default" : "secondary"}>{c.is_published ? "Published" : "Draft"}</Badge> },
+    { 
+      key: "is_published", 
+      header: t("careers.status"), 
+      render: (c) => (
+        <Badge variant={c.is_published ? "default" : "secondary"}>
+          {c.is_published ? t("common.published") : t("common.draft")}
+        </Badge>
+      ) 
+    },
   ];
 
   return (
     <>
-      <PageHeader title="Careers" icon={Briefcase} description="Manage work experience." breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Careers" }]}
-        actions={<Link href="/dashboard/careers/add"><Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5"><Plus className="h-4 w-4" /> Add Career</Button></Link>} />
-      <DataTable data={careers} columns={columns} loading={loading} searchPlaceholder="Search careers..."
+      <PageHeader 
+        title={t("careers.title")} 
+        icon={Briefcase} 
+        description={t("careers.description")} 
+        breadcrumbs={[
+          { label: t("dashboard.title"), href: "/dashboard" }, 
+          { label: t("careers.title") }
+        ]}
+        actions={
+          <Link href="/dashboard/careers/add">
+            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              <Plus className="h-4 w-4" /> {t("careers.add_career")}
+            </Button>
+          </Link>
+        } 
+      />
+      <DataTable 
+        data={careers} 
+        columns={columns} 
+        loading={loading} 
+        searchPlaceholder={t("careers.search_placeholder")}
         filters={[
           {
             key: "is_published",
-            label: "Status",
+            label: t("careers.status"),
             options: [
-              { label: "Published", value: true },
-              { label: "Draft", value: false },
+              { label: t("common.published"), value: true },
+              { label: t("common.draft"), value: false },
             ],
           },
           {
-            key: "type_en",
-            label: "Type",
-            getLabel: (item) => item.type_en || "-",
+            key: `type_${language}`,
+            label: t("careers.type"),
+            getLabel: (item) => (item[`type_${language}` as keyof Career] as string) || "-",
           },
           {
-            key: "model_en",
-            label: "Model",
-            getLabel: (item) => item.model_en || "-",
+            key: `model_${language}`,
+            label: t("careers.model"),
+            getLabel: (item) => (item[`model_${language}` as keyof Career] as string) || "-",
           },
         ]}
         actions={(c) => (
@@ -96,7 +141,7 @@ export default function CareersPage() {
               <Link href={`/dashboard/careers/${c.id}/edit`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem 
@@ -105,12 +150,19 @@ export default function CareersPage() {
                 onClick={() => setDeleteId(c.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )} />
-      <DeleteDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)} onConfirm={handleDelete} loading={deleting} itemName="career" />
+        )} 
+      />
+      <DeleteDialog 
+        open={!!deleteId} 
+        onOpenChange={() => setDeleteId(null)} 
+        onConfirm={handleDelete} 
+        loading={deleting} 
+        itemName="career" 
+      />
     </>
   );
 }

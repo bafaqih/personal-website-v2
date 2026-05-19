@@ -26,8 +26,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AchievementService } from "@/src/services/achievement.service";
 import type { AchievementType } from "@/src/types/database";
+import { useLanguage } from "@/context/language-context";
 
 export default function AchievementTypesPage() {
+  const { t, language } = useLanguage();
   const [types, setTypes] = useState<AchievementType[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -47,7 +49,7 @@ export default function AchievementTypesPage() {
     setLoading(true);
     AchievementService.getTypes()
       .then(setTypes)
-      .catch(() => toast.error("Failed to load types"))
+      .catch(() => toast.error(t("common.failed")))
       .finally(() => setLoading(false));
   };
 
@@ -71,7 +73,7 @@ export default function AchievementTypesPage() {
 
   const handleModalSubmit = async () => {
     if (!formData.name_id.trim() || !formData.name_en.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error(language === "en" ? "Please fill in all fields" : "Silakan isi semua kolom");
       return;
     }
     
@@ -79,15 +81,15 @@ export default function AchievementTypesPage() {
     try {
       if (editingType) {
         await AchievementService.updateType(editingType.id, formData);
-        toast.success("Type updated");
+        toast.success(t("achievements.type_saved"));
       } else {
         await AchievementService.createType(formData);
-        toast.success("Type created");
+        toast.success(t("achievements.type_saved"));
       }
       setIsModalOpen(false);
       fetchTypes();
     } catch {
-      toast.error(editingType ? "Failed to update type" : "Failed to create type");
+      toast.error(t("common.failed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -98,10 +100,10 @@ export default function AchievementTypesPage() {
     setDeleting(true);
     try {
       await AchievementService.deleteType(deleteId);
-      toast.success("Type deleted");
+      toast.success(t("achievements.type_deleted"));
       fetchTypes();
     } catch {
-      toast.error("Failed to delete type");
+      toast.error(t("common.failed"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -111,20 +113,20 @@ export default function AchievementTypesPage() {
   const columns: Column<AchievementType>[] = [
     {
       key: "name_en",
-      header: "Name (EN)",
+      header: language === "en" ? "Name (EN)" : "Nama (EN)",
       className: "font-medium",
     },
     {
       key: "name_id",
-      header: "Name (ID)",
+      header: language === "en" ? "Name (ID)" : "Nama (ID)",
       render: (type) => <Badge variant="secondary">{type.name_id}</Badge>,
     },
     {
       key: "is_active",
-      header: "Status",
+      header: t("common.status"),
       render: (type) => (
         <Badge variant={type.is_active ? "default" : "secondary"}>
-          {type.is_active ? "Active" : "Inactive"}
+          {type.is_active ? (language === "en" ? "Active" : "Aktif") : (language === "en" ? "Inactive" : "Nonaktif")}
         </Badge>
       ),
     },
@@ -133,17 +135,17 @@ export default function AchievementTypesPage() {
   return (
     <>
       <PageHeader
-        title="Achievement Types"
+        title={t("achievements.types")}
         icon={Award}
-        description="Manage achievement type classifications."
+        description={language === "en" ? "Manage achievement type classifications." : "Kelola klasifikasi tipe pencapaian."}
         breadcrumbs={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Achievements" },
-          { label: "Types" },
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("achievements.title"), href: "/dashboard/achievements/list" },
+          { label: t("projects.types") },
         ]}
         actions={
-          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
-            <Plus className="h-4 w-4" /> Add Type
+          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Plus className="h-4 w-4" /> {t("achievements.add_type")}
           </Button>
         }
       />
@@ -151,16 +153,16 @@ export default function AchievementTypesPage() {
       <DataTable
         data={types}
         columns={columns}
-        searchPlaceholder="Search types..."
+        searchPlaceholder={language === "en" ? "Search types..." : "Cari tipe..."}
         loading={loading}
-        emptyMessage={loading ? "Loading types..." : "No types found."}
+        emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {
             key: "is_active",
-            label: "Status",
+            label: t("common.status"),
             options: [
-              { label: "Active", value: true },
-              { label: "Inactive", value: false },
+              { label: language === "en" ? "Active" : "Aktif", value: true },
+              { label: language === "en" ? "Inactive" : "Nonaktif", value: false },
             ],
           },
         ]}
@@ -175,7 +177,7 @@ export default function AchievementTypesPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer" onClick={() => openEditModal(type)}>
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {t("common.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem 
                 variant="destructive"
@@ -183,7 +185,7 @@ export default function AchievementTypesPage() {
                 onClick={() => setDeleteId(type.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -193,11 +195,11 @@ export default function AchievementTypesPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingType ? "Edit Type" : "Add Type"}</DialogTitle>
+            <DialogTitle>{editingType ? t("achievements.edit_type") : t("achievements.add_type")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label>Name (EN)</Label>
+              <Label>{language === "en" ? "Name (EN)" : "Nama (EN)"}</Label>
               <Input
                 placeholder="e.g., Award"
                 value={formData.name_en}
@@ -205,7 +207,7 @@ export default function AchievementTypesPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label>Name (ID)</Label>
+              <Label>{language === "en" ? "Name (ID)" : "Nama (ID)"}</Label>
               <Input
                 placeholder="e.g., Penghargaan"
                 value={formData.name_id}
@@ -217,22 +219,22 @@ export default function AchievementTypesPage() {
                 checked={formData.is_active}
                 onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
               />
-              <Label>Active</Label>
+              <Label>{language === "en" ? "Active" : "Aktif"}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5">
-              <X className="h-4 w-4" /> Cancel
+            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="gap-1.5 cursor-pointer">
+              <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
             <Button onClick={handleModalSubmit}
               disabled={isSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
               {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> {editingType ? "Saving..." : "Creating..."}</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingType ? (
-                <><Save className="h-4 w-4" /> Save Changes</>
+                <><Save className="h-4 w-4" /> {t("common.save")}</>
               ) : (
-                <><Plus className="h-4 w-4" /> Create Type</>
+                <><Plus className="h-4 w-4" /> {t("achievements.add_type")}</>
               )}
             </Button>
           </DialogFooter>
@@ -244,7 +246,7 @@ export default function AchievementTypesPage() {
         onOpenChange={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        itemName="type"
+        itemName={language === "en" ? "type" : "tipe"}
       />
     </>
   );
