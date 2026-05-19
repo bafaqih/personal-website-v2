@@ -228,7 +228,7 @@ export default function BlogAddPage() {
                   checked={watch("is_published")} 
                   onCheckedChange={(v) => setValue("is_published", v)} 
                 />
-                <Label>{t("common.status")}</Label>
+                <Label>{t("common.publish")}</Label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">

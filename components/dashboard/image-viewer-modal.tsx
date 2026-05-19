@@ -152,7 +152,7 @@ export function ImageViewerModal({
   if (!isOpen || !mounted) return null;
 
   const getImageName = (item: string | { url: string; name?: string }, index: number): string => {
-    if (!item) return "No Image";
+    if (!item) return t("common.image_viewer.no_image");
     if (typeof item !== "string" && item.name) {
       return item.name;
     }

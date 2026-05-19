@@ -57,7 +57,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { cn } from "@/src/app/lib/utils";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/context/language-context";
 
 /**
@@ -111,6 +111,9 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   const { t } = useLanguage();
   const activePlaceholder = placeholder || t("common.editor.placeholder");
+  const placeholderRef = useRef(activePlaceholder);
+  placeholderRef.current = activePlaceholder;
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -133,7 +136,7 @@ export function RichTextEditor({
         },
       }),
       Placeholder.configure({
-        placeholder: activePlaceholder,
+        placeholder: () => placeholderRef.current,
         emptyEditorClass: "is-editor-empty before:content-[attr(data-placeholder)] before:text-neutral-400 before:float-left before:pointer-events-none before:h-0",
       }),
       Table.configure({
@@ -193,6 +196,12 @@ export function RichTextEditor({
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && !editor.isDestroyed) {
+      editor.view.dispatch(editor.state.tr);
+    }
+  }, [activePlaceholder, editor]);
 
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isYoutubeModalOpen, setIsYoutubeModalOpen] = useState(false);

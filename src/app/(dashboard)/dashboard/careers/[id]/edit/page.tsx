@@ -297,7 +297,7 @@ export default function CareerEditPage() {
               ) : (
                 <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
               )}
-              <Label>{t("common.published")}</Label>
+              <Label>{t("common.publish")}</Label>
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
