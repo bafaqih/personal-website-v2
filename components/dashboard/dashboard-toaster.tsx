@@ -17,8 +17,8 @@ export function DashboardToaster() {
         className: "font-sans pr-10",
         classNames: {
           toast: "group toast dark:bg-neutral-950 dark:text-neutral-50 dark:border-neutral-800 bg-white text-neutral-950 border-neutral-200 shadow-lg border",
-          description: "dark:text-neutral-400 text-neutral-500 text-xs mt-1",
-          actionButton: "bg-neutral-900 text-neutral-50 dark:bg-neutral-50 dark:text-neutral-900 font-medium text-xs rounded-md px-3 py-1",
+          description: "dark:text-neutral-400 text-neutral-500 text-xs mt-0 leading-tight",
+          actionButton: "bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold text-xs rounded-md px-2.5 py-1.5 transition-colors cursor-pointer",
           closeButton: "dark:bg-neutral-950 dark:text-neutral-400 bg-white text-neutral-500 border dark:border-neutral-800 border-neutral-200",
         }
       }}
