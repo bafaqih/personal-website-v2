@@ -29,6 +29,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { BlogType, BlogCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -46,16 +47,44 @@ export default function BlogEditPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { id } = useParams() as { id: string };
-  const [types, setTypes] = useState<BlogType[]>([]);
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const [contentId, setContentId] = useState("");
   const [contentEn, setContentEn] = useState("");
   const [initialContentId, setInitialContentId] = useState("");
   const [initialContentEn, setInitialContentEn] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [existingTags, setExistingTags] = useState<string[]>([]);
+
+  const { data: blog, isLoading: isBlogLoading } = useQuery({
+    queryKey: ["blog", id],
+    queryFn: () => BlogService.getById(id),
+    meta: { resource: "sidebar.Blogs" },
+  });
+
+  const { data: types = [], isLoading: isTypesLoading } = useQuery({
+    queryKey: ["blog-types"],
+    queryFn: BlogService.getTypes,
+    meta: { resource: "blogs.types" },
+  });
+
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["blog-categories"],
+    queryFn: BlogService.getCategories,
+    meta: { resource: "blogs.categories" },
+  });
+
+  const { data: allTags = [], isLoading: isAllTagsLoading } = useQuery({
+    queryKey: ["blog-all-tags"],
+    queryFn: BlogService.getUniqueTags,
+    meta: { resource: "blogs.tags" },
+  });
+
+  const { data: currentTags = [], isLoading: isCurrentTagsLoading } = useQuery({
+    queryKey: ["blog-tags", id],
+    queryFn: () => BlogService.getTagsByBlogId(id),
+    meta: { resource: "blogs.tags" },
+  });
+
+  const loading = isBlogLoading || isTypesLoading || isCategoriesLoading || isAllTagsLoading || isCurrentTagsLoading;
 
   const { 
     register, 
@@ -73,35 +102,23 @@ export default function BlogEditPage() {
   const isSaveDisabled = isSubmitting || (!isDirty && !hasContentChanged && !hasImageChanged);
 
   useEffect(() => {
-    Promise.all([
-      BlogService.getById(id),
-      BlogService.getTypes(),
-      BlogService.getCategories(),
-      BlogService.getUniqueTags(),
-      BlogService.getTagsByBlogId(id)
-    ])
-      .then(([b, t, c, allTags, currentTags]) => {
-        setTypes(t);
-        setCategories(c);
-        setExistingTags(allTags);
-        setCurrentImageUrl(b.image_url);
-        setContentId(b.content_id || "");
-        setContentEn(b.content_en || "");
-        setInitialContentId(b.content_id || "");
-        setInitialContentEn(b.content_en || "");
-        reset({
-          slug: b.slug,
-          title_id: b.title_id,
-          title_en: b.title_en,
-          type_id: b.type_id || "",
-          category_id: b.category_id || "",
-          is_published: b.is_published,
-          tags: currentTags
-        });
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [id, reset, t]);
+    if (blog) {
+      setCurrentImageUrl(blog.image_url);
+      setContentId(blog.content_id || "");
+      setContentEn(blog.content_en || "");
+      setInitialContentId(blog.content_id || "");
+      setInitialContentEn(blog.content_en || "");
+      reset({
+        slug: blog.slug,
+        title_id: blog.title_id,
+        title_en: blog.title_en,
+        type_id: blog.type_id || "",
+        category_id: blog.category_id || "",
+        is_published: blog.is_published,
+        tags: currentTags || []
+      });
+    }
+  }, [blog, currentTags, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -219,7 +236,7 @@ export default function BlogEditPage() {
                       onChange={(tags) => {
                         setValue("tags", tags, { shouldDirty: true });
                       }} 
-                      suggestions={existingTags}
+                      suggestions={allTags}
                       placeholder={language === "en" ? "Type tag and press space/enter..." : "Ketik tag lalu tekan spasi/enter..."}
                     />
                   )}

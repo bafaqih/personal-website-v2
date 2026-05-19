@@ -21,17 +21,30 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SkillCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function SkillEditPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const params = useParams();
   const id = params.id as string;
-  const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [currentIconUrl, setCurrentIconUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  const { data: skill, isLoading: isSkillLoading } = useQuery({
+    queryKey: ["skill", id],
+    queryFn: () => SkillService.getById(id),
+    meta: { resource: "sidebar.Skills" },
+  });
+
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["skill-categories"],
+    queryFn: SkillService.getCategories,
+    meta: { resource: "skills.categories" },
+  });
+
+  const loading = isSkillLoading || isCategoriesLoading;
 
   const schema = useMemo(() => z.object({
     name: z.string().min(1, t("common.required_field")),
@@ -47,15 +60,11 @@ export default function SkillEditPage() {
   });
 
   useEffect(() => {
-    Promise.all([SkillService.getById(id), SkillService.getCategories()])
-      .then(([skill, cats]) => {
-        setCategories(cats);
-        setCurrentIconUrl(skill.icon_url);
-        reset({ name: skill.name, category_id: skill.category_id, is_active: skill.is_active });
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [id, reset, t]);
+    if (skill) {
+      setCurrentIconUrl(skill.icon_url);
+      reset({ name: skill.name, category_id: skill.category_id, is_active: skill.is_active });
+    }
+  }, [skill, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {

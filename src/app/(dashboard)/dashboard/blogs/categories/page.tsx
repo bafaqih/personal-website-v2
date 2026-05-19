@@ -28,10 +28,19 @@ import { BlogService } from "@/src/services/blog.service";
 import type { BlogCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function BlogCategoriesPage() {
   const { t, language } = useLanguage();
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: categories = [], isLoading, isError } = useQuery({
+    queryKey: ["blog-categories"],
+    queryFn: BlogService.getCategories,
+    meta: { resource: "sidebar.Categories" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +53,6 @@ export default function BlogCategoriesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchCategories = () => {
-    setLoading(true);
-    BlogService.getCategories()
-      .then(setCategories)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchCategories(); }, []);
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -87,7 +86,7 @@ export default function BlogCategoriesPage() {
         toast.success(t("blogs.saved_success"));
       }
       setIsModalOpen(false);
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
     } catch {
       toast.error(t("blogs.saved_failed"));
     } finally {
@@ -101,7 +100,7 @@ export default function BlogCategoriesPage() {
     try {
       await BlogService.deleteCategory(deleteId);
       toast.success(t("blogs.deleted_success"));
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["blog-categories"] });
     } catch {
       toast.error(t("blogs.deleted_failed"));
     } finally {
@@ -153,8 +152,9 @@ export default function BlogCategoriesPage() {
       <DataTable
         data={categories}
         columns={columns}
-        searchPlaceholder={language === "en" ? "Search categories..." : "Cari kategori..."}
         loading={loading}
+        error={isError}
+        searchPlaceholder={language === "en" ? "Search categories..." : "Cari kategori..."}
         emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {

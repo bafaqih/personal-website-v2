@@ -28,10 +28,19 @@ import { AchievementService } from "@/src/services/achievement.service";
 import type { AchievementCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function AchievementCategoriesPage() {
   const { t, language } = useLanguage();
-  const [categories, setCategories] = useState<AchievementCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: categories = [], isLoading, isError } = useQuery({
+    queryKey: ["achievement-categories"],
+    queryFn: AchievementService.getCategories,
+    meta: { resource: "sidebar.Categories" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +53,6 @@ export default function AchievementCategoriesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchCategories = () => {
-    setLoading(true);
-    AchievementService.getCategories()
-      .then(setCategories)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchCategories(); }, []);
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -87,7 +86,7 @@ export default function AchievementCategoriesPage() {
         toast.success(t("achievements.category_saved"));
       }
       setIsModalOpen(false);
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["achievement-categories"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -101,7 +100,7 @@ export default function AchievementCategoriesPage() {
     try {
       await AchievementService.deleteCategory(deleteId);
       toast.success(t("achievements.category_deleted"));
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["achievement-categories"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -153,8 +152,9 @@ export default function AchievementCategoriesPage() {
       <DataTable
         data={categories}
         columns={columns}
-        searchPlaceholder={language === "en" ? "Search categories..." : "Cari kategori..."}
         loading={loading}
+        error={isError}
+        searchPlaceholder={language === "en" ? "Search categories..." : "Cari kategori..."}
         emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {

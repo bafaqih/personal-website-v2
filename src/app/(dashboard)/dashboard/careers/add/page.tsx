@@ -21,12 +21,25 @@ import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CareerAddPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
+
+  const { data: skills = [] } = useQuery({
+    queryKey: ["skills"],
+    queryFn: SkillService.getAll,
+    meta: { resource: "sidebar.Skills" },
+  });
+
+  useEffect(() => {
+    if (skills.length > 0) {
+      setActiveSkills(skills.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
+    }
+  }, [skills]);
 
   const schema = useMemo(() => z.object({
     role_id: z.string().min(1, t("common.required_field")),
@@ -53,12 +66,6 @@ export default function CareerAddPage() {
     defaultValues: { is_published: true, detail_points_id: [], detail_points_en: [], skill_ids: [] },
     mode: "onChange",
   });
-
-  useEffect(() => {
-    SkillService.getAll().then((skills) => {
-      setActiveSkills(skills.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
-    });
-  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {

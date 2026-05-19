@@ -39,6 +39,7 @@ interface DataTableProps<T> {
   emptyMessage?: string;
   className?: string;
   loading?: boolean;
+  error?: boolean;
   filters?: TableFilterConfig[];
 }
 
@@ -55,6 +56,7 @@ export function DataTable<T>({
   emptyMessage,
   className,
   loading = false,
+  error = false,
   filters = [],
 }: DataTableProps<T>) {
   const { t } = useLanguage();
@@ -435,6 +437,15 @@ export function DataTable<T>({
                   )}
                 </TableRow>
               ))
+            ) : error ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="py-12 text-center text-sm text-red-500 dark:text-red-400 font-medium pl-6 pr-6"
+                >
+                  {t("common.failed_to_load_data")}
+                </TableCell>
+              </TableRow>
             ) : paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell

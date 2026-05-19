@@ -20,22 +20,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function SkillsListPage() {
   const { t, language } = useLanguage();
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchSkills = () => {
-    setLoading(true);
-    SkillService.getAll()
-      .then(setSkills)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
+  const { data: skills = [], isLoading, isError } = useQuery({
+    queryKey: ["skills"],
+    queryFn: SkillService.getAll,
+    meta: { resource: "sidebar.Skills" },
+  });
 
-  useEffect(() => { fetchSkills(); }, []);
+  const loading = isLoading;
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -43,7 +42,7 @@ export default function SkillsListPage() {
     try {
       await SkillService.delete(deleteId);
       toast.success(t("skills.deleted_success"));
-      fetchSkills();
+      queryClient.invalidateQueries({ queryKey: ["skills"] });
     } catch {
       toast.error(t("skills.deleted_failed"));
     } finally {
@@ -117,6 +116,7 @@ export default function SkillsListPage() {
         data={skills}
         columns={columns}
         loading={loading}
+        error={isError}
         searchPlaceholder={t("skills.search_placeholder")}
         filters={[
           {

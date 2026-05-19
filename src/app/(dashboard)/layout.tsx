@@ -7,6 +7,8 @@ import { LanguageProvider } from "@/context/language-context";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import QueryProvider from "@/src/providers/query-provider";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
@@ -34,9 +36,11 @@ export default function DashboardRootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <TooltipProvider>
-              {children}
-            </TooltipProvider>
+            <QueryProvider>
+              <TooltipProvider>
+                {children}
+              </TooltipProvider>
+            </QueryProvider>
           </LanguageProvider>
           <Toaster
             position="top-right"

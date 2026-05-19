@@ -19,24 +19,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function ProjectsListPage() {
   const { t, language } = useLanguage();
-  const [items, setItems] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchData = () => {
-    setLoading(true);
-    ProjectService.getAll()
-      .then(setItems)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
+  const { data: items = [], isLoading, isError } = useQuery({
+    queryKey: ["projects"],
+    queryFn: ProjectService.getAll,
+    meta: { resource: "sidebar.Projects" },
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const loading = isLoading;
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -44,7 +41,7 @@ export default function ProjectsListPage() {
     try {
       await ProjectService.delete(deleteId);
       toast.success(t("projects.deleted_success"));
-      fetchData();
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     } catch {
       toast.error(t("projects.deleted_failed"));
     } finally {
@@ -117,6 +114,7 @@ export default function ProjectsListPage() {
         data={items}
         columns={columns}
         loading={loading}
+        error={isError}
         searchPlaceholder={t("projects.search_placeholder")}
         filters={[
           {

@@ -26,6 +26,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { AchievementType, AchievementCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 const schema = z.object({
   title_id: z.string().min(1, "Title (ID) is required"),
@@ -43,9 +44,19 @@ type FormData = z.infer<typeof schema>;
 export default function AchievementAddPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
-  const [types, setTypes] = useState<AchievementType[]>([]);
-  const [categories, setCategories] = useState<AchievementCategory[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const { data: types = [] } = useQuery({
+    queryKey: ["achievement-types"],
+    queryFn: AchievementService.getTypes,
+    meta: { resource: "achievements.types" },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["achievement-categories"],
+    queryFn: AchievementService.getCategories,
+    meta: { resource: "achievements.categories" },
+  });
 
   const { 
     register, 
@@ -64,11 +75,6 @@ export default function AchievementAddPage() {
       credential_url: "",
     }
   });
-
-  useEffect(() => {
-    AchievementService.getTypes().then(setTypes).catch(() => {});
-    AchievementService.getCategories().then(setCategories).catch(() => {});
-  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {

@@ -27,6 +27,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { AchievementType, AchievementCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 const schema = z.object({
   title_id: z.string().min(1, "Title (ID) is required"),
@@ -45,11 +46,28 @@ export default function AchievementEditPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { id } = useParams() as { id: string };
-  const [types, setTypes] = useState<AchievementType[]>([]);
-  const [categories, setCategories] = useState<AchievementCategory[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const { data: achievement, isLoading: isAchievementLoading } = useQuery({
+    queryKey: ["achievement", id],
+    queryFn: () => AchievementService.getById(id),
+    meta: { resource: "sidebar.Achievements" },
+  });
+
+  const { data: types = [], isLoading: isTypesLoading } = useQuery({
+    queryKey: ["achievement-types"],
+    queryFn: AchievementService.getTypes,
+    meta: { resource: "achievements.types" },
+  });
+
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["achievement-categories"],
+    queryFn: AchievementService.getCategories,
+    meta: { resource: "achievements.categories" },
+  });
+
+  const loading = isAchievementLoading || isTypesLoading || isCategoriesLoading;
 
   const { 
     register, 
@@ -63,13 +81,7 @@ export default function AchievementEditPage() {
   });
 
   useEffect(() => {
-    Promise.all([
-      AchievementService.getById(id),
-      AchievementService.getTypes(),
-      AchievementService.getCategories()
-    ]).then(([achievement, typeList, categoryList]) => {
-      setTypes(typeList);
-      setCategories(categoryList);
+    if (achievement) {
       setCurrentImageUrl(achievement.image_url);
       
       reset({
@@ -82,12 +94,8 @@ export default function AchievementEditPage() {
         category_id: achievement.category_id || "",
         is_published: achievement.is_published
       });
-    }).catch(() => {
-      toast.error(t("common.failed"));
-    }).finally(() => {
-      setLoading(false);
-    });
-  }, [id, reset, t]);
+    }
+  }, [achievement, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {

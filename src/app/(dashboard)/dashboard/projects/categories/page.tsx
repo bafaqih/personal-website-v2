@@ -28,10 +28,19 @@ import { ProjectService } from "@/src/services/project.service";
 import type { ProjectCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function ProjectCategoriesPage() {
   const { t, language } = useLanguage();
-  const [categories, setCategories] = useState<ProjectCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: categories = [], isLoading, isError } = useQuery({
+    queryKey: ["project-categories"],
+    queryFn: ProjectService.getCategories,
+    meta: { resource: "sidebar.Categories" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +53,6 @@ export default function ProjectCategoriesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchCategories = () => {
-    setLoading(true);
-    ProjectService.getCategories()
-      .then(setCategories)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchCategories(); }, []);
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -87,7 +86,7 @@ export default function ProjectCategoriesPage() {
         toast.success(t("projects.category_saved"));
       }
       setIsModalOpen(false);
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["project-categories"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -101,7 +100,7 @@ export default function ProjectCategoriesPage() {
     try {
       await ProjectService.deleteCategory(deleteId);
       toast.success(t("projects.category_deleted"));
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["project-categories"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -154,6 +153,7 @@ export default function ProjectCategoriesPage() {
         data={categories}
         columns={columns}
         loading={loading}
+        error={isError}
         searchPlaceholder={t("skills.search_categories")}
         emptyMessage={loading ? (language === "en" ? "Loading categories..." : "Memuat kategori...") : (language === "en" ? "No categories found." : "Kategori tidak ditemukan.")}
         filters={[

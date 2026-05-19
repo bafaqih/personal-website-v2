@@ -28,10 +28,19 @@ import { BlogService } from "@/src/services/blog.service";
 import type { BlogType } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function BlogTypesPage() {
   const { t, language } = useLanguage();
-  const [types, setTypes] = useState<BlogType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: types = [], isLoading, isError } = useQuery({
+    queryKey: ["blog-types"],
+    queryFn: BlogService.getTypes,
+    meta: { resource: "sidebar.Types" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +53,6 @@ export default function BlogTypesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchTypes = () => {
-    setLoading(true);
-    BlogService.getTypes()
-      .then(setTypes)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchTypes(); }, []);
 
   const openAddModal = () => {
     setEditingType(null);
@@ -87,7 +86,7 @@ export default function BlogTypesPage() {
         toast.success(t("blogs.saved_success"));
       }
       setIsModalOpen(false);
-      fetchTypes();
+      queryClient.invalidateQueries({ queryKey: ["blog-types"] });
     } catch {
       toast.error(t("blogs.saved_failed"));
     } finally {
@@ -101,7 +100,7 @@ export default function BlogTypesPage() {
     try {
       await BlogService.deleteType(deleteId);
       toast.success(t("blogs.deleted_success"));
-      fetchTypes();
+      queryClient.invalidateQueries({ queryKey: ["blog-types"] });
     } catch {
       toast.error(t("blogs.deleted_failed"));
     } finally {
@@ -153,8 +152,9 @@ export default function BlogTypesPage() {
       <DataTable
         data={types}
         columns={columns}
-        searchPlaceholder={language === "en" ? "Search types..." : "Cari tipe..."}
         loading={loading}
+        error={isError}
+        searchPlaceholder={language === "en" ? "Search types..." : "Cari tipe..."}
         emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {

@@ -22,6 +22,7 @@ import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CareerEditPage() {
   const router = useRouter();
@@ -30,8 +31,27 @@ export default function CareerEditPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
+
+  const { data: career, isLoading: isCareerLoading } = useQuery({
+    queryKey: ["career", id],
+    queryFn: () => CareerService.getById(id),
+    meta: { resource: "sidebar.Careers" },
+  });
+
+  const { data: skills = [], isLoading: isSkillsLoading } = useQuery({
+    queryKey: ["skills"],
+    queryFn: SkillService.getAll,
+    meta: { resource: "sidebar.Skills" },
+  });
+
+  const loading = isCareerLoading || isSkillsLoading;
+
+  useEffect(() => {
+    if (skills.length > 0) {
+      setActiveSkills(skills.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
+    }
+  }, [skills]);
 
   const schema = useMemo(() => z.object({
     role_id: z.string().min(1, t("common.required_field")),
@@ -59,34 +79,29 @@ export default function CareerEditPage() {
   });
 
   useEffect(() => {
-    Promise.all([CareerService.getById(id), SkillService.getAll()])
-      .then(([c, skills]) => {
-        setActiveSkills(skills.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
-        setCurrentLogoUrl(c.logo_url);
+    if (career) {
+      setCurrentLogoUrl(career.logo_url);
+      const skillIds = career.career_skills?.map(cs => cs.skill_id) || [];
 
-        const skillIds = c.career_skills?.map(cs => cs.skill_id) || [];
-
-        reset({
-          role_id: c.role_id,
-          role_en: c.role_en,
-          company: c.company,
-          url: c.url || "",
-          location: c.location || "",
-          type_id: c.type_id || "",
-          type_en: c.type_en || "",
-          model_id: c.model_id || "",
-          model_en: c.model_en || "",
-          start_date: c.start_date,
-          end_date: c.end_date || "",
-          detail_points_id: c.detail_points_id || [],
-          detail_points_en: c.detail_points_en || [],
-          skill_ids: skillIds,
-          is_published: c.is_published
-        });
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [id, reset, t]);
+      reset({
+        role_id: career.role_id,
+        role_en: career.role_en,
+        company: career.company,
+        url: career.url || "",
+        location: career.location || "",
+        type_id: career.type_id || "",
+        type_en: career.type_en || "",
+        model_id: career.model_id || "",
+        model_en: career.model_en || "",
+        start_date: career.start_date,
+        end_date: career.end_date || "",
+        detail_points_id: career.detail_points_id || [],
+        detail_points_en: career.detail_points_en || [],
+        skill_ids: skillIds,
+        is_published: career.is_published
+      });
+    }
+  }, [career, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {

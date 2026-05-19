@@ -19,22 +19,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function EducationsPage() {
   const { t, language } = useLanguage();
-  const [items, setItems] = useState<Education[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchData = () => {
-    setLoading(true);
-    EducationService.getAll()
-      .then(setItems)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
+  const { data: items = [], isLoading, isError } = useQuery({
+    queryKey: ["educations"],
+    queryFn: EducationService.getAll,
+    meta: { resource: "sidebar.Educations" },
+  });
 
-  useEffect(() => { fetchData(); }, []);
+  const loading = isLoading;
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -42,7 +41,7 @@ export default function EducationsPage() {
     try {
       await EducationService.delete(deleteId);
       toast.success(t("common.success"));
-      fetchData();
+      queryClient.invalidateQueries({ queryKey: ["educations"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -106,6 +105,7 @@ export default function EducationsPage() {
         data={items} 
         columns={columns} 
         loading={loading} 
+        error={isError}
         searchPlaceholder={t("educations.search_placeholder")}
         filters={[
           {

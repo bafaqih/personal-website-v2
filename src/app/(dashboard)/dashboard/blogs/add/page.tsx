@@ -27,8 +27,8 @@ import { BlogService } from "@/src/services/blog.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { AuthService } from "@/src/services/auth.service";
-import type { BlogType, BlogCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -45,12 +45,27 @@ type FormData = z.infer<typeof schema>;
 export default function BlogAddPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
-  const [types, setTypes] = useState<BlogType[]>([]);
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [contentId, setContentId] = useState("");
   const [contentEn, setContentEn] = useState("");
-  const [existingTags, setExistingTags] = useState<string[]>([]);
+
+  const { data: types = [] } = useQuery({
+    queryKey: ["blog-types"],
+    queryFn: BlogService.getTypes,
+    meta: { resource: "blogs.types" },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["blog-categories"],
+    queryFn: BlogService.getCategories,
+    meta: { resource: "blogs.categories" },
+  });
+
+  const { data: allTags = [] } = useQuery({
+    queryKey: ["blog-all-tags"],
+    queryFn: BlogService.getUniqueTags,
+    meta: { resource: "blogs.tags" },
+  });
 
   const { 
     register, 
@@ -69,12 +84,6 @@ export default function BlogAddPage() {
       category_id: ""
     } 
   });
-
-  useEffect(() => {
-    BlogService.getTypes().then(setTypes).catch(() => {});
-    BlogService.getCategories().then(setCategories).catch(() => {});
-    BlogService.getUniqueTags().then(setExistingTags).catch(() => {});
-  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -173,7 +182,7 @@ export default function BlogAddPage() {
                   <TagsInput 
                     value={watch("tags") || []} 
                     onChange={(tags) => setValue("tags", tags)} 
-                    suggestions={existingTags}
+                    suggestions={allTags}
                     placeholder={language === "en" ? "Type tag and press space/enter..." : "Ketik tag lalu tekan spasi/enter..."}
                   />
                 </div>

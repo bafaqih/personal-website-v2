@@ -153,7 +153,7 @@ export function DashboardHeader({
                     <Avatar className={cn("h-full w-full", showSkeleton && "invisible")}>
                       <AvatarImage
                         src={profile?.photo_url || undefined}
-                        alt={profile?.full_name || "Admin"}
+                        alt={profile?.full_name || "FB"}
                         className="rounded-lg"
                         onLoadingStatusChange={(status) => {
                           setImageStatus(status);

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ContactService } from "@/src/services/contact.service";
-import type { Contact } from "@/src/types/database";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/context/language-context";
 
 const schema = z.object({
@@ -30,8 +30,15 @@ type FormData = z.infer<typeof schema>;
 
 export default function ContactPage() {
   const { t, language } = useLanguage();
-  const [contact, setContact] = useState<Contact | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: contact, isLoading } = useQuery({
+    queryKey: ["contact"],
+    queryFn: ContactService.get,
+    meta: { resource: "sidebar.Contact" },
+  });
+
+  const loading = isLoading;
 
   const { 
     register, 
@@ -52,25 +59,19 @@ export default function ContactPage() {
   });
 
   useEffect(() => {
-    ContactService.get()
-      .then((data) => {
-        setContact(data);
-        if (data) {
-          const initialData = {
-            email: data.email || "",
-            instagram_url: data.instagram_url || "",
-            tiktok_url: data.tiktok_url || "",
-            linkedin_url: data.linkedin_url || "",
-            github_url: data.github_url || "",
-            whatsapp_url: data.whatsapp_url || "",
-            location: data.location || ""
-          };
-          reset(initialData);
-        }
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [reset, t]);
+    if (contact) {
+      const initialData = {
+        email: contact.email || "",
+        instagram_url: contact.instagram_url || "",
+        tiktok_url: contact.tiktok_url || "",
+        linkedin_url: contact.linkedin_url || "",
+        github_url: contact.github_url || "",
+        whatsapp_url: contact.whatsapp_url || "",
+        location: contact.location || ""
+      };
+      reset(initialData);
+    }
+  }, [contact, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -78,10 +79,10 @@ export default function ContactPage() {
         await ContactService.update(contact.id, data);
         toast.success(t("contact.saved_success"));
       } else {
-        const newContact = await ContactService.create(data);
-        setContact(newContact);
+        await ContactService.create(data);
         toast.success(t("contact.saved_success"));
       }
+      queryClient.invalidateQueries({ queryKey: ["contact"] });
       reset(data); 
     } catch (e: unknown) {
       toast.error(t("contact.saved_failed"), { 

@@ -28,10 +28,19 @@ import { ProjectService } from "@/src/services/project.service";
 import type { ProjectType } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function ProjectTypesPage() {
   const { t, language } = useLanguage();
-  const [types, setTypes] = useState<ProjectType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: types = [], isLoading, isError } = useQuery({
+    queryKey: ["project-types"],
+    queryFn: ProjectService.getTypes,
+    meta: { resource: "sidebar.Types" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +53,6 @@ export default function ProjectTypesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchTypes = () => {
-    setLoading(true);
-    ProjectService.getTypes()
-      .then(setTypes)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchTypes(); }, []);
 
   const openAddModal = () => {
     setEditingType(null);
@@ -87,7 +86,7 @@ export default function ProjectTypesPage() {
         toast.success(t("projects.type_saved"));
       }
       setIsModalOpen(false);
-      fetchTypes();
+      queryClient.invalidateQueries({ queryKey: ["project-types"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -101,7 +100,7 @@ export default function ProjectTypesPage() {
     try {
       await ProjectService.deleteType(deleteId);
       toast.success(t("projects.type_deleted"));
-      fetchTypes();
+      queryClient.invalidateQueries({ queryKey: ["project-types"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -154,6 +153,7 @@ export default function ProjectTypesPage() {
         data={types}
         columns={columns}
         loading={loading}
+        error={isError}
         searchPlaceholder={t("projects.search_types")}
         emptyMessage={loading ? (language === "en" ? "Loading types..." : "Memuat tipe...") : (language === "en" ? "No types found." : "Tipe tidak ditemukan.")}
         filters={[

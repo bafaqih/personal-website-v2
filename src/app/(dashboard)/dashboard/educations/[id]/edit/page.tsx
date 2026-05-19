@@ -20,6 +20,7 @@ import { EducationService } from "@/src/services/education.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function EducationEditPage() {
   const router = useRouter();
@@ -28,7 +29,14 @@ export default function EducationEditPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  const { data: education, isLoading } = useQuery({
+    queryKey: ["education", id],
+    queryFn: () => EducationService.getById(id),
+    meta: { resource: "sidebar.Educations" },
+  });
+
+  const loading = isLoading;
 
   const schema = useMemo(() => z.object({
     school: z.string().min(1, t("common.required_field")),
@@ -53,28 +61,25 @@ export default function EducationEditPage() {
   });
 
   useEffect(() => {
-    EducationService.getById(id)
-      .then((e) => {
-        setCurrentLogoUrl(e.logo_url);
+    if (education) {
+      setCurrentLogoUrl(education.logo_url);
 
-        reset({
-          school: e.school,
-          location: e.location || "",
-          url: e.url || "",
-          level_major_id: e.level_major_id,
-          level_major_en: e.level_major_en,
-          gpa: e.gpa !== null ? String(e.gpa) : "",
-          max_gpa: e.max_gpa !== null ? String(e.max_gpa) : "",
-          start_date: e.start_date,
-          end_date: e.end_date || "",
-          detail_points_id: e.detail_points_id || [],
-          detail_points_en: e.detail_points_en || [],
-          is_published: e.is_published
-        });
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [id, reset, t]);
+      reset({
+        school: education.school,
+        location: education.location || "",
+        url: education.url || "",
+        level_major_id: education.level_major_id,
+        level_major_en: education.level_major_en,
+        gpa: education.gpa !== null ? String(education.gpa) : "",
+        max_gpa: education.max_gpa !== null ? String(education.max_gpa) : "",
+        start_date: education.start_date,
+        end_date: education.end_date || "",
+        detail_points_id: education.detail_points_id || [],
+        detail_points_en: education.detail_points_en || [],
+        is_published: education.is_published
+      });
+    }
+  }, [education, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {

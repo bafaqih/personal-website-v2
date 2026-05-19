@@ -20,12 +20,18 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { SkillCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function SkillAddPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
-  const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [iconFile, setIconFile] = useState<File | null>(null);
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["skill-categories"],
+    queryFn: SkillService.getCategories,
+    meta: { resource: "skills.categories" },
+  });
 
   const schema = useMemo(() => z.object({
     name: z.string().min(1, t("common.required_field")),
@@ -40,8 +46,6 @@ export default function SkillAddPage() {
     defaultValues: { is_active: true },
     mode: "onChange",
   });
-
-  useEffect(() => { SkillService.getCategories().then(setCategories).catch(() => {}); }, []);
 
   const onSubmit = async (data: FormData) => {
     try {

@@ -19,22 +19,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function OrganizationsPage() {
   const { t, language } = useLanguage();
-  const [items, setItems] = useState<Organization[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchData = () => {
-    setLoading(true);
-    OrganizationService.getAll()
-      .then(setItems)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
+  const { data: items = [], isLoading, isError } = useQuery({
+    queryKey: ["organizations"],
+    queryFn: OrganizationService.getAll,
+    meta: { resource: "sidebar.Organizations" },
+  });
 
-  useEffect(() => { fetchData(); }, []);
+  const loading = isLoading;
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -42,7 +41,7 @@ export default function OrganizationsPage() {
     try {
       await OrganizationService.delete(deleteId);
       toast.success(t("organizations.deleted_success"));
-      fetchData();
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
     } catch {
       toast.error(t("organizations.deleted_failed"));
     } finally {
@@ -105,6 +104,7 @@ export default function OrganizationsPage() {
         data={items} 
         columns={columns} 
         loading={loading} 
+        error={isError}
         searchPlaceholder={t("organizations.search_placeholder")}
         filters={[
           {

@@ -17,20 +17,21 @@ import { StatisticsService } from "@/src/services/statistics.service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery } from "@tanstack/react-query";
+
 /**
  * Dashboard overview — displays stat cards with entity counts.
  */
 export default function DashboardPage() {
   const { t } = useLanguage();
-  const [stats, setStats] = useState<Record<string, number> | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    StatisticsService.getAll()
-      .then(setStats)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["statistics"],
+    queryFn: StatisticsService.getAll,
+    meta: { resource: "dashboard.title" },
+  });
+
+  const loading = isLoading;
 
   const cards = [
     { title: "Skills", key: "total_skills", icon: Code2 },
@@ -55,7 +56,7 @@ export default function DashboardPage() {
           <StatCard
             key={card.key}
             title={t(`sidebar.${card.title}`)}
-            value={stats?.[card.key] ?? 0}
+            value={(stats as any)?.[card.key] ?? 0}
             icon={card.icon}
             loading={loading}
           />

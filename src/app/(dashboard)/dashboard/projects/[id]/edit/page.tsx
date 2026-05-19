@@ -26,16 +26,43 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { ProjectType, ProjectCategory } from "@/src/types/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProjectEditPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const { id } = useParams() as { id: string };
-  const [loading, setLoading] = useState(true);
-  const [types, setTypes] = useState<ProjectType[]>([]);
-  const [categories, setCategories] = useState<ProjectCategory[]>([]);
-  const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
   
+  const { data: project, isLoading: isProjectLoading } = useQuery({
+    queryKey: ["project", id],
+    queryFn: () => ProjectService.getById(id),
+    meta: { resource: "sidebar.Projects" },
+  });
+
+  const { data: types = [], isLoading: isTypesLoading } = useQuery({
+    queryKey: ["project-types"],
+    queryFn: ProjectService.getTypes,
+    meta: { resource: "projects.types" },
+  });
+
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["project-categories"],
+    queryFn: ProjectService.getCategories,
+    meta: { resource: "projects.categories" },
+  });
+
+  const { data: skillsData = [], isLoading: isSkillsLoading } = useQuery({
+    queryKey: ["skills"],
+    queryFn: SkillService.getAll,
+    meta: { resource: "sidebar.Skills" },
+  });
+
+  const loading = isProjectLoading || isTypesLoading || isCategoriesLoading || isSkillsLoading;
+
+  const activeSkills = useMemo(() => {
+    return skillsData.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name }));
+  }, [skillsData]);
+
   // Image states
   const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null; previewUrl?: string; existingUrl?: string }[]>([]);
   const [hasImageChanges, setHasImageChanges] = useState(false);
@@ -100,79 +127,59 @@ export default function ProjectEditPage() {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [project, typesData, categoriesData, skillsData] = await Promise.all([
-          ProjectService.getById(id),
-          ProjectService.getTypes(),
-          ProjectService.getCategories(),
-          SkillService.getAll()
-        ]);
-
-        setTypes(typesData);
-        setCategories(categoriesData);
-        setActiveSkills(skillsData.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
-
-        // Pre-fill image slots
-        if (project.project_images && project.project_images.length > 0) {
-          setImageSlots(project.project_images.map(img => ({
-            id: img.id,
-            file: null,
-            existingUrl: img.image_url
-          })));
-        } else {
-          setImageSlots([{ id: Date.now().toString(), file: null }]);
-        }
-
-        // Map features and responsibilities back to input format
-        const features_id = (project.project_features || []).map(f => `${f.title_id}: ${f.description_id}`);
-        const features_en = (project.project_features || []).map(f => `${f.title_en}: ${f.description_en}`);
-        const responsibilities_id = (project.project_responsibilities || []).map(r => r.content_id);
-        const responsibilities_en = (project.project_responsibilities || []).map(r => r.content_en);
-
-        reset({
-          slug: project.slug,
-          title_id: project.title_id,
-          title_en: project.title_en,
-          bio_id: project.bio_id || "",
-          bio_en: project.bio_en || "",
-          type_id: project.type_id || "",
-          category_id: project.category_id || "",
-          project_date: project.project_date || "",
-          github_url: project.github_url || "",
-          live_url: project.live_url || "",
-          video_url: project.video_url || "",
-          overview_id: project.overview_id || "",
-          overview_en: project.overview_en || "",
-          challenge_intro_id: project.challenge_intro_id || "",
-          challenge_intro_en: project.challenge_intro_en || "",
-          challenge_points_id: project.challenge_points_id || [],
-          challenge_points_en: project.challenge_points_en || [],
-          result_intro_id: project.result_intro_id || "",
-          result_intro_en: project.result_intro_en || "",
-          result_points_id: project.result_points_id || [],
-          result_points_en: project.result_points_en || [],
-          lesson_intro_id: project.lesson_intro_id || "",
-          lesson_intro_en: project.lesson_intro_en || "",
-          lesson_points_id: project.lesson_points_id || [],
-          lesson_points_en: project.lesson_points_en || [],
-          is_published: project.is_published,
-          skill_ids: (project.project_skills || []).map(s => s.skill_id),
-          features_id,
-          features_en,
-          responsibilities_id,
-          responsibilities_en
-        });
-      } catch (err) {
-        toast.error(t("common.failed"));
-        console.error(err);
-      } finally {
-        setLoading(false);
+    if (project) {
+      // Pre-fill image slots
+      if (project.project_images && project.project_images.length > 0) {
+        setImageSlots(project.project_images.map(img => ({
+          id: img.id,
+          file: null,
+          existingUrl: img.image_url
+        })));
+      } else {
+        setImageSlots([{ id: Date.now().toString(), file: null }]);
       }
-    };
 
-    fetchData();
-  }, [id, reset, t]);
+      // Map features and responsibilities back to input format
+      const features_id = (project.project_features || []).map(f => `${f.title_id}: ${f.description_id}`);
+      const features_en = (project.project_features || []).map(f => `${f.title_en}: ${f.description_en}`);
+      const responsibilities_id = (project.project_responsibilities || []).map(r => r.content_id);
+      const responsibilities_en = (project.project_responsibilities || []).map(r => r.content_en);
+
+      reset({
+        slug: project.slug,
+        title_id: project.title_id,
+        title_en: project.title_en,
+        bio_id: project.bio_id || "",
+        bio_en: project.bio_en || "",
+        type_id: project.type_id || "",
+        category_id: project.category_id || "",
+        project_date: project.project_date || "",
+        github_url: project.github_url || "",
+        live_url: project.live_url || "",
+        video_url: project.video_url || "",
+        overview_id: project.overview_id || "",
+        overview_en: project.overview_en || "",
+        challenge_intro_id: project.challenge_intro_id || "",
+        challenge_intro_en: project.challenge_intro_en || "",
+        challenge_points_id: project.challenge_points_id || [],
+        challenge_points_en: project.challenge_points_en || [],
+        result_intro_id: project.result_intro_id || "",
+        result_intro_en: project.result_intro_en || "",
+        result_points_id: project.result_points_id || [],
+        result_points_en: project.result_points_en || [],
+        lesson_intro_id: project.lesson_intro_id || "",
+        lesson_intro_en: project.lesson_intro_en || "",
+        lesson_points_id: project.lesson_points_id || [],
+        lesson_points_en: project.lesson_points_en || [],
+        is_published: project.is_published,
+        skill_ids: (project.project_skills || []).map(s => s.skill_id),
+        features_id,
+        features_en,
+        responsibilities_id,
+        responsibilities_en
+      });
+    }
+  }, [project, reset]);
 
   const moveImage = (index: number, dir: 'up' | 'down') => {
     const newSlots = [...imageSlots];

@@ -25,13 +25,33 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { ProjectType, ProjectCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProjectAddPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
-  const [types, setTypes] = useState<ProjectType[]>([]);
-  const [categories, setCategories] = useState<ProjectCategory[]>([]);
-  const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
+
+  const { data: types = [] } = useQuery({
+    queryKey: ["project-types"],
+    queryFn: ProjectService.getTypes,
+    meta: { resource: "projects.types" },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["project-categories"],
+    queryFn: ProjectService.getCategories,
+    meta: { resource: "projects.categories" },
+  });
+
+  const { data: skillsData = [] } = useQuery({
+    queryKey: ["skills"],
+    queryFn: SkillService.getAll,
+    meta: { resource: "sidebar.Skills" },
+  });
+
+  const activeSkills = useMemo(() => {
+    return skillsData.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name }));
+  }, [skillsData]);
   
   // Image states
   const [imageSlots, setImageSlots] = useState<{ id: string; file: File | null; previewUrl?: string }[]>([{ id: Date.now().toString(), file: null }]);
@@ -94,14 +114,6 @@ export default function ProjectAddPage() {
     },
     mode: "onChange",
   });
-
-  useEffect(() => {
-    ProjectService.getTypes().then(setTypes).catch(() => {});
-    ProjectService.getCategories().then(setCategories).catch(() => {});
-    SkillService.getAll().then((skills) => {
-      setActiveSkills(skills.filter(s => s.is_active).map(s => ({ id: s.id, name: s.name })));
-    });
-  }, []);
 
   const moveImage = (index: number, dir: 'up' | 'down') => {
     const newSlots = [...imageSlots];

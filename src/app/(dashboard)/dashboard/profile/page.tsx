@@ -37,12 +37,20 @@ import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
 import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import { toast } from "sonner";
 import { cn } from "@/src/app/lib/utils";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/context/language-context";
 
 export default function ProfilePage() {
   const { t, language } = useLanguage();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile"],
+    queryFn: AuthService.getProfile,
+    meta: { resource: "sidebar.Profile" },
+  });
+
+  const loading = isLoading;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDeletingImage, setIsDeletingImage] = useState(false);
@@ -60,25 +68,12 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const data = await AuthService.getProfile();
-      if (data) {
-        setProfile(data);
-        setFullName(data.full_name);
-        setUsername(data.username);
-        setEmail(data.email);
-      }
-    } catch (error) {
-      toast.error(t("common.failed"));
-    } finally {
-      setLoading(false);
+    if (profile) {
+      setFullName(profile.full_name || "");
+      setUsername(profile.username || "");
+      setEmail(profile.email || "");
     }
-  };
+  }, [profile]);
 
   const handleEditClick = () => {
     setIsEditModalOpen(true);
@@ -93,7 +88,7 @@ export default function ProfilePage() {
         username: username,
         email: email,
       });
-      setProfile(updated);
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       setIsEditModalOpen(false);
       toast.success(t("profile.save_success"));
       // Synchronize changes globally
@@ -130,7 +125,7 @@ export default function ProfilePage() {
         photo_url: publicUrl,
       });
 
-      setProfile(updated);
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       setIsViewerOpen(false);
       toast.success(t("profile.photo_success"));
       // Synchronize changes globally
@@ -151,7 +146,7 @@ export default function ProfilePage() {
         photo_url: null,
       });
 
-      setProfile(updated);
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       setIsDeleteOpen(false);
       setIsViewerOpen(false);
       toast.success(t("profile.photo_delete_success"));

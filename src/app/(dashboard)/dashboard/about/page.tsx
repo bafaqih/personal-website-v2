@@ -18,7 +18,7 @@ import { AboutService } from "@/src/services/about.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { About } from "@/src/types/database";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/context/language-context";
 
 const aboutSchema = z.object({
@@ -40,10 +40,17 @@ type AboutForm = z.infer<typeof aboutSchema>;
  */
 export default function AboutPage() {
   const { t } = useLanguage();
-  const [about, setAbout] = useState<About | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [viewPdfUrl, setViewPdfUrl] = useState<string | null>(null);
+
+  const { data: about, isLoading } = useQuery({
+    queryKey: ["about"],
+    queryFn: AboutService.get,
+    meta: { resource: "sidebar.About" },
+  });
+
+  const loading = isLoading;
 
   const {
     register,
@@ -55,14 +62,10 @@ export default function AboutPage() {
   });
 
   useEffect(() => {
-    AboutService.get()
-      .then((data) => {
-        setAbout(data);
-        if (data) reset(data as unknown as AboutForm);
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [reset, t]);
+    if (about) {
+      reset(about as unknown as AboutForm);
+    }
+  }, [about, reset]);
 
   const onSubmit = async (data: AboutForm) => {
     if (!about) return;
@@ -74,6 +77,7 @@ export default function AboutPage() {
       }
       await AboutService.update(about.id, { ...data, cv_url });
       toast.success(t("about.saved_success"));
+      queryClient.invalidateQueries({ queryKey: ["about"] });
       reset(data); // Mark as not dirty after successful save
       setCvFile(null);
     } catch (error: unknown) {

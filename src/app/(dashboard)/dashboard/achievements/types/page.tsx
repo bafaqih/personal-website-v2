@@ -28,10 +28,19 @@ import { AchievementService } from "@/src/services/achievement.service";
 import type { AchievementType } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function AchievementTypesPage() {
   const { t, language } = useLanguage();
-  const [types, setTypes] = useState<AchievementType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: types = [], isLoading, isError } = useQuery({
+    queryKey: ["achievement-types"],
+    queryFn: AchievementService.getTypes,
+    meta: { resource: "sidebar.Types" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +53,6 @@ export default function AchievementTypesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchTypes = () => {
-    setLoading(true);
-    AchievementService.getTypes()
-      .then(setTypes)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchTypes(); }, []);
 
   const openAddModal = () => {
     setEditingType(null);
@@ -87,7 +86,7 @@ export default function AchievementTypesPage() {
         toast.success(t("achievements.type_saved"));
       }
       setIsModalOpen(false);
-      fetchTypes();
+      queryClient.invalidateQueries({ queryKey: ["achievement-types"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -101,7 +100,7 @@ export default function AchievementTypesPage() {
     try {
       await AchievementService.deleteType(deleteId);
       toast.success(t("achievements.type_deleted"));
-      fetchTypes();
+      queryClient.invalidateQueries({ queryKey: ["achievement-types"] });
     } catch {
       toast.error(t("common.failed"));
     } finally {
@@ -153,8 +152,9 @@ export default function AchievementTypesPage() {
       <DataTable
         data={types}
         columns={columns}
-        searchPlaceholder={language === "en" ? "Search types..." : "Cari tipe..."}
         loading={loading}
+        error={isError}
+        searchPlaceholder={language === "en" ? "Search types..." : "Cari tipe..."}
         emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
           {

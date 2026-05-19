@@ -20,6 +20,7 @@ import { OrganizationService } from "@/src/services/organization.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
+import { useQuery } from "@tanstack/react-query";
 
 export default function OrganizationEditPage() {
   const router = useRouter();
@@ -28,7 +29,14 @@ export default function OrganizationEditPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  const { data: organization, isLoading } = useQuery({
+    queryKey: ["organization", id],
+    queryFn: () => OrganizationService.getById(id),
+    meta: { resource: "sidebar.Organizations" },
+  });
+
+  const loading = isLoading;
 
   const schema = useMemo(() => z.object({
     organization: z.string().min(1, t("common.required_field")),
@@ -51,26 +59,23 @@ export default function OrganizationEditPage() {
   });
 
   useEffect(() => {
-    OrganizationService.getById(id)
-      .then((o) => {
-        setCurrentLogoUrl(o.logo_url);
-        
-        reset({ 
-          organization: o.organization,
-          url: o.url || "",
-          location: o.location || "",
-          role_id: o.role_id, 
-          role_en: o.role_en, 
-          start_date: o.start_date, 
-          end_date: o.end_date || "", 
-          detail_points_id: o.detail_points_id || [],
-          detail_points_en: o.detail_points_en || [],
-          is_published: o.is_published 
-        });
-      })
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  }, [id, reset, t]);
+    if (organization) {
+      setCurrentLogoUrl(organization.logo_url);
+      
+      reset({ 
+        organization: organization.organization,
+        url: organization.url || "",
+        location: organization.location || "",
+        role_id: organization.role_id, 
+        role_en: organization.role_en, 
+        start_date: organization.start_date, 
+        end_date: organization.end_date || "", 
+        detail_points_id: organization.detail_points_id || [],
+        detail_points_en: organization.detail_points_en || [],
+        is_published: organization.is_published 
+      });
+    }
+  }, [organization, reset]);
 
   const onSubmit = async (data: FormData) => {
     try {

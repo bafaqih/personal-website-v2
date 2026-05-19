@@ -27,11 +27,19 @@ import {
 import { SkillService } from "@/src/services/skill.service";
 import type { SkillCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function SkillCategoriesPage() {
   const { t, language } = useLanguage();
-  const [categories, setCategories] = useState<SkillCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: categories = [], isLoading, isError } = useQuery({
+    queryKey: ["skill-categories"],
+    queryFn: SkillService.getCategories,
+    meta: { resource: "sidebar.Categories" },
+  });
+
+  const loading = isLoading;
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +52,6 @@ export default function SkillCategoriesPage() {
   // Delete state
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchCategories = () => {
-    setLoading(true);
-    SkillService.getCategories()
-      .then(setCategories)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchCategories(); }, []);
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -87,7 +85,7 @@ export default function SkillCategoriesPage() {
         toast.success(t("skills.saved_category_success"));
       }
       setIsModalOpen(false);
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["skill-categories"] });
     } catch {
       toast.error(t("skills.saved_category_failed"));
     } finally {
@@ -101,7 +99,7 @@ export default function SkillCategoriesPage() {
     try {
       await SkillService.deleteCategory(deleteId);
       toast.success(t("skills.deleted_category_success"));
-      fetchCategories();
+      queryClient.invalidateQueries({ queryKey: ["skill-categories"] });
     } catch {
       toast.error(t("skills.deleted_category_failed"));
     } finally {
@@ -154,6 +152,7 @@ export default function SkillCategoriesPage() {
         data={categories}
         columns={columns}
         loading={loading}
+        error={isError}
         searchPlaceholder={t("skills.search_categories")}
         emptyMessage={loading ? t("common.saving") : undefined}
         filters={[

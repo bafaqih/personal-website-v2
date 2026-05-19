@@ -18,22 +18,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CareersPage() {
   const { t, language } = useLanguage();
-  const [careers, setCareers] = useState<Career[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetch = () => {
-    setLoading(true);
-    CareerService.getAll()
-      .then(setCareers)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
-  useEffect(() => { fetch(); }, []);
+  const { data: careers = [], isLoading, isError } = useQuery({
+    queryKey: ["careers"],
+    queryFn: CareerService.getAll,
+    meta: { resource: "sidebar.Careers" },
+  });
+
+  const loading = isLoading;
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -41,7 +40,7 @@ export default function CareersPage() {
     try {
       await CareerService.delete(deleteId);
       toast.success(t("careers.deleted_success"));
-      fetch();
+      queryClient.invalidateQueries({ queryKey: ["careers"] });
     } catch {
       toast.error(t("careers.deleted_failed"));
     } finally {
@@ -108,6 +107,7 @@ export default function CareersPage() {
         data={careers} 
         columns={columns} 
         loading={loading} 
+        error={isError}
         searchPlaceholder={t("careers.search_placeholder")}
         filters={[
           {

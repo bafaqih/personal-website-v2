@@ -19,24 +19,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/context/language-context";
 
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 export default function AchievementsListPage() {
   const { t, language } = useLanguage();
-  const [items, setItems] = useState<Achievement[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchData = () => {
-    setLoading(true);
-    AchievementService.getAll()
-      .then(setItems)
-      .catch(() => toast.error(t("common.failed")))
-      .finally(() => setLoading(false));
-  };
+  const { data: items = [], isLoading, isError } = useQuery({
+    queryKey: ["achievements"],
+    queryFn: AchievementService.getAll,
+    meta: { resource: "sidebar.Achievements" },
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const loading = isLoading;
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -44,7 +41,7 @@ export default function AchievementsListPage() {
     try {
       await AchievementService.delete(deleteId);
       toast.success(t("achievements.deleted_success"));
-      fetchData();
+      queryClient.invalidateQueries({ queryKey: ["achievements"] });
     } catch {
       toast.error(t("achievements.deleted_failed"));
     } finally {
@@ -117,6 +114,7 @@ export default function AchievementsListPage() {
         data={items} 
         columns={columns} 
         loading={loading}
+        error={isError}
         searchPlaceholder={t("achievements.search_placeholder")}
         emptyMessage={loading ? t("common.loading") : t("common.no_data")}
         filters={[
