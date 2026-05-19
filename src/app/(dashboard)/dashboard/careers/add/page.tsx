@@ -172,9 +172,6 @@ export default function CareerAddPage() {
               <div className="space-y-2">
                 <Label>{t("careers.form_end_date")}</Label>
                 <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
-                <span className="text-[10px] text-neutral-500 font-normal">
-                  {t("careers.form_end_date_desc")}
-                </span>
               </div>
             </div>
 

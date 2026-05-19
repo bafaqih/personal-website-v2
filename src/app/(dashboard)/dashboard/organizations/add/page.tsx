@@ -125,9 +125,6 @@ export default function OrganizationAddPage() {
               <div className="space-y-2">
                 <div className="flex flex-col gap-1">
                   <Label>{t("organizations.form_end_date")}</Label>
-                  <span className="text-[10px] text-neutral-500 dark:text-neutral-400">
-                    {t("organizations.form_end_date_desc")}
-                  </span>
                 </div>
                 <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
               </div>

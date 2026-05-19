@@ -200,9 +200,6 @@ export default function EducationEditPage() {
               <div className="space-y-2">
                 <div className="flex flex-col gap-1">
                   <Label>{t("educations.form_end_date")}</Label>
-                  <span className="text-[10px] text-neutral-500 dark:text-neutral-400">
-                    {t("educations.form_end_date_desc")}
-                  </span>
                 </div>
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
