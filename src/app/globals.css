@@ -138,21 +138,38 @@
 
   --success-bg: var(--background) !important;
   --success-border: var(--border) !important;
-  --success-text: #22c55e !important;
+  --success-text: var(--foreground) !important;
+  --success-icon: #22c55e !important;
 
   --error-bg: var(--background) !important;
   --error-border: var(--border) !important;
-  --error-text: #ef4444 !important;
+  --error-text: var(--foreground) !important;
+  --error-icon: #ef4444 !important;
 
   --info-bg: var(--background) !important;
   --info-border: var(--border) !important;
-  --info-text: #3b82f6 !important;
+  --info-text: var(--foreground) !important;
+  --info-icon: #3b82f6 !important;
 
   --warning-bg: var(--background) !important;
   --warning-border: var(--border) !important;
-  --warning-text: #f59e0b !important;
+  --warning-text: var(--foreground) !important;
+  --warning-icon: #f59e0b !important;
   
   padding-right: 40px !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: #22c55e !important;
+}
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: #ef4444 !important;
+}
+[data-sonner-toast][data-type="info"] [data-icon] {
+  color: #3b82f6 !important;
+}
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  color: #f59e0b !important;
 }
 
 [data-sonner-toast] [data-close-button] {

@@ -4,7 +4,7 @@ import "../globals.css";
 import { cn } from "@/src/app/lib/utils";
 import { ThemeProvider } from "@/components/dashboard/theme-provider";
 import { LanguageProvider } from "@/context/language-context";
-import { Toaster } from "sonner";
+import { DashboardToaster } from "@/components/dashboard/dashboard-toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import QueryProvider from "@/src/providers/query-provider";
@@ -42,16 +42,7 @@ export default function DashboardRootLayout({
               </TooltipProvider>
             </QueryProvider>
           </LanguageProvider>
-          <Toaster
-            position="top-right"
-            duration={5000}
-            closeButton
-            expand={true}
-            richColors
-            toastOptions={{
-              className: "font-sans pr-10",
-            }}
-          />
+          <DashboardToaster />
         </ThemeProvider>
       </body>
     </html>
