@@ -84,6 +84,9 @@ export const translations = {
         no_options: "No options found.",
         no_results: "No results found.",
       },
+      date_picker: {
+        placeholder: "Select date...",
+      },
       pdf_viewer: {
         close: "Close viewer",
         open_tab: "Open in new tab",
@@ -529,6 +532,9 @@ export const translations = {
         select_skills: "Pilih keahlian...",
         no_options: "Pilihan tidak ditemukan.",
         no_results: "Hasil tidak ditemukan.",
+      },
+      date_picker: {
+        placeholder: "Pilih tanggal...",
       },
       pdf_viewer: {
         close: "Tutup penampil",

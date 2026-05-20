@@ -2,11 +2,14 @@
 
 import * as React from "react";
 import { format, parse, isValid } from "date-fns";
+import { id, enUS } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+import { useLanguage } from "@/context/language-context";
 
 interface DatePickerProps {
   value?: string; // format: "YYYY-MM-DD"
@@ -19,11 +22,15 @@ interface DatePickerProps {
 export function DatePicker({
   value,
   onChange,
-  placeholder = "Pilih tanggal",
+  placeholder,
   disabled = false,
   className,
 }: DatePickerProps) {
+  const { t, language } = useLanguage();
+  const activePlaceholder = placeholder || t("common.date_picker.placeholder");
   const [open, setOpen] = React.useState(false);
+
+  const activeLocale = language === "id" ? id : enUS;
 
   // Parse string "YYYY-MM-DD" → Date object
   const selectedDate = React.useMemo(() => {
@@ -58,9 +65,9 @@ export function DatePicker({
         >
           <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
           {selectedDate ? (
-            format(selectedDate, "dd MMMM yyyy")
+            <span>{format(selectedDate, "dd MMMM yyyy", { locale: activeLocale })}</span>
           ) : (
-            <span>{placeholder}</span>
+            <span>{activePlaceholder}</span>
           )}
         </Button>
       </PopoverTrigger>
@@ -71,6 +78,7 @@ export function DatePicker({
           onSelect={handleSelect}
           defaultMonth={selectedDate}
           initialFocus
+          locale={activeLocale}
         />
       </PopoverContent>
     </Popover>
