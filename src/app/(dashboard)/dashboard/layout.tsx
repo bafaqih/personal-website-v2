@@ -27,7 +27,7 @@ export default function DashboardLayout({
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 overflow-x-hidden">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <DashboardSidebar
