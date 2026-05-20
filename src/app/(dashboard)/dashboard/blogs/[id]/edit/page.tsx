@@ -29,7 +29,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { BlogType, BlogCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -47,6 +47,7 @@ export default function BlogEditPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { id } = useParams() as { id: string };
+  const queryClient = useQueryClient();
   const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const [contentId, setContentId] = useState("");
@@ -142,6 +143,7 @@ export default function BlogEditPage() {
       await BlogService.syncTags(id, tags || []);
 
       toast.success(t("blogs.saved_success"));
+      await queryClient.invalidateQueries({ queryKey: ["blogs"] });
       router.push("/dashboard/blogs/list");
     } catch (e: unknown) {
       toast.error(t("blogs.saved_failed"), { 

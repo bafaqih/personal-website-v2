@@ -19,10 +19,12 @@ import { OrganizationService } from "@/src/services/organization.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function OrganizationAddPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
+  const queryClient = useQueryClient();
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const schema = useMemo(() => z.object({
@@ -63,6 +65,7 @@ export default function OrganizationAddPage() {
       };
       
       await OrganizationService.create(payload);
+      await queryClient.invalidateQueries({ queryKey: ["organizations"] });
       toast.success(t("organizations.saved_success"));
       router.push("/dashboard/organizations");
     } catch (e: unknown) {

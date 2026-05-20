@@ -22,12 +22,13 @@ import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CareerEditPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const { id } = useParams() as { id: string };
+  const queryClient = useQueryClient();
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
@@ -120,6 +121,7 @@ export default function CareerEditPage() {
       };
 
       await CareerService.update(id, careerData, skill_ids || []);
+      await queryClient.invalidateQueries({ queryKey: ["careers"] });
       toast.success(t("careers.saved_success"));
       router.push("/dashboard/careers");
     } catch (e: unknown) {

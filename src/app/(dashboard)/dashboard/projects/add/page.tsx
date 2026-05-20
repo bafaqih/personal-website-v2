@@ -25,11 +25,12 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { ProjectType, ProjectCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectAddPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
+  const queryClient = useQueryClient();
 
   const { data: types = [] } = useQuery({
     queryKey: ["project-types"],
@@ -221,6 +222,7 @@ export default function ProjectAddPage() {
 
       await ProjectService.create(coreData, uploadedImages, data.skill_ids, parsedResponsibilities, parsedFeatures);
 
+      await queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success(t("projects.saved_success"));
       router.push("/dashboard/projects/list");
     } catch (e: unknown) {

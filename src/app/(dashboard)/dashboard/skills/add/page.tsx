@@ -20,11 +20,12 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { SkillCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function SkillAddPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
+  const queryClient = useQueryClient();
   const [iconFile, setIconFile] = useState<File | null>(null);
 
   const { data: categories = [] } = useQuery({
@@ -55,6 +56,7 @@ export default function SkillAddPage() {
         icon_url = result.publicUrl;
       }
       await SkillService.create({ ...data, icon_url });
+      await queryClient.invalidateQueries({ queryKey: ["skills"] });
       toast.success(t("skills.saved_success"));
       router.push("/dashboard/skills/list");
     } catch (error: unknown) {

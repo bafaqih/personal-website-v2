@@ -26,12 +26,13 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { ProjectType, ProjectCategory } from "@/src/types/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectEditPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const { id } = useParams() as { id: string };
+  const queryClient = useQueryClient();
   
   const { data: project, isLoading: isProjectLoading } = useQuery({
     queryKey: ["project", id],
@@ -293,6 +294,7 @@ export default function ProjectEditPage() {
 
       await ProjectService.update(id, coreData, imagesPayload, data.skill_ids, parsedResponsibilities, parsedFeatures);
 
+      await queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success(t("projects.saved_success"));
       router.push("/dashboard/projects/list");
     } catch (e: unknown) {

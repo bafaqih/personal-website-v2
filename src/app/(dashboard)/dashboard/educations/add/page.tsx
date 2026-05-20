@@ -19,10 +19,12 @@ import { EducationService } from "@/src/services/education.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function EducationAddPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
+  const queryClient = useQueryClient();
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const schema = useMemo(() => z.object({
@@ -67,6 +69,7 @@ export default function EducationAddPage() {
       };
 
       await EducationService.create(payload);
+      await queryClient.invalidateQueries({ queryKey: ["educations"] });
       toast.success(t("educations.saved_success"));
       router.push("/dashboard/educations");
     } catch (e: unknown) {

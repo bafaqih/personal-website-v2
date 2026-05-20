@@ -27,7 +27,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { AchievementType, AchievementCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const schema = z.object({
   title_id: z.string().min(1, "Title (ID) is required"),
@@ -46,6 +46,7 @@ export default function AchievementEditPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { id } = useParams() as { id: string };
+  const queryClient = useQueryClient();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
 
@@ -112,6 +113,7 @@ export default function AchievementEditPage() {
       });
       
       toast.success(t("achievements.saved_success"));
+      await queryClient.invalidateQueries({ queryKey: ["achievements"] });
       router.push("/dashboard/achievements/list");
     } catch (e: unknown) {
       toast.error(t("achievements.saved_failed"), { 

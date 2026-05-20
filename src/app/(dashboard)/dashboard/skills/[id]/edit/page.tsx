@@ -21,13 +21,14 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { SkillCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function SkillEditPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const params = useParams();
   const id = params.id as string;
+  const queryClient = useQueryClient();
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [currentIconUrl, setCurrentIconUrl] = useState<string | null>(null);
   const [isImageChanged, setIsImageChanged] = useState(false);
@@ -74,6 +75,7 @@ export default function SkillEditPage() {
         icon_url = result.publicUrl;
       }
       await SkillService.update(id, { ...data, icon_url });
+      await queryClient.invalidateQueries({ queryKey: ["skills"] });
       toast.success(t("skills.saved_success"));
       router.push("/dashboard/skills/list");
     } catch (error: unknown) {

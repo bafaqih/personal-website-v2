@@ -28,7 +28,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { AuthService } from "@/src/services/auth.service";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
@@ -45,6 +45,7 @@ type FormData = z.infer<typeof schema>;
 export default function BlogAddPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [contentId, setContentId] = useState("");
   const [contentEn, setContentEn] = useState("");
@@ -113,6 +114,7 @@ export default function BlogAddPage() {
       }
       
       toast.success(t("blogs.saved_success"));
+      await queryClient.invalidateQueries({ queryKey: ["blogs"] });
       router.push("/dashboard/blogs/list");
     } catch (e: unknown) {
       toast.error(t("blogs.saved_failed"), { 

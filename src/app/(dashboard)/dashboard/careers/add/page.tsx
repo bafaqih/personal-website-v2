@@ -21,11 +21,12 @@ import { SkillService } from "@/src/services/skill.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CareerAddPage() {
   const router = useRouter();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [activeSkills, setActiveSkills] = useState<{ id: string; name: string }[]>([]);
 
@@ -86,6 +87,7 @@ export default function CareerAddPage() {
 
       await CareerService.create(careerData, skill_ids || []);
 
+      await queryClient.invalidateQueries({ queryKey: ["careers"] });
       toast.success(t("careers.saved_success"));
       router.push("/dashboard/careers");
     } catch (e: unknown) {
