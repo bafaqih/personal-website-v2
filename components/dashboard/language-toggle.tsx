@@ -32,7 +32,7 @@ export function LanguageToggle() {
           <Globe className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
           
           {/* Overlapping Badge */}
-          <span className="absolute -bottom-1.5 -right-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-[4px] bg-neutral-900 px-0.5 text-[8px] font-bold text-white border border-neutral-200 dark:bg-white dark:text-neutral-900 dark:border-neutral-800 leading-none select-none uppercase">
+          <span className="absolute -bottom-1.5 -right-1.5 z-0 flex h-4 min-w-[16px] items-center justify-center rounded-[4px] bg-neutral-900 px-0.5 text-[8px] font-bold text-white border border-neutral-200 dark:bg-white dark:text-neutral-900 dark:border-neutral-800 leading-none select-none uppercase">
             {language === "en" ? "id" : "en"}
           </span>
           

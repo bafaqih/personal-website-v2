@@ -47,6 +47,7 @@ export function DashboardHeader({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [imageStatus, setImageStatus] = useState<"idle" | "loading" | "loaded" | "error">("idle");
+  const [isMobile, setIsMobile] = useState(false);
 
   const showSkeleton = loading || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
 
@@ -73,6 +74,13 @@ export function DashboardHeader({
     return () => {
       window.removeEventListener("profile-update", handleProfileUpdate);
     };
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const handleLogout = async () => {
@@ -159,7 +167,7 @@ export function DashboardHeader({
                 </DropdownMenuTrigger>
               </TooltipTrigger>
               <DropdownMenuContent
-                align="end"
+                align={isMobile ? "start" : "end"}
                 className="w-48"
                 onCloseAutoFocus={(e) => e.preventDefault()}
               >

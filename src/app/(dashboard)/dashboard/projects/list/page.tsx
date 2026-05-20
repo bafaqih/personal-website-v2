@@ -99,7 +99,7 @@ export default function ProjectsListPage() {
         breadcrumbs={[
           { label: t("dashboard.title"), href: "/dashboard" },
           { label: t("projects.title") },
-          { label: t("common.all") },
+          { label: t("sidebar.List") },
         ]}
         actions={
           <Link href="/dashboard/projects/add">

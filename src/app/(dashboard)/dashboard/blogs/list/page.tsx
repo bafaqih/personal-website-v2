@@ -114,7 +114,7 @@ export default function BlogsListPage() {
         breadcrumbs={[
           { label: t("dashboard.title"), href: "/dashboard" },
           { label: t("blogs.title"), href: "/dashboard/blogs/list" },
-          { label: t("common.list") },
+          { label: t("sidebar.List") },
         ]}
         actions={
           <Link href="/dashboard/blogs/add">
