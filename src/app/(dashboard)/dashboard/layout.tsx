@@ -37,8 +37,8 @@ export default function DashboardLayout({
 
       {/* Mobile sidebar (Sheet) */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-[260px] p-0">
-          <DashboardSidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
+        <SheetContent side="left" className="w-[300px] p-0 border-none bg-transparent shadow-none" showCloseButton={false}>
+          <DashboardSidebar collapsed={false} onToggle={() => setMobileOpen(false)} isMobile={true} />
         </SheetContent>
       </Sheet>
 

@@ -8,6 +8,7 @@ import {
   ChevronDown,
   PanelLeftClose,
   PanelLeft,
+  X,
 } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 import { DASHBOARD_NAV, type NavItem } from "@/src/lib/constants";
@@ -27,13 +28,14 @@ import logoWhite from "@/src/assets/images/fadilbaf-white.svg";
 interface DashboardSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  isMobile?: boolean;
 }
 
 /**
  * Dashboard sidebar with logo, navigation menu, and collapsible submenus.
  * Features glassmorphism border and smooth collapse animation.
  */
-export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps) {
+export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
   // Track only ONE open menu at a time
@@ -56,6 +58,9 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
       });
     } else {
       setOpenMenu(null);
+      if (isMobile) {
+        onToggle();
+      }
     }
   };
 
@@ -63,13 +68,25 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300",
+          "flex h-full flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300",
           "dark:border-white/10 dark:bg-neutral-950/90",
-          collapsed ? "w-[72px]" : "w-[260px]"
+          isMobile ? "relative w-full" : "fixed left-0 top-0 z-40 h-screen",
+          !isMobile && (collapsed ? "w-[72px]" : "w-[260px]")
         )}
       >
-        {/* Logo */}
-        <div className={cn("flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 justify-center")}>
+        {/* Logo & Mobile Close Button */}
+        <div className="relative flex h-16 items-center justify-center px-4 border-b border-neutral-200/60 dark:border-white/10">
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggle}
+              className="absolute left-4 top-[14px] h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+            >
+              <X className="h-5 w-5 stroke-[2.5]" />
+            </Button>
+          )}
+
           <Link href="/dashboard" className="flex items-center">
             <Image
               src={logoBlack}
@@ -143,6 +160,11 @@ export function DashboardSidebar({ collapsed, onToggle }: DashboardSidebarProps)
                               <li key={child.href}>
                                 <Link
                                   href={child.href}
+                                  onClick={() => {
+                                    if (isMobile) {
+                                      onToggle();
+                                    }
+                                  }}
                                   className={cn(
                                     "block rounded-md px-3 py-2 text-sm transition-colors",
                                     isActive(child.href)

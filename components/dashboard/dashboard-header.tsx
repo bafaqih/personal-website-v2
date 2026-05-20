@@ -90,7 +90,7 @@ export function DashboardHeader({
   return (
     <TooltipProvider>
       <header
-        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-8 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
+        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-4 sm:px-8 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
         {/* Left Side: Toggle Button */}
         <div className="flex items-center">
@@ -99,9 +99,9 @@ export function DashboardHeader({
             variant="ghost"
             size="icon"
             onClick={onMobileMenuToggle}
-            className="lg:hidden mr-2"
+            className="lg:hidden mr-2 h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-[18px] w-[18px] stroke-[2.5]" />
           </Button>
 
           {/* Desktop Sidebar Toggle */}
