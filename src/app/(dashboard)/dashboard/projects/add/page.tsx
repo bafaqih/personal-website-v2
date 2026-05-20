@@ -26,6 +26,7 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { ProjectType, ProjectCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { DatePicker } from "@/components/dashboard/date-picker";
 
 export default function ProjectAddPage() {
   const router = useRouter();
@@ -256,7 +257,10 @@ export default function ProjectAddPage() {
               </div>
               <div className="space-y-2">
                 <Label>{t("projects.form_date")}</Label>
-                <Input type="date" {...register("project_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                <DatePicker
+                  value={watch("project_date") || ""}
+                  onChange={(v) => setValue("project_date", v, { shouldValidate: true, shouldDirty: true })}
+                />
               </div>
             </div>
             <div className="grid gap-6 md:grid-cols-2">

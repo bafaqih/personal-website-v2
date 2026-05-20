@@ -27,6 +27,7 @@ import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { AchievementType, AchievementCategory } from "@/src/types/database";
 import { useLanguage } from "@/context/language-context";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { DatePicker } from "@/components/dashboard/date-picker";
 
 const schema = z.object({
   title_id: z.string().min(1, "Title (ID) is required"),
@@ -147,10 +148,9 @@ export default function AchievementAddPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>{t("achievements.issue_date")}</Label>
-                  <Input 
-                    type="date" 
-                    {...register("issue_date")} 
-                    onClick={(e) => e.currentTarget.showPicker()}
+                  <DatePicker
+                    value={watch("issue_date")}
+                    onChange={(v) => setValue("issue_date", v, { shouldValidate: true, shouldDirty: true })}
                   />
                   {errors.issue_date && <p className="text-xs text-red-500">{errors.issue_date.message}</p>}
                 </div>

@@ -20,6 +20,7 @@ import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import { useLanguage } from "@/context/language-context";
 import { useQueryClient } from "@tanstack/react-query";
+import { DatePicker } from "@/components/dashboard/date-picker";
 
 export default function EducationAddPage() {
   const router = useRouter();
@@ -137,7 +138,10 @@ export default function EducationAddPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>{t("educations.form_start_date")}</Label>
-                <Input type="date" {...register("start_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                <DatePicker
+                  value={watch("start_date") || ""}
+                  onChange={(v) => setValue("start_date", v, { shouldValidate: true, shouldDirty: true })}
+                />
                 {errors.start_date && <p className="text-xs text-red-500">{errors.start_date.message}</p>}
               </div>
               <div className="space-y-2">
@@ -146,7 +150,10 @@ export default function EducationAddPage() {
                   <span className="text-[10px] text-neutral-500 dark:text-neutral-400">
                   </span>
                 </div>
-                <Input type="date" {...register("end_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                <DatePicker
+                  value={watch("end_date") || ""}
+                  onChange={(v) => setValue("end_date", v, { shouldValidate: true, shouldDirty: true })}
+                />
               </div>
             </div>
 

@@ -27,6 +27,7 @@ import type { ProjectType, ProjectCategory } from "@/src/types/database";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/context/language-context";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { DatePicker } from "@/components/dashboard/date-picker";
 
 export default function ProjectEditPage() {
   const router = useRouter();
@@ -335,7 +336,10 @@ export default function ProjectEditPage() {
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
-                  <Input type="date" {...register("project_date")} onClick={(e) => e.currentTarget.showPicker()} />
+                  <DatePicker
+                    value={watch("project_date") || ""}
+                    onChange={(v) => setValue("project_date", v, { shouldValidate: true, shouldDirty: true })}
+                  />
                 )}
               </div>
             </div>
