@@ -93,13 +93,95 @@ export function DashboardHeader({
   };
 
 
+  const profileDropdown = (
+    <Tooltip
+      open={dropdownOpen ? false : tooltipOpen}
+      onOpenChange={setTooltipOpen}
+    >
+      <DropdownMenu onOpenChange={setDropdownOpen}>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              disabled={showSkeleton}
+              onClick={() => !showSkeleton && setTooltipOpen(false)}
+              className={cn(
+                "h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0 relative overflow-hidden",
+                showSkeleton && "pointer-events-none cursor-default"
+              )}
+            >
+              <Avatar className={cn("h-full w-full", showSkeleton && "invisible")}>
+                <AvatarImage
+                  src={profile?.photo_url || undefined}
+                  alt={profile?.full_name || "FB"}
+                  className="rounded-lg"
+                  onLoadingStatusChange={(status) => {
+                    setImageStatus(status);
+                  }}
+                />
+                <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center">
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              {showSkeleton && (
+                <Skeleton className="absolute inset-0 h-full w-full rounded-lg" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <DropdownMenuContent
+          align={isMobile ? "start" : "end"}
+          className="w-48"
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
+          <DropdownMenuLabel>
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold text-neutral-900 dark:text-white">
+                {profile?.full_name || "Admin"}
+              </p>
+              <p className="text-xs text-neutral-500 font-normal">
+                {profile?.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              router.push("/dashboard/profile");
+              setTooltipOpen(false);
+            }}
+            className="cursor-pointer"
+          >
+            <User className="mr-2 h-4 w-4" />
+            {t("header.my_profile")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={handleLogout}
+            className="cursor-pointer"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            {t("header.logout")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <TooltipContent side="bottom">
+        <p>{t("header.profile")}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+
   return (
     <TooltipProvider>
       <header
-        className="sticky top-0 z-30 flex h-16 flex-row-reverse lg:flex-row items-center justify-between border-b border-neutral-200/60 bg-white/70 px-4 sm:px-8 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
+        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-4 sm:px-8 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
-        {/* Left Side: Toggle Button */}
+        {/* Left Side: Profile dropdown on mobile, Sidebar toggle on desktop */}
         <div className="flex items-center">
+          {/* Mobile Profile dropdown */}
+          <div className="block lg:hidden">
+            {profileDropdown}
+          </div>
 
           {/* Desktop Sidebar Toggle */}
           <div className="hidden lg:block">
@@ -125,87 +207,15 @@ export function DashboardHeader({
           </div>
         </div>
 
-        {/* Right side */}
-        <div className="flex flex-row-reverse lg:flex-row items-center gap-3">
+        {/* Right side: Language, Theme, and Profile dropdown (on desktop) */}
+        <div className="flex items-center gap-3 pr-12 lg:pr-0">
           <LanguageToggle />
           <ThemeToggle />
 
-          {/* Profile dropdown */}
-          <Tooltip
-            open={dropdownOpen ? false : tooltipOpen}
-            onOpenChange={setTooltipOpen}
-          >
-            <DropdownMenu onOpenChange={setDropdownOpen}>
-              <TooltipTrigger asChild>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    disabled={showSkeleton}
-                    onClick={() => !showSkeleton && setTooltipOpen(false)}
-                    className={cn(
-                      "h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0 relative overflow-hidden",
-                      showSkeleton && "pointer-events-none cursor-default"
-                    )}
-                  >
-                    <Avatar className={cn("h-full w-full", showSkeleton && "invisible")}>
-                      <AvatarImage
-                        src={profile?.photo_url || undefined}
-                        alt={profile?.full_name || "FB"}
-                        className="rounded-lg"
-                        onLoadingStatusChange={(status) => {
-                          setImageStatus(status);
-                        }}
-                      />
-                      <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center">
-                        <User className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                    {showSkeleton && (
-                      <Skeleton className="absolute inset-0 h-full w-full rounded-lg" />
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-              </TooltipTrigger>
-              <DropdownMenuContent
-                align={isMobile ? "start" : "end"}
-                className="w-48"
-                onCloseAutoFocus={(e) => e.preventDefault()}
-              >
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-semibold text-neutral-900 dark:text-white">
-                      {profile?.full_name || "Admin"}
-                    </p>
-                    <p className="text-xs text-neutral-500 font-normal">
-                      {profile?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    router.push("/dashboard/profile");
-                    setTooltipOpen(false);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  {t("header.my_profile")}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={handleLogout}
-                  className="cursor-pointer"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  {t("header.logout")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <TooltipContent side="bottom">
-              <p>{t("header.profile")}</p>
-            </TooltipContent>
-          </Tooltip>
+          {/* Desktop Profile dropdown */}
+          <div className="hidden lg:block">
+            {profileDropdown}
+          </div>
         </div>
       </header>
     </TooltipProvider>
