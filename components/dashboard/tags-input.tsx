@@ -98,8 +98,18 @@ export function TagsInput({
             ref={inputRef}
             value={inputValue}
             onChange={(e) => {
-              setInputValue(e.target.value);
-              setOpen(true);
+              const val = e.target.value;
+              if (val.endsWith(" ") || val.endsWith(",") || val.endsWith("\n")) {
+                const tagValue = val.slice(0, -1).trim().replace(/,$/, "");
+                if (tagValue) {
+                  addTag(tagValue);
+                } else {
+                  setInputValue("");
+                }
+              } else {
+                setInputValue(val);
+                setOpen(true);
+              }
             }}
             onKeyDown={handleKeyDown}
             onFocus={() => {
