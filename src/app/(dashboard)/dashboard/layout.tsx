@@ -55,7 +55,7 @@ export default function DashboardLayout({
           variant="ghost"
           size="icon"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden fixed top-[14px] right-4 z-60 h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+          className="lg:hidden fixed top-[14px] right-4 z-45 h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
         >
           <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
             <span className={cn(
