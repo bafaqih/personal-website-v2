@@ -68,25 +68,14 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "flex h-full flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300",
+          "flex h-full flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300 overflow-x-hidden",
           "dark:border-white/10 dark:bg-neutral-950/90",
           isMobile ? "relative w-full" : "fixed left-0 top-0 z-40 h-screen",
           !isMobile && (collapsed ? "w-[72px]" : "w-[260px]")
         )}
       >
-        {/* Logo & Mobile Close Button */}
-        <div className="relative flex h-16 items-center justify-center px-4 border-b border-neutral-200/60 dark:border-white/10">
-          {isMobile && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggle}
-              className="absolute left-4 top-[14px] h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
-            >
-              <X className="h-5 w-5 stroke-[2.5]" />
-            </Button>
-          )}
-
+        {/* Logo */}
+        <div className="flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 justify-center">
           <Link href="/dashboard" className="flex items-center">
             <Image
               src={logoBlack}
@@ -108,8 +97,8 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
         </div>
 
         {/* Navigation */}
-        <nav key={collapsed ? "collapsed" : "expanded"} className="flex-1 overflow-y-auto px-3 py-4">
-          <ul className="space-y-2">
+        <nav key={collapsed ? "collapsed" : "expanded"} className={cn("flex-1 overflow-y-auto", isMobile ? "px-4 py-6" : "px-3 py-4")}>
+          <ul className={cn(isMobile ? "space-y-2.5" : "space-y-2")}>
             {DASHBOARD_NAV.map((item) => {
               const hasChildren = !!item.children;
               const isOpen = openMenu === item.title;
@@ -132,20 +121,23 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
                               }
                             }}
                             className={cn(
-                              "flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
-                              collapsed ? "h-11 w-11 justify-center p-0" : "w-full px-3 py-2.5",
+                              "flex items-center rounded-lg font-medium transition-all duration-200",
+                              isMobile
+                                ? "w-full px-4 py-3 text-[15px] gap-3.5"
+                                : (collapsed ? "h-11 w-11 justify-center p-0 text-sm gap-3" : "w-full px-3 py-2.5 text-sm gap-3"),
                               isActive(item.href)
                                 ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                               : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                             )}
                           >
-                            <item.icon className="h-5 w-5 shrink-0" />
+                            <item.icon className={cn("shrink-0", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
                             {!collapsed && (
                               <>
                                 <span className="flex-1 text-left">{translatedTitle}</span>
                                 <ChevronDown
                                   className={cn(
-                                    "h-4 w-4 shrink-0 transition-transform duration-200",
+                                    "shrink-0 transition-transform duration-200",
+                                    isMobile ? "h-5 w-5" : "h-4 w-4",
                                     isOpen && "rotate-180"
                                   )}
                                 />
@@ -155,7 +147,7 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
                         </TooltipTrigger>
                         {/* Submenu */}
                         {!collapsed && isOpen && (
-                          <ul className="ml-4 mt-1 w-full space-y-0.5 border-l border-neutral-200 pl-4 dark:border-white/10">
+                          <ul className={cn("ml-4 mt-1 border-l border-neutral-200 pl-4 dark:border-white/10", isMobile ? "space-y-1" : "space-y-0.5")}>
                             {item.children?.map((child) => (
                               <li key={child.href}>
                                 <Link
@@ -166,7 +158,8 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
                                     }
                                   }}
                                   className={cn(
-                                    "block rounded-md px-3 py-2 text-sm transition-colors",
+                                    "block rounded-md transition-colors",
+                                    isMobile ? "px-4 py-2.5 text-[14px]" : "px-3 py-2 text-sm",
                                     isActive(child.href)
                                       ? "font-medium text-neutral-900 dark:text-white"
                                       : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -186,15 +179,17 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
                           onPointerDown={(e) => e.preventDefault()}
                           onClick={(e) => handleNavClick(item, e)}
                           className={cn(
-                            "flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
+                            "flex items-center rounded-lg font-medium transition-all duration-200",
                             item.disabled && "opacity-50 cursor-not-allowed",
-                            collapsed ? "h-11 w-11 justify-center p-0" : "w-full px-3 py-2.5",
+                            isMobile
+                              ? "w-full px-4 py-3 text-[15px] gap-3.5"
+                              : (collapsed ? "h-11 w-11 justify-center p-0 text-sm gap-3" : "w-full px-3 py-2.5 text-sm gap-3"),
                             isActive(item.href)
                               ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
                               : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                           )}
                         >
-                          <item.icon className="h-5 w-5 shrink-0" />
+                          <item.icon className={cn("shrink-0", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
                           {!collapsed && <span>{translatedTitle}</span>}
                         </Link>
                       </TooltipTrigger>
@@ -210,6 +205,15 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
             })}
           </ul>
         </nav>
+
+        {/* Copyright */}
+        {!collapsed && (
+          <div className="border-t border-neutral-200/60 dark:border-white/10 px-2 py-4 text-center text-neutral-400 dark:text-neutral-500 shrink-0">
+            <p className="text-[10px] whitespace-nowrap">
+              © {new Date().getFullYear()} Fadil Bafagih. All Rights Reserved.
+            </p>
+          </div>
+        )}
       </aside>
     </TooltipProvider>
   );
