@@ -13,7 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, User, PanelLeft, PanelLeftClose } from "lucide-react";
+import { LogOut, User, PanelLeft, PanelLeftClose } from "lucide-react";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { LanguageToggle } from "@/components/dashboard/language-toggle";
 import { useLanguage } from "@/context/language-context";
@@ -27,73 +27,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface DashboardHeaderProps {
-  sidebarCollapsed: boolean;
-  onToggleSidebar?: () => void;
+interface ProfileDropdownProps {
+  profile: Profile | null;
+  showSkeleton: boolean;
+  handleLogout: () => void;
+  router: any;
+  t: any;
+  align: "start" | "end";
 }
 
-/**
- * Dashboard header with glassmorphism background.
- * Contains: mobile menu toggle, language toggle, theme toggle, and user profile dropdown.
- */
-export function DashboardHeader({
-  sidebarCollapsed,
-  onToggleSidebar,
-}: DashboardHeaderProps) {
-  const router = useRouter();
-  const { t } = useLanguage();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+function ProfileDropdown({
+  profile,
+  showSkeleton,
+  handleLogout,
+  router,
+  t,
+  align,
+}: ProfileDropdownProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [imageStatus, setImageStatus] = useState<"idle" | "loading" | "loaded" | "error">("idle");
-  const [isMobile, setIsMobile] = useState(false);
 
-  const showSkeleton = loading || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
+  const actualShowSkeleton = showSkeleton || (profile?.photo_url ? (imageStatus !== "loaded" && imageStatus !== "error") : false);
 
-  useEffect(() => {
-    AuthService.getProfile()
-      .then(setProfile)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-
-    const handleProfileUpdate = () => {
-      setLoading(true);
-      AuthService.getProfile()
-        .then((updatedProfile) => {
-          if (updatedProfile) {
-            setProfile(updatedProfile);
-            setImageStatus("idle");
-          }
-        })
-        .catch(() => {})
-        .finally(() => setLoading(false));
-    };
-
-    window.addEventListener("profile-update", handleProfileUpdate);
-    return () => {
-      window.removeEventListener("profile-update", handleProfileUpdate);
-    };
-  }, []);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await AuthService.signOut();
-      router.push("/login");
-    } catch {
-      // Ignore logout errors
-    }
-  };
-
-
-  const profileDropdown = (
+  return (
     <Tooltip
       open={dropdownOpen ? false : tooltipOpen}
       onOpenChange={setTooltipOpen}
@@ -103,34 +60,32 @@ export function DashboardHeader({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              disabled={showSkeleton}
-              onClick={() => !showSkeleton && setTooltipOpen(false)}
+              disabled={actualShowSkeleton}
+              onClick={() => !actualShowSkeleton && setTooltipOpen(false)}
               className={cn(
-                "h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0 relative overflow-hidden",
-                showSkeleton && "pointer-events-none cursor-default"
+                "h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0 relative overflow-hidden cursor-pointer",
+                actualShowSkeleton && "pointer-events-none cursor-default"
               )}
             >
-              <Avatar className={cn("h-full w-full", showSkeleton && "invisible")}>
+              <Avatar className={cn("h-full w-full", actualShowSkeleton && "invisible")}>
                 <AvatarImage
                   src={profile?.photo_url || undefined}
                   alt={profile?.full_name || "FB"}
                   className="rounded-lg"
-                  onLoadingStatusChange={(status) => {
-                    setImageStatus(status);
-                  }}
+                  onLoadingStatusChange={setImageStatus}
                 />
                 <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center">
                   <User className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
-              {showSkeleton && (
+              {actualShowSkeleton && (
                 <Skeleton className="absolute inset-0 h-full w-full rounded-lg" />
               )}
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
         <DropdownMenuContent
-          align={isMobile ? "start" : "end"}
+          align={align}
           className="w-48"
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
@@ -170,6 +125,58 @@ export function DashboardHeader({
       </TooltipContent>
     </Tooltip>
   );
+}
+
+interface DashboardHeaderProps {
+  sidebarCollapsed: boolean;
+  onToggleSidebar?: () => void;
+}
+
+/**
+ * Dashboard header with glassmorphism background.
+ * Contains: mobile menu toggle, language toggle, theme toggle, and user profile dropdown.
+ */
+export function DashboardHeader({
+  sidebarCollapsed,
+  onToggleSidebar,
+}: DashboardHeaderProps) {
+  const router = useRouter();
+  const { t } = useLanguage();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    AuthService.getProfile()
+      .then(setProfile)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+
+    const handleProfileUpdate = () => {
+      setLoading(true);
+      AuthService.getProfile()
+        .then((updatedProfile) => {
+          if (updatedProfile) {
+            setProfile(updatedProfile);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    };
+
+    window.addEventListener("profile-update", handleProfileUpdate);
+    return () => {
+      window.removeEventListener("profile-update", handleProfileUpdate);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AuthService.signOut();
+      router.push("/login");
+    } catch {
+      // Ignore logout errors
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -180,7 +187,14 @@ export function DashboardHeader({
         <div className="flex items-center">
           {/* Mobile Profile dropdown */}
           <div className="block lg:hidden">
-            {profileDropdown}
+            <ProfileDropdown
+              profile={profile}
+              showSkeleton={loading}
+              handleLogout={handleLogout}
+              router={router}
+              t={t}
+              align="start"
+            />
           </div>
 
           {/* Desktop Sidebar Toggle */}
@@ -191,7 +205,7 @@ export function DashboardHeader({
                   variant="ghost"
                   size="icon"
                   onClick={onToggleSidebar}
-                  className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg"
+                  className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg cursor-pointer"
                 >
                   {sidebarCollapsed ? (
                     <PanelLeft className="h-4 w-4" />
@@ -214,7 +228,14 @@ export function DashboardHeader({
 
           {/* Desktop Profile dropdown */}
           <div className="hidden lg:block">
-            {profileDropdown}
+            <ProfileDropdown
+              profile={profile}
+              showSkeleton={loading}
+              handleLogout={handleLogout}
+              router={router}
+              t={t}
+              align="end"
+            />
           </div>
         </div>
       </header>
