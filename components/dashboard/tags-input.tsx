@@ -23,6 +23,7 @@ export function TagsInput({
   const activePlaceholder = placeholder || t("common.tags_input.placeholder");
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -69,7 +70,10 @@ export function TagsInput({
   return (
     <div className="relative w-full" ref={containerRef}>
       <div
-        className="flex min-h-9 w-full cursor-pointer flex-wrap items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow,background-color] outline-none dark:bg-input/30 dark:hover:bg-input/50"
+        className={cn(
+          "flex min-h-9 w-full cursor-pointer flex-wrap items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-1 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow,background-color] outline-none dark:bg-input/30 dark:hover:bg-input/50",
+          isFocused && "border-ring ring-3 ring-ring/50"
+        )}
         onClick={() => inputRef.current?.focus()}
       >
         <div className="flex flex-wrap items-center gap-1.5 flex-1">
@@ -99,7 +103,11 @@ export function TagsInput({
               setOpen(true);
             }}
             onKeyDown={handleKeyDown}
-            onFocus={() => setOpen(true)}
+            onFocus={() => {
+              setOpen(true);
+              setIsFocused(true);
+            }}
+            onBlur={() => setIsFocused(false)}
             placeholder={value.length === 0 ? activePlaceholder : ""}
             className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground min-w-[120px]"
           />

@@ -89,6 +89,21 @@ const highlightStyles = `
   .tiptap p:last-child {
     margin-bottom: 0;
   }
+
+  /* Youtube Video Responsiveness */
+  .tiptap div[data-youtube-video] {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5rem auto;
+    aspect-ratio: 16 / 9;
+  }
+  .tiptap div[data-youtube-video] iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+    border-radius: 8px;
+  }
 `;
 
 interface RichTextEditorProps {
@@ -191,7 +206,10 @@ export function RichTextEditor({
           "[&_.hljs-number]:text-orange-400",
           "[&_.hljs-attr]:text-cyan-400 [&_.hljs-attribute]:text-cyan-400",
           "[&_.hljs-function]:text-blue-400",
-          "[&_.hljs-params]:text-neutral-100"
+          "[&_.hljs-params]:text-neutral-100",
+          // Youtube Video Responsiveness
+          "[&_div\\[data-youtube-video\\]]:w-full [&_div\\[data-youtube-video\\]]:max-w-full [&_div\\[data-youtube-video\\]]:mx-auto [&_div\\[data-youtube-video\\]]:my-6 [&_div\\[data-youtube-video\\]]:aspect-video",
+          "[&_div\\[data-youtube-video\\]_iframe]:w-full [&_div\\[data-youtube-video\\]_iframe]:h-full [&_div\\[data-youtube-video\\]_iframe]:rounded-lg [&_div\\[data-youtube-video\\]_iframe]:border-none"
         ),
       },
     },
@@ -202,6 +220,16 @@ export function RichTextEditor({
       editor.view.dispatch(editor.state.tr);
     }
   }, [activePlaceholder, editor]);
+
+  // Keep editor content in sync with external content prop changes (e.g. after loading from API)
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return;
+    if (editor.isFocused) return; // Prevent cursor jumps while typing
+    
+    if (content !== editor.getHTML()) {
+      editor.commands.setContent(content || "", { emitUpdate: false });
+    }
+  }, [content, editor]);
 
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isYoutubeModalOpen, setIsYoutubeModalOpen] = useState(false);

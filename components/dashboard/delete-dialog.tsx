@@ -49,12 +49,12 @@ export function DeleteDialog({
           <DialogTitle>{displayTitle}</DialogTitle>
           <DialogDescription>{displayDescription}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+        <DialogFooter className="flex flex-row flex-wrap items-center sm:justify-end gap-2.5">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="gap-1.5 cursor-pointer"
+            className="flex-1 sm:flex-initial min-w-[110px] gap-1.5 cursor-pointer"
           >
             <X className="h-4 w-4" /> {t("common.cancel")}
           </Button>
@@ -62,7 +62,7 @@ export function DeleteDialog({
             variant="destructive"
             onClick={onConfirm}
             disabled={loading}
-            className="gap-1.5 cursor-pointer"
+            className="flex-1 sm:flex-initial min-w-[110px] gap-1.5 cursor-pointer"
           >
             {loading ? (
               <>

@@ -490,8 +490,8 @@ export function DataTable<T>({
         </Table>
 
         {/* Footer section inside the table box container */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-200 dark:border-white/10 px-6 py-3.5 bg-white dark:bg-neutral-950">
-          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-neutral-200 dark:border-white/10 px-6 py-3.5 bg-white dark:bg-neutral-950">
+          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 w-full text-left sm:w-auto">
             {t("common.showing_info", {
               start: String(filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1),
               end: String(Math.min(page * pageSize, filteredData.length)),
@@ -500,18 +500,22 @@ export function DataTable<T>({
           </p>
 
           {totalPages > 1 && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center justify-between sm:justify-end gap-1 w-full sm:w-auto">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer"
+                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <div className="flex items-center gap-1">
+              <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 sm:hidden">
+                {t("common.page_info", { current: String(page), total: String(totalPages) })}
+              </span>
+
+              <div className="hidden sm:flex items-center gap-1">
                 {visiblePages.map((pageItem, index) => {
                   if (typeof pageItem === "string") {
                     return (
@@ -549,7 +553,7 @@ export function DataTable<T>({
                 size="icon"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer"
+                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>

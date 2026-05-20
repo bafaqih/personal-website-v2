@@ -40,6 +40,7 @@ export const translations = {
       apply: "Apply",
       reset: "Reset",
       showing_info: "Showing {start} to {end} of {total} data",
+      page_info: "Page {current} of {total}",
       location: "Location",
       image_viewer: {
         close: "Close viewer",
@@ -485,6 +486,7 @@ export const translations = {
       apply: "Terapkan",
       reset: "Atur ulang",
       showing_info: "Menampilkan {start} sampai {end} dari {total} data",
+      page_info: "Halaman {current} dari {total}",
       location: "Lokasi",
       image_viewer: {
         close: "Tutup penampil",
