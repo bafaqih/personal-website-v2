@@ -16,16 +16,36 @@ export function ScrollToTop() {
 
   useEffect(() => {
     const toggleVisibility = () => {
-      // Show button if scrolled down past 300px
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      // Use setTimeout to ensure Radix UI has finished updating DOM attributes
+      setTimeout(() => {
+        const isModalOpen = 
+          document.body.style.pointerEvents === "none" || 
+          document.body.hasAttribute("data-scroll-locked") ||
+          document.body.style.overflow === "hidden" ||
+          !!document.querySelector('[data-state="open"]');
+
+        // Show button if scrolled down past 300px and no modals/sidebars are open
+        if (window.scrollY > 300 && !isModalOpen) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      }, 0);
     };
 
     window.addEventListener("scroll", toggleVisibility, { passive: true });
-    return () => window.removeEventListener("scroll", toggleVisibility);
+    
+    // Watch for dialog/sheet mounting/unmounting and attribute locks on the document body
+    const observer = new MutationObserver(toggleVisibility);
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+
+    // Initial check
+    toggleVisibility();
+
+    return () => {
+      window.removeEventListener("scroll", toggleVisibility);
+      observer.disconnect();
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -40,7 +60,7 @@ export function ScrollToTop() {
       onClick={scrollToTop}
       type="button"
       className={cn(
-        "fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-xl sm:rounded-2xl",
+        "fixed bottom-6 right-6 z-40 flex items-center justify-center w-12 h-12 rounded-xl sm:rounded-2xl",
         "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
         "border border-neutral-300 dark:border-neutral-600 shadow-lg",
         "text-neutral-950 dark:text-neutral-50",
