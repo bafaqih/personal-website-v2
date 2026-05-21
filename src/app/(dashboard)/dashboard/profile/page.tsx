@@ -32,6 +32,7 @@ import { AuthService } from "@/src/services/auth.service";
 import { StorageService } from "@/src/services/storage.service";
 import { STORAGE_PATHS } from "@/src/lib/constants";
 import type { Profile } from "@/src/types/database";
+import { cropToSquare } from "@/src/app/lib/image";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { ImageViewerModal } from "@/components/dashboard/image-viewer-modal";
 import { DeleteDialog } from "@/components/dashboard/delete-dialog";
@@ -108,18 +109,22 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
 
-    // Validate size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t("common.image_upload.file_too_large", { 
-        size: (file.size / (1024 * 1024)).toFixed(1),
-        max: "5"
-      }));
-      return;
-    }
-
     try {
       setIsUploading(true);
-      const { publicUrl } = await StorageService.uploadImage(STORAGE_PATHS.PROFILES, file);
+
+      // Crop image to center 1:1 square
+      const croppedFile = await cropToSquare(file);
+
+      // Validate size (5MB)
+      if (croppedFile.size > 5 * 1024 * 1024) {
+        toast.error(t("common.image_upload.file_too_large", { 
+          size: (croppedFile.size / (1024 * 1024)).toFixed(1),
+          max: "5"
+        }));
+        return;
+      }
+
+      const { publicUrl } = await StorageService.uploadImage(STORAGE_PATHS.PROFILES, croppedFile);
 
       const updated = await AuthService.updateProfile(profile.id, {
         photo_url: publicUrl,
@@ -131,9 +136,13 @@ export default function ProfilePage() {
       // Synchronize changes globally
       window.dispatchEvent(new CustomEvent("profile-update", { detail: updated }));
     } catch (error) {
+      console.error("Error cropping/uploading profile image:", error);
       toast.error(t("common.failed"));
     } finally {
       setIsUploading(false);
+      if (e.target) {
+        e.target.value = "";
+      }
     }
   };
 
