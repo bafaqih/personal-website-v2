@@ -2,12 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Middleware for:
+ * Proxy for:
  * 1. Multi-domain routing (admin subdomain → dashboard routes)
  * 2. Auth session refresh
  * 3. Protected route redirection
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get("host") || "";
 
