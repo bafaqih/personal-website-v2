@@ -182,7 +182,7 @@ export function DashboardHeader({
   return (
     <TooltipProvider>
       <header
-        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-4 sm:px-8 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
+        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 pl-4 sm:pl-5 pr-4 sm:pr-5 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
         {/* Left Side: Profile dropdown on mobile, Sidebar toggle on desktop */}
         <div className="flex items-center">
