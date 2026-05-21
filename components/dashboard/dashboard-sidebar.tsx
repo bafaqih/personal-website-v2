@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -198,6 +198,19 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
     if (href === "/dashboard") return pathname === "/dashboard" || pathname === "/admin/dashboard";
     return pathname.startsWith(href) || pathname.startsWith(`/admin${href}`);
   };
+
+  useEffect(() => {
+    const activeParent = DASHBOARD_NAV.find((item) => {
+      if (item.children) {
+        return item.children.some((child) => isActive(child.href));
+      }
+      return false;
+    });
+
+    if (activeParent) {
+      setOpenMenu(activeParent.title);
+    }
+  }, [pathname]);
 
   const handleNavClick = (item: NavItem, e: React.MouseEvent) => {
     if (item.disabled) {
