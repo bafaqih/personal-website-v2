@@ -326,15 +326,15 @@ export function ImageViewerModal({
 
       {/* Bottom Action Buttons (Balanced and Centered) */}
       {(onEdit || onDelete) && !hasMultiple && (
-        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-60 w-full max-w-[calc(100%-2rem)] sm:max-w-[320px] px-4 pointer-events-auto">
-          <div className="flex flex-wrap items-center gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md border border-neutral-300 dark:border-neutral-600 shadow-xl">
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-60 w-full max-w-[320px] px-4 pointer-events-auto">
+          <div className="flex flex-col min-[300px]:flex-row items-center gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md border border-neutral-300 dark:border-neutral-600 shadow-xl">
             {onEdit && (
               <button
                 onClick={onEdit}
                 disabled={isEditLoading}
                 type="button"
                 className={cn(
-                  "flex-1 min-w-[130px] flex items-center justify-center h-11 px-4 rounded-xl",
+                  "w-full min-[300px]:w-auto min-[300px]:flex-1 flex items-center justify-center h-11 px-4 rounded-xl",
                   "bg-neutral-500/10 hover:bg-neutral-500/20 active:scale-95",
                   "border border-neutral-500/20 shadow-sm",
                   "text-neutral-900 dark:text-neutral-100",
@@ -358,7 +358,7 @@ export function ImageViewerModal({
                 disabled={isDeleteLoading}
                 type="button"
                 className={cn(
-                  "flex-1 min-w-[130px] flex items-center justify-center h-11 px-4 rounded-xl",
+                  "w-full min-[300px]:w-auto min-[300px]:flex-1 flex items-center justify-center h-11 px-4 rounded-xl",
                   "bg-red-500/10 hover:bg-red-500/20 active:scale-95",
                   "border border-red-500/20 shadow-sm",
                   "text-red-600 dark:text-red-400",
