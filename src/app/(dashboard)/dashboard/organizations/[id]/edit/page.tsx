@@ -244,7 +244,7 @@ export default function OrganizationEditPage() {
               {loading ? (
                 <Skeleton className="h-6 w-10 rounded-full" />
               ) : (
-                <Switch checked={watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
+                <Switch checked={!!watch("is_published")} onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} />
               )}
               <Label>{t("common.publish")}</Label>
             </div>
