@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { cn } from "@/src/app/lib/utils";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollToTop } from "@/components/scroll-to-top";
 
@@ -39,6 +39,8 @@ export default function DashboardLayout({
       {/* Mobile sidebar (Sheet) */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="w-[calc(100vw-68px)]! max-w-none! p-0 border-none bg-transparent shadow-none" showCloseButton={false}>
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <SheetDescription className="sr-only">Mobile navigation sidebar for the admin dashboard</SheetDescription>
           <DashboardSidebar collapsed={false} onToggle={() => setMobileOpen(false)} isMobile={true} />
         </SheetContent>
       </Sheet>
