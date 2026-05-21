@@ -135,6 +135,7 @@ export default function ChangePasswordPage() {
                   <Input
                     id="oldPassword"
                     type={showOldPassword ? "text" : "password"}
+                    autoComplete="current-password"
                     placeholder={language === "en" ? "Enter your old password" : "Masukkan kata sandi lama Anda"}
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
@@ -165,6 +166,7 @@ export default function ChangePasswordPage() {
                   <Input
                     id="newPassword"
                     type={showNewPassword ? "text" : "password"}
+                    autoComplete="new-password"
                     placeholder={language === "en" ? "Enter your new password (min. 6 characters)" : "Masukkan kata sandi baru Anda (min. 6 karakter)"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -195,6 +197,7 @@ export default function ChangePasswordPage() {
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
                     placeholder={language === "en" ? "Confirm your new password" : "Konfirmasi kata sandi baru Anda"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
