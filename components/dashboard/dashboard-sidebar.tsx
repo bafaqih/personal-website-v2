@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   ChevronDown,
@@ -81,47 +80,35 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
           <Link href="/dashboard" className="relative flex items-center w-full h-8 overflow-hidden">
             {/* Full logo (light and dark) */}
             <div className={cn(
-              "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0",
-              collapsed ? "opacity-0 scale-75 -translate-x-10 pointer-events-none w-0" : "opacity-100 scale-100 w-full"
+              "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0 overflow-hidden",
+              collapsed ? "opacity-0 -translate-x-10 pointer-events-none w-0" : "opacity-100 w-full"
             )}>
-              <Image
-                src={logoBlack}
+              <img
+                src={logoBlack.src}
                 alt="Fadil Bafagih"
-                width={141}
-                height={32}
-                className="transition-all duration-300 dark:hidden h-8 w-auto"
-                priority
+                className="dark:hidden h-8 w-[141px] min-w-[141px] shrink-0"
               />
-              <Image
-                src={logoWhite}
+              <img
+                src={logoWhite.src}
                 alt="Fadil Bafagih"
-                width={141}
-                height={32}
-                className="hidden transition-all duration-300 dark:block h-8 w-auto"
-                priority
+                className="hidden dark:block h-8 w-[141px] min-w-[141px] shrink-0"
               />
             </div>
 
             {/* Icon logo (light and dark) */}
             <div className={cn(
               "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0",
-              collapsed ? "opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none"
+              collapsed ? "opacity-100" : "opacity-0 pointer-events-none"
             )}>
-              <Image
-                src={iconBlack}
+              <img
+                src={iconBlack.src}
                 alt="FB Icon"
-                width={32}
-                height={32}
-                className="transition-all duration-300 dark:hidden h-8 w-auto"
-                priority
+                className="dark:hidden h-8 w-auto"
               />
-              <Image
-                src={iconWhite}
+              <img
+                src={iconWhite.src}
                 alt="FB Icon"
-                width={32}
-                height={32}
-                className="hidden transition-all duration-300 dark:block h-8 w-auto"
-                priority
+                className="hidden dark:block h-8 w-auto"
               />
             </div>
           </Link>
@@ -135,120 +122,121 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
               const isOpen = openMenu === item.title;
               const translatedTitle = t(`sidebar.${item.title}`);
 
+              const triggerElement = hasChildren ? (
+                <button
+                  onPointerDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    if (collapsed) {
+                      onToggle(); // Open sidebar
+                      setOpenMenu(item.title); // Show submenu
+                    } else {
+                      toggleSubmenu(item.title);
+                    }
+                  }}
+                  className={cn(
+                    "flex items-center !justify-start rounded-lg font-medium transition-all duration-300 cursor-pointer",
+                    isMobile
+                      ? "w-full px-4 py-3 text-[15px] gap-3.5"
+                      : cn(
+                          "h-10 rounded-lg transition-all duration-300",
+                          collapsed ? "w-10 pl-2.5 pr-2.5 gap-0" : "w-full pl-2.5 pr-3 py-2.5 gap-3"
+                        ),
+                    isActive(item.href)
+                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                      : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                  )}
+                >
+                  <item.icon className={cn("shrink-0", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
+                  <span className={cn(
+                    "inline-block !text-left transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
+                    collapsed
+                      ? "w-0 max-w-0 opacity-0 -translate-x-4 pointer-events-none flex-none"
+                      : "flex-1 max-w-[200px] opacity-100 translate-x-0"
+                  )}>
+                    {translatedTitle}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "shrink-0 transition-all duration-200 origin-center ml-auto",
+                      isOpen && "rotate-180",
+                      collapsed
+                        ? "w-0 h-0 opacity-0 pointer-events-none flex-none"
+                        : cn("opacity-100", isMobile ? "h-5 w-5" : "h-4 w-4")
+                    )}
+                  />
+                </button>
+              ) : (
+                <Link
+                  href={item.disabled ? "#" : item.href}
+                  onPointerDown={(e) => e.preventDefault()}
+                  onClick={(e) => handleNavClick(item, e)}
+                  className={cn(
+                    "flex items-center !justify-start rounded-lg font-medium transition-all duration-300",
+                    item.disabled && "opacity-50 cursor-not-allowed",
+                    isMobile
+                      ? "w-full px-4 py-3 text-[15px] gap-3.5"
+                      : cn(
+                          "h-10 rounded-lg transition-all duration-300",
+                          collapsed ? "w-10 pl-2.5 pr-2.5 gap-0" : "w-full pl-2.5 pr-3 py-2.5 gap-3"
+                        ),
+                    isActive(item.href)
+                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                      : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                  )}
+                >
+                  <item.icon className={cn("shrink-0", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
+                  <span className={cn(
+                    "inline-block !text-left transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
+                    collapsed
+                      ? "w-0 max-w-0 opacity-0 -translate-x-4 pointer-events-none flex-none"
+                      : "flex-1 max-w-[200px] opacity-100 translate-x-0"
+                  )}>
+                    {translatedTitle}
+                  </span>
+                </Link>
+              );
+
               return (
                 <li key={item.title} className="flex flex-col items-start w-full">
-                  <Tooltip>
-                    {hasChildren ? (
-                      <>
-                        <TooltipTrigger asChild>
-                          <button
-                            onPointerDown={(e) => e.preventDefault()}
-                            onClick={() => {
-                              if (collapsed) {
-                                onToggle(); // Open sidebar
-                                setOpenMenu(item.title); // Show submenu
-                              } else {
-                                toggleSubmenu(item.title);
-                              }
-                            }}
-                            className={cn(
-                              "flex items-center rounded-lg font-medium transition-all duration-300 cursor-pointer",
-                              isMobile
-                                ? "w-full px-4 py-3 text-[15px] gap-3.5"
-                                : cn(
-                                    "h-10 rounded-lg transition-all duration-300",
-                                    collapsed ? "w-10 justify-start pl-2.5 pr-2.5 gap-0" : "w-full pl-2.5 pr-3 py-2.5 gap-3"
-                                  ),
-                              isActive(item.href)
-                                ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
-                            )}
-                          >
-                            <item.icon className={cn("shrink-0 transition-all duration-300", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
-                            <span className={cn(
-                              "inline-block transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
-                              collapsed
-                                ? "w-0 max-w-0 opacity-0 -translate-x-4 scale-x-75 pointer-events-none flex-none"
-                                : "flex-1 text-left max-w-[200px] opacity-100 translate-x-0 scale-x-100"
-                            )}>
-                              {translatedTitle}
-                            </span>
-                            <ChevronDown
-                              className={cn(
-                                "shrink-0 transition-all duration-200 origin-center",
-                                isOpen && "rotate-180",
-                                collapsed
-                                  ? "w-0 h-0 opacity-0 scale-0 pointer-events-none flex-none"
-                                  : cn("opacity-100 scale-100", isMobile ? "h-5 w-5" : "h-4 w-4")
-                              )}
-                            />
-                          </button>
-                        </TooltipTrigger>
-                        {/* Submenu */}
-                        {!collapsed && isOpen && (
-                          <ul className={cn("ml-4 mt-1 border-l border-neutral-200 pl-4 dark:border-white/10 w-full", isMobile ? "space-y-1" : "space-y-0.5")}>
-                            {item.children?.map((child) => (
-                              <li key={child.href}>
-                                <Link
-                                  href={child.href}
-                                  onClick={() => {
-                                    if (isMobile) {
-                                      onToggle();
-                                    }
-                                  }}
-                                  className={cn(
-                                    "block rounded-md transition-colors",
-                                    isMobile ? "px-4 py-2.5 text-[14px]" : "px-3 py-2 text-sm",
-                                    isActive(child.href)
-                                      ? "font-medium text-neutral-900 dark:text-white"
-                                      : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                                  )}
-                                >
-                                  {t(`sidebar.${child.title}`)}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </>
-                    ) : (
+                  {collapsed ? (
+                    <Tooltip>
                       <TooltipTrigger asChild>
-                        <Link
-                          href={item.disabled ? "#" : item.href}
-                          onPointerDown={(e) => e.preventDefault()}
-                          onClick={(e) => handleNavClick(item, e)}
-                          className={cn(
-                            "flex items-center rounded-lg font-medium transition-all duration-300",
-                            item.disabled && "opacity-50 cursor-not-allowed",
-                            isMobile
-                              ? "w-full px-4 py-3 text-[15px] gap-3.5"
-                              : cn(
-                                  "h-10 rounded-lg transition-all duration-300",
-                                  collapsed ? "w-10 justify-start pl-2.5 pr-2.5 gap-0" : "w-full pl-2.5 pr-3 py-2.5 gap-3"
-                                ),
-                            isActive(item.href)
-                              ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                              : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
-                          )}
-                        >
-                          <item.icon className={cn("shrink-0 transition-all duration-300", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
-                          <span className={cn(
-                            "inline-block transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
-                            collapsed
-                              ? "w-0 max-w-0 opacity-0 -translate-x-4 scale-x-75 pointer-events-none flex-none"
-                              : "flex-1 text-left max-w-[200px] opacity-100 translate-x-0 scale-x-100"
-                          )}>
-                            {translatedTitle}
-                          </span>
-                        </Link>
+                        {triggerElement}
                       </TooltipTrigger>
-                    )}
-                    {collapsed && (
                       <TooltipContent side="right" sideOffset={10}>
                         <p>{translatedTitle}</p>
                       </TooltipContent>
-                    )}
-                  </Tooltip>
+                    </Tooltip>
+                  ) : (
+                    triggerElement
+                  )}
+
+                  {/* Submenu */}
+                  {!collapsed && isOpen && hasChildren && (
+                    <ul className={cn("ml-4 mt-1 border-l border-neutral-200 pl-4 dark:border-white/10 w-full", isMobile ? "space-y-1" : "space-y-0.5")}>
+                      {item.children?.map((child) => (
+                        <li key={child.href}>
+                          <Link
+                            href={child.href}
+                            onClick={() => {
+                              if (isMobile) {
+                                onToggle();
+                              }
+                            }}
+                            className={cn(
+                              "block rounded-md transition-colors",
+                              isMobile ? "px-4 py-2.5 text-[14px]" : "px-3 py-2 text-sm",
+                              isActive(child.href)
+                                ? "font-medium text-neutral-900 dark:text-white"
+                                : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            )}
+                          >
+                            {t(`sidebar.${child.title}`)}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               );
             })}
