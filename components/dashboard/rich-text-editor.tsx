@@ -134,6 +134,7 @@ export function RichTextEditor({
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
         codeBlock: false, // Disable default to use lowlight
+        link: false, // Disable built-in link to avoid duplicate warnings
       }),
       CodeBlockLowlight.configure({
         lowlight,
