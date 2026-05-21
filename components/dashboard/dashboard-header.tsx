@@ -60,6 +60,7 @@ function ProfileDropdown({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
+              size="icon"
               disabled={actualShowSkeleton}
               onClick={() => !actualShowSkeleton && setTooltipOpen(false)}
               className={cn(
@@ -186,7 +187,7 @@ export function DashboardHeader({
         {/* Left Side: Profile dropdown on mobile, Sidebar toggle on desktop */}
         <div className="flex items-center">
           {/* Mobile Profile dropdown */}
-          <div className="block lg:hidden">
+          <div className="flex lg:hidden items-center">
             <ProfileDropdown
               profile={profile}
               showSkeleton={loading}
@@ -227,7 +228,7 @@ export function DashboardHeader({
           <ThemeToggle />
 
           {/* Desktop Profile dropdown */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center">
             <ProfileDropdown
               profile={profile}
               showSkeleton={loading}
