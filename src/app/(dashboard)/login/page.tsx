@@ -172,7 +172,7 @@ export default function LoginPage() {
 
                 <div className="flex justify-center">
                   <Link
-                    href="/"
+                    href={`/${language}`}
                     className="flex items-center text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                   >
                     <ArrowLeft className="mr-1 h-4 w-4" />
