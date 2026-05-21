@@ -84,17 +84,19 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
     <Image
       src={logoBlack}
       alt="Fadil Bafagih"
-      width={collapsed ? 32 : 120}
-      height={32}
+      width={collapsed ? 32 : 141}
+      height={collapsed ? 7 : 32}
       className="transition-all duration-300 dark:hidden"
+      style={{ height: "auto" }}
       priority
     />
     <Image
       src={logoWhite}
       alt="Fadil Bafagih"
-      width={collapsed ? 32 : 120}
-      height={32}
+      width={collapsed ? 32 : 141}
+      height={collapsed ? 7 : 32}
       className="hidden transition-all duration-300 dark:block"
+      style={{ height: "auto" }}
       priority
     />
   </Link>

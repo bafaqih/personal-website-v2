@@ -97,9 +97,10 @@ export default function LoginPage() {
                 src={logo}
                 alt="Fadil Bafagih"
                 width={160}
-                height={45}
+                height={36}
                 priority
                 className="mb-5"
+                style={{ height: "auto" }}
               />
             )}
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
