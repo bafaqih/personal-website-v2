@@ -139,7 +139,7 @@ export default function ProjectTypesPage() {
         description={t("projects.type_description")}
         breadcrumbs={[
           { label: t("dashboard.title"), href: "/dashboard" },
-          { label: t("projects.title"), href: "/dashboard/projects" },
+          { label: t("projects.title"), href: "/dashboard/projects/list" },
           { label: t("projects.types") },
         ]}
         actions={

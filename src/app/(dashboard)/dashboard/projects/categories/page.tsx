@@ -139,7 +139,7 @@ export default function ProjectCategoriesPage() {
         description={t("skills.category_description")}
         breadcrumbs={[
           { label: t("dashboard.title"), href: "/dashboard" },
-          { label: t("projects.title"), href: "/dashboard/projects" },
+          { label: t("projects.title"), href: "/dashboard/projects/list" },
           { label: t("projects.categories") },
         ]}
         actions={
