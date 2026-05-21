@@ -75,26 +75,30 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
         )}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 justify-center">
-          <Link href="/dashboard" className="flex items-center">
-            <Image
-              src={logoBlack}
-              alt="Fadil Bafagih"
-              width={collapsed ? 32 : 120}
-              height={32}
-              className="transition-all duration-300 dark:hidden"
-              priority
-            />
-            <Image
-              src={logoWhite}
-              alt="Fadil Bafagih"
-              width={collapsed ? 32 : 120}
-              height={32}
-              className="hidden transition-all duration-300 dark:block"
-              priority
-            />
-          </Link>
-        </div>
+<div
+  className={`flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 ${
+    collapsed ? "justify-center" : "justify-start"
+  }`}
+>
+  <Link href="/dashboard" className="flex items-center">
+    <Image
+      src={logoBlack}
+      alt="Fadil Bafagih"
+      width={collapsed ? 32 : 120}
+      height={32}
+      className="transition-all duration-300 dark:hidden"
+      priority
+    />
+    <Image
+      src={logoWhite}
+      alt="Fadil Bafagih"
+      width={collapsed ? 32 : 120}
+      height={32}
+      className="hidden transition-all duration-300 dark:block"
+      priority
+    />
+  </Link>
+</div>
 
         {/* Navigation */}
         <nav key={collapsed ? "collapsed" : "expanded"} className={cn("flex-1 overflow-y-auto", isMobile ? "px-4 py-6" : "px-3 py-4")}>
