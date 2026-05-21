@@ -130,6 +130,7 @@ export function RichTextEditor({
   placeholderRef.current = activePlaceholder;
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
@@ -535,7 +536,8 @@ export function RichTextEditor({
       {/* Floating Menu */}
       <FloatingMenu
         editor={editor}
-        shouldShow={({ state }: { state: any }) => {
+        shouldShow={({ editor, state }: { editor: any; state: any }) => {
+          if (!editor.isFocused) return false;
           const { selection } = state;
           const { $from } = selection;
           return $from.parent.content.size === 0;
@@ -569,6 +571,9 @@ export function RichTextEditor({
       {/* Bubble Menu */}
       <BubbleMenu
         editor={editor}
+        shouldShow={({ editor }: { editor: any }) => {
+          return editor.isFocused && !editor.state.selection.empty;
+        }}
         className="flex items-center gap-1 rounded-lg border border-neutral-200 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-neutral-900"
       >
         <ToolbarButton
