@@ -145,6 +145,7 @@ export const translations = {
       back_to_home: "Back to Home",
       welcome_back: "Welcome back!",
       login_failed: "Login Failed",
+      all_rights: "All Rights Reserved.",
     },
     about: {
       title: "About Me",
@@ -597,6 +598,7 @@ export const translations = {
       back_to_home: "Kembali ke Beranda",
       welcome_back: "Selamat datang kembali!",
       login_failed: "Login Gagal",
+      all_rights: "Hak Cipta Dilindungi.",
     },
     about: {
       title: "Tentang Saya",

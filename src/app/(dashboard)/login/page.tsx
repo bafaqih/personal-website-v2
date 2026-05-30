@@ -186,7 +186,7 @@ export default function LoginPage() {
 
         {/* Copyright */}
         <p className="mt-6 text-center text-xs text-neutral-400 dark:text-neutral-500">
-          © {new Date().getFullYear()} Fadil Bafagih. All Rights Reserved.
+          © {new Date().getFullYear()} Fadil Bafagih. {t("login.all_rights")}
         </p>
       </motion.div>
     </div>
