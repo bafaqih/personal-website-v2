@@ -70,7 +70,7 @@ function SidebarNavItem({
         }
       }}
       className={cn(
-        "flex items-center !justify-start rounded-lg font-medium transition-all duration-300 cursor-pointer w-full px-4 py-3 text-[15px] gap-3.5 lg:text-sm lg:h-10 lg:transition-all lg:duration-300",
+        "flex items-center justify-start! rounded-lg font-medium transition-all duration-300 cursor-pointer w-full px-4 py-3 text-[15px] gap-3.5 lg:text-sm lg:h-10 lg:transition-all lg:duration-300",
         collapsed ? "lg:w-10 lg:pl-2.5 lg:pr-2.5 lg:gap-0" : "lg:w-full lg:pl-2.5 lg:pr-3 lg:py-2.5 lg:gap-3",
         isActive(item.href)
           ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
@@ -79,7 +79,7 @@ function SidebarNavItem({
     >
       <item.icon className="shrink-0 h-5 w-5 max-lg:h-[22px] max-lg:w-[22px]" />
       <span className={cn(
-        "inline-block !text-left transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
+        "inline-block text-left! transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
         collapsed
           ? "lg:w-0 lg:max-w-0 lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:flex-none"
           : "flex-1 max-w-[200px] opacity-100 translate-x-0"
@@ -104,7 +104,7 @@ function SidebarNavItem({
       onMouseLeave={() => setHovered(false)}
       onClick={(e) => handleNavClick(item, e)}
       className={cn(
-        "flex items-center !justify-start rounded-lg font-medium transition-all duration-300 w-full px-4 py-3 text-[15px] gap-3.5 lg:text-sm lg:h-10 lg:transition-all lg:duration-300",
+        "flex items-center justify-start! rounded-lg font-medium transition-all duration-300 w-full px-4 py-3 text-[15px] gap-3.5 lg:text-sm lg:h-10 lg:transition-all lg:duration-300",
         item.disabled && "opacity-50 cursor-not-allowed",
         collapsed ? "lg:w-10 lg:pl-2.5 lg:pr-2.5 lg:gap-0" : "lg:w-full lg:pl-2.5 lg:pr-3 lg:py-2.5 lg:gap-3",
         isActive(item.href)
@@ -114,7 +114,7 @@ function SidebarNavItem({
     >
       <item.icon className="shrink-0 h-5 w-5 max-lg:h-[22px] max-lg:w-[22px]" />
       <span className={cn(
-        "inline-block !text-left transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
+        "inline-block text-left! transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
         collapsed
           ? "lg:w-0 lg:max-w-0 lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:flex-none"
           : "flex-1 max-w-[200px] opacity-100 translate-x-0"
