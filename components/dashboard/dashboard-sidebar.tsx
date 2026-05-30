@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ChevronRight, LogOut, User, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 import { DASHBOARD_NAV, type NavItem } from "@/src/lib/constants";
 import { toast } from "sonner";
@@ -14,6 +14,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { AuthService } from "@/src/services/auth.service";
+import type { Profile } from "@/src/types/database";
 
 interface SidebarNavItemProps {
   item: NavItem;
@@ -168,8 +180,44 @@ export function DashboardSidebar({
   onMobileClose,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { t } = useLanguage();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    AuthService.getProfile()
+      .then(setProfile)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+
+    const handleProfileUpdate = () => {
+      setLoading(true);
+      AuthService.getProfile()
+        .then((updatedProfile) => {
+          if (updatedProfile) {
+            setProfile(updatedProfile);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    };
+
+    window.addEventListener("profile-update", handleProfileUpdate);
+    return () => {
+      window.removeEventListener("profile-update", handleProfileUpdate);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AuthService.signOut();
+      router.push("/login");
+    } catch {
+      // Ignore
+    }
+  };
 
   const toggleSubmenu = (title: string) => {
     setOpenMenu((prev) => (prev === title ? null : title));
@@ -241,6 +289,88 @@ export function DashboardSidebar({
             })}
           </ul>
         </nav>
+
+        {/* Profile Footer Section */}
+        {!collapsed && (
+          <div className="px-4 pb-4 pt-2 shrink-0 animate-in fade-in duration-300">
+            {loading ? (
+              <div className="flex items-center p-2 gap-3 w-full">
+                <Skeleton className="h-9 w-9 rounded-lg shrink-0" />
+                <div className="flex-1 flex flex-col space-y-1.5">
+                  <Skeleton className="h-4 w-20 rounded animate-pulse" />
+                  <Skeleton className="h-3 w-28 rounded animate-pulse" />
+                </div>
+              </div>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center w-full text-left rounded-lg hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer outline-none focus:outline-none p-2 gap-3">
+                    {/* Avatar */}
+                    <Avatar className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg shrink-0">
+                      <AvatarImage
+                        src={profile?.photo_url || undefined}
+                        alt={profile?.full_name || "FB"}
+                        className="rounded-lg"
+                      />
+                      <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-lg flex items-center justify-center text-sm font-semibold">
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Profile details */}
+                    <div className="flex-1 flex items-center justify-between min-w-0">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">
+                          {profile?.full_name || "Admin"}
+                        </p>
+                        <p className="text-xs text-neutral-500 truncate">
+                          {profile?.email || ""}
+                        </p>
+                      </div>
+                      <ChevronsUpDown className="h-4 w-4 text-neutral-400 dark:text-neutral-500 shrink-0 ml-2" />
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="start"
+                  sideOffset={12}
+                  className="w-48"
+                >
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">
+                        {profile?.full_name || "Admin"}
+                      </p>
+                      <p className="text-xs text-neutral-500 font-normal truncate">
+                        {profile?.email || ""}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      router.push("/dashboard/profile");
+                      onMobileClose?.();
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    {t("header.my_profile")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={handleLogout}
+                    className="cursor-pointer"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {t("header.logout")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        )}
       </aside>
     </TooltipProvider>
   );
