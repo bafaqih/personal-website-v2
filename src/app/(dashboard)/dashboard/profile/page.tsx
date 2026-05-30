@@ -383,6 +383,17 @@ export default function ProfilePage() {
               </div>
 
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                {/* Hidden username input for accessibility/password managers */}
+                <input
+                  type="text"
+                  name="username"
+                  autoComplete="username"
+                  value={profile?.username || ""}
+                  readOnly
+                  className="sr-only"
+                  tabIndex={-1}
+                />
+
                 {/* Old Password */}
                 <div className="space-y-2">
                   <Label htmlFor="oldPassword">{t("profile.old_password")}</Label>
