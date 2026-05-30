@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, PanelLeft, PanelLeftClose } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { LanguageToggle } from "@/components/dashboard/language-toggle";
 import { useLanguage } from "@/context/language-context";
@@ -153,7 +153,7 @@ export function DashboardHeader({
   useEffect(() => {
     AuthService.getProfile()
       .then(setProfile)
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
 
     const handleProfileUpdate = () => {
@@ -164,7 +164,7 @@ export function DashboardHeader({
             setProfile(updatedProfile);
           }
         })
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => setLoading(false));
     };
 
@@ -210,13 +210,13 @@ export function DashboardHeader({
                   variant="ghost"
                   size="icon"
                   onClick={onToggleSidebar}
-                  className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg cursor-pointer flex items-center justify-center"
+                  className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
                 >
-                  {sidebarCollapsed ? (
-                    <PanelLeft className="h-4 w-4" />
-                  ) : (
-                    <PanelLeftClose className="h-4 w-4" />
-                  )}
+                  <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
+                    <span className="w-full h-[2px] bg-current rounded-full" />
+                    <span className="w-full h-[2px] bg-current rounded-full" />
+                    <span className="w-full h-[2px] bg-current rounded-full" />
+                  </div>
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
