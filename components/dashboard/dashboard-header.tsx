@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -155,6 +155,7 @@ export function DashboardHeader({
   onToggleMobileSidebar,
 }: DashboardHeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { t } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -242,7 +243,16 @@ export function DashboardHeader({
           </div>
 
           {/* Brand Logo */}
-          <Link href="/dashboard" className="relative flex items-center h-8 w-[141px]">
+          <Link
+            href="/dashboard"
+            onClick={(e) => {
+              if (pathname === "/dashboard") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="relative flex items-center h-8 w-[141px]"
+          >
             <img
               src={logoBlack.src}
               alt="Fadil Bafagih"
