@@ -216,7 +216,7 @@ export default function ContactPage() {
                     {isSubmitting ? (
                       <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                     ) : (
-                      <><Save className="h-4 w-4" /> {t("common.save")}</>
+                      <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
                     )}
                   </Button>
                 )}
