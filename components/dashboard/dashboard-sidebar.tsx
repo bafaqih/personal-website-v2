@@ -3,15 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ChevronRight,
-  PanelLeftClose,
-  PanelLeft,
-  X,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/src/app/lib/utils";
 import { DASHBOARD_NAV, type NavItem } from "@/src/lib/constants";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/language-context";
 import {
@@ -21,15 +15,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import logoBlack from "@/src/assets/images/fadilbaf-black.svg";
-import logoWhite from "@/src/assets/images/fadilbaf-white.svg";
-import iconBlack from "@/src/assets/images/icon-black.svg";
-import iconWhite from "@/src/assets/images/icon-white.svg";
-
 interface SidebarNavItemProps {
   item: NavItem;
   collapsed: boolean;
-  isMobile: boolean;
   isActive: (href: string) => boolean;
   isOpen: boolean;
   t: (key: string) => string;
@@ -37,12 +25,12 @@ interface SidebarNavItemProps {
   toggleSubmenu: (title: string) => void;
   handleNavClick: (item: NavItem, e: React.MouseEvent) => void;
   setOpenMenu: (title: string | null) => void;
+  onMobileClose?: () => void;
 }
 
 function SidebarNavItem({
   item,
   collapsed,
-  isMobile,
   isActive,
   isOpen,
   t,
@@ -50,6 +38,7 @@ function SidebarNavItem({
   toggleSubmenu,
   handleNavClick,
   setOpenMenu,
+  onMobileClose,
 }: SidebarNavItemProps) {
   const [hovered, setHovered] = useState(false);
   const hasChildren = !!item.children;
@@ -69,23 +58,18 @@ function SidebarNavItem({
         }
       }}
       className={cn(
-        "flex items-center !justify-start rounded-lg font-medium transition-all duration-300 cursor-pointer",
-        isMobile
-          ? "w-full px-4 py-3 text-[15px] gap-3.5"
-          : cn(
-              "h-10 rounded-lg transition-all duration-300",
-              collapsed ? "w-10 pl-2.5 pr-2.5 gap-0" : "w-full pl-2.5 pr-3 py-2.5 gap-3"
-            ),
+        "flex items-center !justify-start rounded-lg font-medium transition-all duration-300 cursor-pointer w-full px-4 py-3 text-[15px] gap-3.5 lg:text-sm lg:h-10 lg:transition-all lg:duration-300",
+        collapsed ? "lg:w-10 lg:pl-2.5 lg:pr-2.5 lg:gap-0" : "lg:w-full lg:pl-2.5 lg:pr-3 lg:py-2.5 lg:gap-3",
         isActive(item.href)
           ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
           : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
       )}
     >
-      <item.icon className={cn("shrink-0", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
+      <item.icon className="shrink-0 h-5 w-5 max-lg:h-[22px] max-lg:w-[22px]" />
       <span className={cn(
         "inline-block !text-left transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
         collapsed
-          ? "w-0 max-w-0 opacity-0 -translate-x-4 pointer-events-none flex-none"
+          ? "lg:w-0 lg:max-w-0 lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:flex-none"
           : "flex-1 max-w-[200px] opacity-100 translate-x-0"
       )}>
         {translatedTitle}
@@ -95,8 +79,8 @@ function SidebarNavItem({
           "shrink-0 transition-all duration-200 origin-center ml-auto",
           isOpen && "rotate-90",
           collapsed
-            ? "w-0 h-0 opacity-0 pointer-events-none flex-none"
-            : cn("opacity-100", isMobile ? "h-5 w-5" : "h-4 w-4")
+            ? "lg:w-0 lg:h-0 lg:opacity-0 lg:pointer-events-none lg:flex-none"
+            : "opacity-100 h-4 w-4 max-lg:h-5 max-lg:w-5"
         )}
       />
     </button>
@@ -108,24 +92,19 @@ function SidebarNavItem({
       onMouseLeave={() => setHovered(false)}
       onClick={(e) => handleNavClick(item, e)}
       className={cn(
-        "flex items-center !justify-start rounded-lg font-medium transition-all duration-300",
+        "flex items-center !justify-start rounded-lg font-medium transition-all duration-300 w-full px-4 py-3 text-[15px] gap-3.5 lg:text-sm lg:h-10 lg:transition-all lg:duration-300",
         item.disabled && "opacity-50 cursor-not-allowed",
-        isMobile
-          ? "w-full px-4 py-3 text-[15px] gap-3.5"
-          : cn(
-              "h-10 rounded-lg transition-all duration-300",
-              collapsed ? "w-10 pl-2.5 pr-2.5 gap-0" : "w-full pl-2.5 pr-3 py-2.5 gap-3"
-            ),
+        collapsed ? "lg:w-10 lg:pl-2.5 lg:pr-2.5 lg:gap-0" : "lg:w-full lg:pl-2.5 lg:pr-3 lg:py-2.5 lg:gap-3",
         isActive(item.href)
           ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
           : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
       )}
     >
-      <item.icon className={cn("shrink-0", isMobile ? "h-[22px] w-[22px]" : "h-5 w-5")} />
+      <item.icon className="shrink-0 h-5 w-5 max-lg:h-[22px] max-lg:w-[22px]" />
       <span className={cn(
         "inline-block !text-left transition-all duration-200 origin-left whitespace-nowrap overflow-hidden text-ellipsis",
         collapsed
-          ? "w-0 max-w-0 opacity-0 -translate-x-4 pointer-events-none flex-none"
+          ? "lg:w-0 lg:max-w-0 lg:opacity-0 lg:-translate-x-4 lg:pointer-events-none lg:flex-none"
           : "flex-1 max-w-[200px] opacity-100 translate-x-0"
       )}>
         {translatedTitle}
@@ -146,19 +125,16 @@ function SidebarNavItem({
 
       {/* Submenu */}
       {!collapsed && isOpen && hasChildren && (
-        <ul className={cn("ml-4 mt-1 border-l border-neutral-200 pl-4 dark:border-white/10 w-full", isMobile ? "space-y-1" : "space-y-0.5")}>
+        <ul className="ml-4 mt-1 border-l border-neutral-200 pl-4 dark:border-white/10 w-full space-y-0.5 max-lg:space-y-1">
           {item.children?.map((child) => (
             <li key={child.href}>
               <Link
                 href={child.href}
                 onClick={() => {
-                  if (isMobile) {
-                    onToggle();
-                  }
+                  onMobileClose?.();
                 }}
                 className={cn(
-                  "block rounded-md transition-colors",
-                  isMobile ? "px-4 py-2.5 text-[14px]" : "px-3 py-2 text-sm",
+                  "block rounded-md transition-colors px-3 py-2 text-sm max-lg:px-4 max-lg:py-2.5 max-lg:text-[14px]",
                   isActive(child.href)
                     ? "font-medium text-neutral-900 dark:text-white"
                     : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -177,17 +153,22 @@ function SidebarNavItem({
 interface DashboardSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
-  isMobile?: boolean;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
 /**
- * Dashboard sidebar with logo, navigation menu, and collapsible submenus.
- * Features glassmorphism border and smooth collapse animation.
+ * Dashboard sidebar with navigation menu and collapsible submenus.
+ * Features glassmorphism border and responsive visibility/translations.
  */
-export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: DashboardSidebarProps) {
+export function DashboardSidebar({
+  collapsed,
+  onToggle,
+  mobileOpen = false,
+  onMobileClose,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
-  // Track only ONE open menu at a time
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const toggleSubmenu = (title: string) => {
@@ -220,9 +201,7 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
       });
     } else {
       setOpenMenu(null);
-      if (isMobile) {
-        onToggle();
-      }
+      onMobileClose?.();
     }
   };
 
@@ -230,56 +209,17 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "flex h-full flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300 overflow-x-hidden",
+          "flex h-[calc(100vh-64px)] flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300 overflow-x-hidden",
           "dark:border-white/10 dark:bg-neutral-950/90",
-          isMobile ? "relative w-full" : "fixed left-0 top-16 z-20 h-[calc(100vh-64px)]",
-          !isMobile && (collapsed ? "w-[72px]" : "w-[260px]")
+          "fixed top-16 z-20",
+          collapsed ? "lg:w-[72px]" : "lg:w-[260px]",
+          "w-[260px] max-lg:left-0 max-lg:transition-transform max-lg:duration-300",
+          mobileOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-full"
         )}
       >
-        {/* Logo */}
-        {isMobile && (
-          <div className="flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 transition-all duration-300">
-            <Link href="/dashboard" className="relative flex items-center w-full h-8 overflow-hidden">
-              {/* Full logo (light and dark) */}
-              <div className={cn(
-                "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0 overflow-hidden",
-                collapsed ? "opacity-0 -translate-x-10 pointer-events-none w-0" : "opacity-100 w-full"
-              )}>
-                <img
-                  src={logoBlack.src}
-                  alt="Fadil Bafagih"
-                  className="dark:hidden h-8 w-[141px] min-w-[141px] shrink-0"
-                />
-                <img
-                  src={logoWhite.src}
-                  alt="Fadil Bafagih"
-                  className="hidden dark:block h-8 w-[141px] min-w-[141px] shrink-0"
-                />
-              </div>
-
-              {/* Icon logo (light and dark) */}
-              <div className={cn(
-                "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0",
-                collapsed ? "opacity-100" : "opacity-0 pointer-events-none"
-              )}>
-                <img
-                  src={iconBlack.src}
-                  alt="FB Icon"
-                  className="dark:hidden h-8 w-auto"
-                />
-                <img
-                  src={iconWhite.src}
-                  alt="FB Icon"
-                  className="hidden dark:block h-8 w-auto"
-                />
-              </div>
-            </Link>
-          </div>
-        )}
-
         {/* Navigation */}
-        <nav className={cn("flex-1 overflow-y-auto", isMobile ? "px-4 py-6" : "px-4 py-4")}>
-          <ul className={cn(isMobile ? "space-y-2.5" : "space-y-2")}>
+        <nav className="flex-1 overflow-y-auto px-4 py-4 max-lg:py-6">
+          <ul className="space-y-2 max-lg:space-y-2.5">
             {DASHBOARD_NAV.map((item) => {
               const isOpen = openMenu === item.title;
 
@@ -288,7 +228,6 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
                   key={item.title}
                   item={item}
                   collapsed={collapsed}
-                  isMobile={isMobile}
                   isActive={isActive}
                   isOpen={isOpen}
                   t={t}
@@ -296,12 +235,12 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
                   toggleSubmenu={toggleSubmenu}
                   handleNavClick={handleNavClick}
                   setOpenMenu={setOpenMenu}
+                  onMobileClose={onMobileClose}
                 />
               );
             })}
           </ul>
         </nav>
-
       </aside>
     </TooltipProvider>
   );

@@ -135,6 +135,8 @@ function ProfileDropdown({
 interface DashboardHeaderProps {
   sidebarCollapsed: boolean;
   onToggleSidebar?: () => void;
+  mobileOpen?: boolean;
+  onToggleMobileSidebar?: () => void;
 }
 
 /**
@@ -144,6 +146,8 @@ interface DashboardHeaderProps {
 export function DashboardHeader({
   sidebarCollapsed,
   onToggleSidebar,
+  mobileOpen,
+  onToggleMobileSidebar,
 }: DashboardHeaderProps) {
   const router = useRouter();
   const { t } = useLanguage();
@@ -188,22 +192,26 @@ export function DashboardHeader({
       <header
         className="fixed top-0 left-0 w-full z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 pl-4 sm:pl-5 pr-4 sm:pr-5 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
-        {/* Left Side: Profile dropdown on mobile, Sidebar toggle and Logo on desktop */}
+        {/* Left Side: Mobile/Desktop Toggle and Logo */}
         <div className="flex items-center gap-4">
-          {/* Mobile Profile dropdown */}
-          <div className="flex lg:hidden items-center">
-            <ProfileDropdown
-              profile={profile}
-              showSkeleton={loading}
-              handleLogout={handleLogout}
-              router={router}
-              t={t}
-              align="start"
-            />
+          {/* Mobile Sidebar Toggle */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggleMobileSidebar}
+              className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+            >
+              <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
+                <span className="w-full h-[2px] bg-current rounded-full" />
+                <span className="w-full h-[2px] bg-current rounded-full" />
+                <span className="w-full h-[2px] bg-current rounded-full" />
+              </div>
+            </Button>
           </div>
 
-          {/* Desktop Sidebar Toggle & Logo */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* Desktop Sidebar Toggle */}
+          <div className="hidden lg:block">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -223,39 +231,37 @@ export function DashboardHeader({
                 <p>{sidebarCollapsed ? t("header.expand") : t("header.collapse")}</p>
               </TooltipContent>
             </Tooltip>
-
-            {/* Brand Logo */}
-            <Link href="/dashboard" className="relative flex items-center h-8 w-[141px]">
-              <img
-                src={logoBlack.src}
-                alt="Fadil Bafagih"
-                className="dark:hidden h-8 w-[141px] min-w-[141px]"
-              />
-              <img
-                src={logoWhite.src}
-                alt="Fadil Bafagih"
-                className="hidden dark:block h-8 w-[141px] min-w-[141px]"
-              />
-            </Link>
           </div>
+
+          {/* Brand Logo */}
+          <Link href="/dashboard" className="relative flex items-center h-8 w-[141px]">
+            <img
+              src={logoBlack.src}
+              alt="Fadil Bafagih"
+              className="dark:hidden h-8 w-[141px] min-w-[141px]"
+            />
+            <img
+              src={logoWhite.src}
+              alt="Fadil Bafagih"
+              className="hidden dark:block h-8 w-[141px] min-w-[141px]"
+            />
+          </Link>
         </div>
 
-        {/* Right side: Language, Theme, and Profile dropdown (on desktop) */}
-        <div className="flex items-center gap-3 pr-12 lg:pr-0">
+        {/* Right side: Language, Theme, and Profile dropdown */}
+        <div className="flex items-center gap-3">
           <LanguageToggle />
           <ThemeToggle />
 
-          {/* Desktop Profile dropdown */}
-          <div className="hidden lg:flex items-center">
-            <ProfileDropdown
-              profile={profile}
-              showSkeleton={loading}
-              handleLogout={handleLogout}
-              router={router}
-              t={t}
-              align="end"
-            />
-          </div>
+          {/* User Profile dropdown */}
+          <ProfileDropdown
+            profile={profile}
+            showSkeleton={loading}
+            handleLogout={handleLogout}
+            router={router}
+            t={t}
+            align="end"
+          />
         </div>
       </header>
     </TooltipProvider>
