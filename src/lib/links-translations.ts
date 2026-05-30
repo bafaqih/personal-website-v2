@@ -46,6 +46,7 @@ const linksTranslations: Record<LinksLocale, Record<string, string>> = {
     sending: "Sending...",
 
     // Subject options
+    select_subject: "Select subject",
     subject_collaboration: "Collaboration",
     subject_job: "Job Opportunity",
     subject_freelance: "Freelance",
@@ -114,6 +115,7 @@ const linksTranslations: Record<LinksLocale, Record<string, string>> = {
     sending: "Mengirim...",
 
     // Subject options
+    select_subject: "Pilih subjek",
     subject_collaboration: "Kolaborasi",
     subject_job: "Peluang Kerja",
     subject_freelance: "Freelance",

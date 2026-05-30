@@ -5,6 +5,12 @@ import Image from "next/image";
 import { MapPin, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { tLinks, type LinksLocale } from "@/src/lib/links-translations";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Profile, Role, Contact } from "@/src/types/database";
 
 /** Inline SVG brand icons — consistent B&W style */
@@ -162,12 +168,12 @@ export function LinksProfile({
         transition={{ delay: 0.4, duration: 0.4 }}
       >
         {contact?.location && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-xs font-medium text-neutral-600 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-transparent px-3.5 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
             <MapPin className="h-3 w-3" />
             {contact.location}
           </span>
         )}
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-xs font-medium text-neutral-600 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-transparent px-3.5 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
           <Globe className="h-3 w-3" />
           {tLinks(locale, "open_to_remote")}
         </span>
@@ -175,25 +181,36 @@ export function LinksProfile({
 
       {/* Social media icons */}
       {socialLinks.length > 0 && (
-        <motion.div
-          className="flex items-center gap-3 mt-5"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.4 }}
-        >
-          {socialLinks.map(({ url, icon: Icon, label }) => (
-            <a
-              key={label}
-              href={url!}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
-              aria-label={label}
-            >
-              <Icon className="h-5 w-5" />
-            </a>
-          ))}
-        </motion.div>
+        <TooltipProvider>
+          <motion.div
+            className="flex items-center gap-3 mt-5"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+          >
+            {socialLinks.map(({ url, icon: Icon, label }) => (
+              <Tooltip key={label}>
+                <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
+                  <a
+                    href={url!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                    aria-label={label}
+                    onClick={(e) => {
+                      e.currentTarget.blur();
+                    }}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>{label}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </motion.div>
+        </TooltipProvider>
       )}
     </motion.section>
   );

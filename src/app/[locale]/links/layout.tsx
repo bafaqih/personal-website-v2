@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
+import { LinksToaster } from "@/src/components/links/links-toaster";
 
 export async function generateMetadata({
   params,
@@ -20,7 +20,7 @@ export async function generateMetadata({
 
 /**
  * Layout for the /links page.
- * Adds Sonner toaster for contact form toast feedback.
+ * Adds custom LinksToaster for contact form toast feedback.
  */
 export default function LinksLayout({
   children,
@@ -30,14 +30,7 @@ export default function LinksLayout({
   return (
     <>
       {children}
-      <Toaster
-        position="top-center"
-        richColors
-        closeButton
-        toastOptions={{
-          style: { fontFamily: "var(--font-sans)" },
-        }}
-      />
+      <LinksToaster />
     </>
   );
 }

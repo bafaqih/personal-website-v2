@@ -11,6 +11,7 @@ import { LinksContact } from "@/src/components/links/links-contact";
 import { LinksFooter } from "@/src/components/links/links-footer";
 import { LinksService, type LinksPageData } from "@/src/services/links.service";
 import type { LinksLocale } from "@/src/lib/links-translations";
+import { ScrollToTop } from "@/components/scroll-to-top";
 
 /**
  * Skeleton loader displayed while data is being fetched.
@@ -114,6 +115,8 @@ export default function LinksPage() {
           )}
         </motion.div>
       </div>
+
+      <ScrollToTop />
     </div>
   );
 }
