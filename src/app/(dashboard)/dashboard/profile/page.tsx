@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Eye,
+  EyeOff,
   Mail,
   Pencil,
   User as UserIcon,
@@ -67,6 +68,59 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  // Change Password Form states
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  // Password visibility states
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const isPasswordFormValid = oldPassword.trim() !== "" && newPassword.trim() !== "" && confirmPassword.trim() !== "";
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!oldPassword) {
+      toast.error(t("profile.old_pwd_req"));
+      return;
+    }
+
+    if (!newPassword) {
+      toast.error(t("profile.new_pwd_req"));
+      return;
+    } else if (newPassword.length < 6) {
+      toast.error(t("profile.new_pwd_len"));
+      return;
+    }
+
+    if (!confirmPassword) {
+      toast.error(t("profile.confirm_pwd_req"));
+      return;
+    } else if (newPassword !== confirmPassword) {
+      toast.error(t("profile.pwd_mismatch"));
+      return;
+    }
+
+    try {
+      setIsChangingPassword(true);
+      await AuthService.updatePassword(oldPassword, newPassword);
+      toast.success(t("profile.pwd_success"));
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error: any) {
+      toast.error(t("profile.pwd_failed"), {
+        description: error.message || (language === "en" ? "An unexpected error occurred." : "Terjadi kesalahan yang tidak terduga.")
+      });
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
 
   useEffect(() => {
     if (profile) {
@@ -180,12 +234,13 @@ export default function ProfilePage() {
         ]}
       />
 
-      <div className="grid gap-8">
-        {/* Profile Header Card */}
-        <Card className="overflow-hidden border-none bg-white shadow-sm dark:bg-neutral-900">
-          <CardContent className="p-8 space-y-8">
-            <div className="flex flex-col items-center gap-6 md:flex-row md:items-center">
-              <div className="relative group">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Box Kiri: Data Profil */}
+        <Card className="border-none bg-white shadow-sm dark:bg-neutral-900">
+          <CardContent className="p-8 space-y-6">
+            {/* Avatar & Basic Info (Centered on mobile, Row & Left-aligned on sm and larger) */}
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 pb-6 border-b border-neutral-100 dark:border-neutral-800">
+              <div className="relative group mb-4 sm:mb-0">
                 <button
                   onClick={() => setIsViewerOpen(true)}
                   disabled={isUploading || isDeletingImage || loading}
@@ -248,23 +303,23 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <div className="flex-1 text-center md:text-left flex flex-col justify-center">
+              <div className="space-y-1 flex-1">
                 {loading ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-8 w-56 mx-auto md:mx-0" />
-                    <Skeleton className="h-5 w-36 mx-auto md:mx-0" />
+                  <div className="space-y-1.5 flex flex-col items-center sm:items-start">
+                    <Skeleton className="h-6 w-44" />
+                    <Skeleton className="h-4 w-28" />
                   </div>
                 ) : (
                   <>
-                    <h2 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">
                       {profile?.full_name}
                     </h2>
-                    <p className="text-lg text-neutral-500 dark:text-neutral-400">
+                    <p className="text-base text-neutral-500 dark:text-neutral-400">
                       @{profile?.username}
                     </p>
                   </>
                 )}
-                <div className="mt-3 flex flex-wrap justify-center gap-2 md:justify-start">
+                <div className="pt-1.5 flex justify-center sm:justify-start">
                   <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
                     Administrator
                   </span>
@@ -272,27 +327,27 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="border-t border-neutral-100 pt-8 dark:border-neutral-800">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                  {t("profile.personal_info")}
-                </h3>
-                {loading ? (
-                  <Skeleton className="h-9 w-28" />
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleEditClick}
-                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
-                  >
-                    <Pencil className="h-4 w-4" />
-                    {t("profile.edit_profile")}
-                  </Button>
-                )}
-              </div>
+            {/* Personal Information Header */}
+            <div className="flex items-center justify-between pt-4">
+              <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                {t("profile.personal_info")}
+              </h3>
+              {loading ? (
+                <Skeleton className="h-9 w-28" />
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleEditClick}
+                  className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                >
+                  <Pencil className="h-4 w-4" />
+                  {t("profile.edit_profile")}
+                </Button>
+              )}
+            </div>
 
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 pt-2">
                 <InfoCard
                   label={t("profile.full_name")}
                   value={profile?.full_name || "-"}
@@ -312,21 +367,128 @@ export default function ProfilePage() {
                   loading={loading}
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="border-t border-neutral-100 mt-8 pt-8 dark:border-neutral-800 flex justify-start">
-                <Link href="/dashboard/profile/password/change">
-                  <Button
-                    className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5 cursor-pointer"
-                  >
-                    <KeyRound className="h-4 w-4" />
-                    {t("profile.change_password")}
-                  </Button>
-                </Link>
+          {/* Box Kanan: Form Change Password */}
+          <Card className="border-none bg-white shadow-sm dark:bg-neutral-900">
+            <CardContent className="p-8 space-y-6">
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                  {t("profile.change_password")}
+                </h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {t("profile.change_password_desc")}
+                </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+
+              <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                {/* Old Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="oldPassword">{t("profile.old_password")}</Label>
+                  <div className="relative">
+                    <Input
+                      id="oldPassword"
+                      type={showOldPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      placeholder={t("profile.old_password_placeholder")}
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      disabled={isChangingPassword}
+                      className="h-11 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+                    >
+                      {showOldPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* New Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">{t("profile.new_password")}</Label>
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      placeholder={t("profile.new_password_placeholder")}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      disabled={isChangingPassword}
+                      className="h-11 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm New Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">{t("profile.confirm_new_password")}</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      placeholder={t("profile.confirm_password_placeholder")}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      disabled={isChangingPassword}
+                      className="h-11 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Change Password Button */}
+                <Button
+                  type="submit"
+                  disabled={isChangingPassword || !isPasswordFormValid}
+                  className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-2 text-sm font-semibold tracking-wide transition-all cursor-pointer"
+                >
+                  {isChangingPassword ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      {language === "en" ? "Changing Password..." : "Mengubah Kata Sandi..."}
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound className="h-4 w-4" />
+                      {t("profile.change_password")}
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
