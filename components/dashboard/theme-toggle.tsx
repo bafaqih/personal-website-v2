@@ -16,9 +16,10 @@ export function ThemeToggle() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
     setOpen(false); // Hide tooltip on click
+    e.currentTarget.blur();
   };
 
   return (

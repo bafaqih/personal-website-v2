@@ -14,9 +14,10 @@ export function LanguageToggle() {
   const { language, setLanguage, t } = useLanguage();
   const [open, setOpen] = useState(false);
 
-  const toggleLanguage = () => {
+  const toggleLanguage = (e: React.MouseEvent<HTMLButtonElement>) => {
     setLanguage(language === "en" ? "id" : "en");
     setOpen(false); // Hide tooltip on click
+    e.currentTarget.blur();
   };
 
   return (

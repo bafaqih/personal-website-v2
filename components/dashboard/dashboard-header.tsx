@@ -66,7 +66,12 @@ function ProfileDropdown({
               variant="ghost"
               size="icon"
               disabled={actualShowSkeleton}
-              onClick={() => !actualShowSkeleton && setTooltipOpen(false)}
+              onClick={(e) => {
+                if (!actualShowSkeleton) {
+                  setTooltipOpen(false);
+                  e.currentTarget.blur();
+                }
+              }}
               className={cn(
                 "h-9 w-9 rounded-lg p-0 border border-neutral-200 dark:border-white/10 hover:bg-transparent active:scale-100 focus:ring-0 focus-visible:ring-0 relative overflow-hidden cursor-pointer",
                 actualShowSkeleton && "pointer-events-none cursor-default"
@@ -217,7 +222,10 @@ export function DashboardHeader({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={onToggleSidebar}
+                  onClick={(e) => {
+                    onToggleSidebar?.();
+                    e.currentTarget.blur();
+                  }}
                   className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
                 >
                   <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
