@@ -59,7 +59,7 @@ export function DataTable<T>({
   error = false,
   filters = [],
 }: DataTableProps<T>) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const actualPlaceholder = searchPlaceholder || t("common.search");
   const actualEmptyMessage = emptyMessage || t("common.no_data");
   const [search, setSearch] = useState("");
@@ -178,55 +178,11 @@ export function DataTable<T>({
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / pageSize);
+  const displayTotalPages = totalPages === 0 ? 1 : totalPages;
   const paginatedData = filteredData.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
-
-  // Generate pages to show with Ellipsis Algorithm when totalPages > 5
-  const visiblePages = useMemo(() => {
-    const pages: (number | string)[] = [];
-    
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Always show page 1
-      pages.push(1);
-      
-      if (page > 3) {
-        pages.push("ellipsis-start");
-      }
-      
-      // Show page neighbors
-      const start = Math.max(2, page - 1);
-      const end = Math.min(totalPages - 1, page + 1);
-      
-      // Adjust neighbors if we are close to the start or end to keep exactly 5 visual items
-      let adjustedStart = start;
-      let adjustedEnd = end;
-      
-      if (page <= 3) {
-        adjustedEnd = 4;
-      } else if (page >= totalPages - 2) {
-        adjustedStart = totalPages - 3;
-      }
-      
-      for (let i = adjustedStart; i <= adjustedEnd; i++) {
-        pages.push(i);
-      }
-      
-      if (page < totalPages - 2) {
-        pages.push("ellipsis-end");
-      }
-      
-      // Always show last page
-      pages.push(totalPages);
-    }
-    
-    return pages;
-  }, [page, totalPages]);
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -490,8 +446,8 @@ export function DataTable<T>({
         </Table>
 
         {/* Footer section inside the table box container */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-neutral-200 dark:border-white/10 px-6 py-3.5 bg-white dark:bg-neutral-950">
-          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 w-full text-left sm:w-auto">
+        <div className="flex items-center justify-between gap-4 border-t border-neutral-200 dark:border-white/10 px-4 sm:px-6 py-3 bg-white dark:bg-neutral-950">
+          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 truncate">
             {t("common.showing_info", {
               start: String(filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1),
               end: String(Math.min(page * pageSize, filteredData.length)),
@@ -499,66 +455,36 @@ export function DataTable<T>({
             })}
           </p>
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between sm:justify-end gap-1 w-full sm:w-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
 
-              <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 sm:hidden">
-                {t("common.page_info", { current: String(page), total: String(totalPages) })}
-              </span>
-
-              <div className="hidden sm:flex items-center gap-1">
-                {visiblePages.map((pageItem, index) => {
-                  if (typeof pageItem === "string") {
-                    return (
-                      <span
-                        key={`ellipsis-${index}`}
-                        className="h-8 w-8 flex items-center justify-center text-xs font-semibold text-neutral-400 dark:text-neutral-500"
-                      >
-                        ...
-                      </span>
-                    );
-                  }
-
-                  const isCurrent = page === pageItem;
-                  return (
-                    <Button
-                      key={pageItem}
-                      variant={isCurrent ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setPage(pageItem)}
-                      className={cn(
-                        "h-8 w-8 rounded-md p-0 text-xs font-semibold cursor-pointer",
-                        isCurrent
-                          ? "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-                          : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
-                      )}
-                    >
-                      {pageItem}
-                    </Button>
-                  );
-                })}
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs font-semibold text-neutral-600 dark:text-neutral-400 select-none">
+              <div className="flex h-8 min-w-8 px-2.5 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-900 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 dark:text-white">
+                {page}
               </div>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+              <span className="text-neutral-500 dark:text-neutral-500 font-medium whitespace-nowrap">
+                {language === "en" ? "of" : "dari"} {displayTotalPages}
+              </span>
             </div>
-          )}
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setPage((p) => Math.min(displayTotalPages, p + 1))}
+              disabled={page === displayTotalPages}
+              className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
