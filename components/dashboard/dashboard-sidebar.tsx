@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  ChevronDown,
+  ChevronRight,
   PanelLeftClose,
   PanelLeft,
   X,
@@ -90,10 +90,10 @@ function SidebarNavItem({
       )}>
         {translatedTitle}
       </span>
-      <ChevronDown
+      <ChevronRight
         className={cn(
           "shrink-0 transition-all duration-200 origin-center ml-auto",
-          isOpen && "rotate-180",
+          isOpen && "rotate-90",
           collapsed
             ? "w-0 h-0 opacity-0 pointer-events-none flex-none"
             : cn("opacity-100", isMobile ? "h-5 w-5" : "h-4 w-4")
