@@ -36,8 +36,8 @@ export default function LoginPage() {
   useEffect(() => setMounted(true), []);
 
   const loginSchema = z.object({
-    email: z.string().email(language === "en" ? "Invalid email address" : "Format email tidak valid"),
-    password: z.string().min(6, language === "en" ? "Password must be at least 6 characters" : "Kata sandi minimal harus 6 karakter"),
+    email: z.string().optional(),
+    password: z.string().optional(),
   });
 
   type LoginForm = z.infer<typeof loginSchema>;
@@ -45,28 +45,34 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginForm) => {
+    const email = data.email?.trim();
+    const password = data.password;
+
+    if (!email || !password) {
+      toast.error(
+        language === "en"
+          ? "Please enter your email and password"
+          : "Harap isi email dan password"
+      );
+      return;
+    }
+
     try {
-      await AuthService.signIn(data.email, data.password);
+      await AuthService.signIn(email, password);
       toast.success(t("login.welcome_back"));
       router.push("/dashboard");
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : t("login.login_failed");
-      toast.error(t("login.login_failed"), { description: message });
-    }
-  };
-
-  const onError = (errors: any) => {
-    if (errors.email) {
-      toast.error(errors.email.message);
-    } else if (errors.password) {
-      toast.error(errors.password.message);
+    } catch {
+      toast.error(
+        language === "en"
+          ? "Invalid credentials"
+          : "Kredensial tidak valid"
+      );
     }
   };
 
@@ -109,7 +115,7 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent className="px-8 pb-6 pt-4">
-            <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email">{t("login.email")}</Label>
                 <Input
@@ -118,10 +124,7 @@ export default function LoginPage() {
                   placeholder="you@example.com"
                   autoComplete="email"
                   {...register("email")}
-                  className={cn(
-                    "h-11",
-                    errors.email && "border-red-500 focus-visible:ring-red-500"
-                  )}
+                  className="h-11"
                 />
               </div>
 
@@ -134,10 +137,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     autoComplete="current-password"
                     {...register("password")}
-                    className={cn(
-                      "h-11 pr-10",
-                      errors.password && "border-red-500 focus-visible:ring-red-500"
-                    )}
+                    className="h-11 pr-10"
                   />
                   <button
                     type="button"
