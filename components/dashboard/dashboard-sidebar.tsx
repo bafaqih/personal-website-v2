@@ -232,48 +232,50 @@ export function DashboardSidebar({ collapsed, onToggle, isMobile = false }: Dash
         className={cn(
           "flex h-full flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300 overflow-x-hidden",
           "dark:border-white/10 dark:bg-neutral-950/90",
-          isMobile ? "relative w-full" : "fixed left-0 top-0 z-40 h-screen",
+          isMobile ? "relative w-full" : "fixed left-0 top-16 z-20 h-[calc(100vh-64px)]",
           !isMobile && (collapsed ? "w-[72px]" : "w-[260px]")
         )}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 transition-all duration-300">
-          <Link href="/dashboard" className="relative flex items-center w-full h-8 overflow-hidden">
-            {/* Full logo (light and dark) */}
-            <div className={cn(
-              "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0 overflow-hidden",
-              collapsed ? "opacity-0 -translate-x-10 pointer-events-none w-0" : "opacity-100 w-full"
-            )}>
-              <img
-                src={logoBlack.src}
-                alt="Fadil Bafagih"
-                className="dark:hidden h-8 w-[141px] min-w-[141px] shrink-0"
-              />
-              <img
-                src={logoWhite.src}
-                alt="Fadil Bafagih"
-                className="hidden dark:block h-8 w-[141px] min-w-[141px] shrink-0"
-              />
-            </div>
+        {isMobile && (
+          <div className="flex h-16 items-center px-4 border-b border-neutral-200/60 dark:border-white/10 transition-all duration-300">
+            <Link href="/dashboard" className="relative flex items-center w-full h-8 overflow-hidden">
+              {/* Full logo (light and dark) */}
+              <div className={cn(
+                "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0 overflow-hidden",
+                collapsed ? "opacity-0 -translate-x-10 pointer-events-none w-0" : "opacity-100 w-full"
+              )}>
+                <img
+                  src={logoBlack.src}
+                  alt="Fadil Bafagih"
+                  className="dark:hidden h-8 w-[141px] min-w-[141px] shrink-0"
+                />
+                <img
+                  src={logoWhite.src}
+                  alt="Fadil Bafagih"
+                  className="hidden dark:block h-8 w-[141px] min-w-[141px] shrink-0"
+                />
+              </div>
 
-            {/* Icon logo (light and dark) */}
-            <div className={cn(
-              "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0",
-              collapsed ? "opacity-100" : "opacity-0 pointer-events-none"
-            )}>
-              <img
-                src={iconBlack.src}
-                alt="FB Icon"
-                className="dark:hidden h-8 w-auto"
-              />
-              <img
-                src={iconWhite.src}
-                alt="FB Icon"
-                className="hidden dark:block h-8 w-auto"
-              />
-            </div>
-          </Link>
-        </div>
+              {/* Icon logo (light and dark) */}
+              <div className={cn(
+                "absolute left-0 top-0 h-full flex items-center transition-all duration-300 origin-left shrink-0",
+                collapsed ? "opacity-100" : "opacity-0 pointer-events-none"
+              )}>
+                <img
+                  src={iconBlack.src}
+                  alt="FB Icon"
+                  className="dark:hidden h-8 w-auto"
+                />
+                <img
+                  src={iconWhite.src}
+                  alt="FB Icon"
+                  className="hidden dark:block h-8 w-auto"
+                />
+              </div>
+            </Link>
+          </div>
+        )}
 
         {/* Navigation */}
         <nav className={cn("flex-1 overflow-y-auto", isMobile ? "px-4 py-6" : "px-4 py-4")}>

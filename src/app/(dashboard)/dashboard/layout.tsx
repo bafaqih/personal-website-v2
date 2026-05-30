@@ -28,6 +28,11 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <DashboardHeader
+        sidebarCollapsed={collapsed}
+        onToggleSidebar={() => setCollapsed(!collapsed)}
+      />
+
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <DashboardSidebar
@@ -48,7 +53,7 @@ export default function DashboardLayout({
       {/* Main content area */}
       <div
         className={cn(
-          "transition-all duration-300",
+          "transition-all duration-300 pt-16",
           collapsed ? "lg:ml-[72px]" : "lg:ml-[260px]"
         )}
       >
@@ -74,11 +79,6 @@ export default function DashboardLayout({
             )} />
           </div>
         </Button>
-
-        <DashboardHeader
-          sidebarCollapsed={collapsed}
-          onToggleSidebar={() => setCollapsed(!collapsed)}
-        />
 
         <main className="p-6 lg:p-8">
           {children}

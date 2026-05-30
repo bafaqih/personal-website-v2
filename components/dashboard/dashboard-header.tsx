@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +27,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+import logoBlack from "@/src/assets/images/fadilbaf-black.svg";
+import logoWhite from "@/src/assets/images/fadilbaf-white.svg";
 
 interface ProfileDropdownProps {
   profile: Profile | null;
@@ -182,10 +186,10 @@ export function DashboardHeader({
   return (
     <TooltipProvider>
       <header
-        className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 pl-4 sm:pl-5 pr-4 sm:pr-5 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
+        className="fixed top-0 left-0 w-full z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 pl-4 sm:pl-5 pr-4 sm:pr-5 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
-        {/* Left Side: Profile dropdown on mobile, Sidebar toggle on desktop */}
-        <div className="flex items-center">
+        {/* Left Side: Profile dropdown on mobile, Sidebar toggle and Logo on desktop */}
+        <div className="flex items-center gap-4">
           {/* Mobile Profile dropdown */}
           <div className="flex lg:hidden items-center">
             <ProfileDropdown
@@ -198,15 +202,15 @@ export function DashboardHeader({
             />
           </div>
 
-          {/* Desktop Sidebar Toggle */}
-          <div className="hidden lg:block">
+          {/* Desktop Sidebar Toggle & Logo */}
+          <div className="hidden lg:flex items-center gap-4">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={onToggleSidebar}
-                  className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg cursor-pointer"
+                  className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg cursor-pointer flex items-center justify-center"
                 >
                   {sidebarCollapsed ? (
                     <PanelLeft className="h-4 w-4" />
@@ -219,6 +223,20 @@ export function DashboardHeader({
                 <p>{sidebarCollapsed ? t("header.expand") : t("header.collapse")}</p>
               </TooltipContent>
             </Tooltip>
+
+            {/* Brand Logo */}
+            <Link href="/dashboard" className="relative flex items-center h-8 w-[141px]">
+              <img
+                src={logoBlack.src}
+                alt="Fadil Bafagih"
+                className="dark:hidden h-8 w-[141px] min-w-[141px]"
+              />
+              <img
+                src={logoWhite.src}
+                alt="Fadil Bafagih"
+                className="hidden dark:block h-8 w-[141px] min-w-[141px]"
+              />
+            </Link>
           </div>
         </div>
 
