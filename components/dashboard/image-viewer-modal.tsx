@@ -211,18 +211,21 @@ export function ImageViewerModal({
       </div>
 
       {/* Floating Left Navigation Chevron */}
-      {hasMultiple && currentIndex > 0 && (
+      {hasMultiple && (
         <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-60">
           <button
             onClick={() => setCurrentIndex((prev) => prev - 1)}
+            disabled={currentIndex === 0}
             type="button"
             className={cn(
               "relative flex items-center justify-center w-12 h-12 rounded-xl sm:rounded-2xl",
               "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
               "border border-neutral-300 dark:border-neutral-600 shadow-lg",
               "text-neutral-950 dark:text-neutral-50",
-              "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
-              "transition-all duration-200 cursor-pointer outline-none group"
+              "transition-all duration-200 outline-none group",
+              currentIndex === 0
+                ? "opacity-30 cursor-not-allowed pointer-events-none"
+                : "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95 cursor-pointer"
             )}
             title={t("common.image_viewer.prev")}
           >
@@ -232,18 +235,21 @@ export function ImageViewerModal({
       )}
 
       {/* Floating Right Navigation Chevron */}
-      {hasMultiple && currentIndex < images.length - 1 && (
+      {hasMultiple && (
         <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-60">
           <button
             onClick={() => setCurrentIndex((prev) => prev + 1)}
+            disabled={currentIndex === images.length - 1}
             type="button"
             className={cn(
               "relative flex items-center justify-center w-12 h-12 rounded-xl sm:rounded-2xl",
               "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
               "border border-neutral-300 dark:border-neutral-600 shadow-lg",
               "text-neutral-950 dark:text-neutral-50",
-              "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
-              "transition-all duration-200 cursor-pointer outline-none group"
+              "transition-all duration-200 outline-none group",
+              currentIndex === images.length - 1
+                ? "opacity-30 cursor-not-allowed pointer-events-none"
+                : "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95 cursor-pointer"
             )}
             title={t("common.image_viewer.next")}
           >
