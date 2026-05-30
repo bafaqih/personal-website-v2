@@ -236,11 +236,12 @@ export default function ProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Box Kiri: Data Profil */}
-        <Card className="border-none bg-white shadow-sm dark:bg-neutral-900">
-          <CardContent className="p-8 space-y-6">
+        <Card className="h-full border-none bg-white shadow-sm dark:bg-neutral-900">
+          <CardContent className="p-8 space-y-6 flex flex-col h-full">
+            <div className="flex-1 space-y-6">
             {/* Avatar & Basic Info (Centered on mobile, Row & Left-aligned on sm and larger) */}
-            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 pb-6 border-b border-neutral-100 dark:border-neutral-800">
-              <div className="relative group mb-4 sm:mb-0">
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 sm:gap-6 pb-6 border-b border-neutral-100 dark:border-neutral-800">
+              <div className="relative group">
                 <button
                   onClick={() => setIsViewerOpen(true)}
                   disabled={isUploading || isDeletingImage || loading}
@@ -367,12 +368,14 @@ export default function ProfilePage() {
                   loading={loading}
                 />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Box Kanan: Form Change Password */}
+        {/* Box Kanan: Form Change Password & System Information */}
+        <div className="space-y-8">
           <Card className="border-none bg-white shadow-sm dark:bg-neutral-900">
-            <CardContent className="p-8 space-y-6">
+          <CardContent className="p-8 space-y-6">
               <div className="space-y-1">
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
                   {t("profile.change_password")}
@@ -499,7 +502,46 @@ export default function ProfilePage() {
               </form>
             </CardContent>
           </Card>
+
+          {/* Card: About System */}
+          <Card className="border-none bg-white shadow-sm dark:bg-neutral-900">
+            <CardContent className="p-8 space-y-6">
+              <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                {t("profile.system_info")}
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-neutral-500 dark:text-neutral-400">
+                    Platform
+                  </span>
+                  <span className="font-medium text-neutral-900 dark:text-white">
+                    Personal Website
+                  </span>
+                </div>
+                
+                <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4 flex justify-between items-center text-sm">
+                  <span className="text-neutral-500 dark:text-neutral-400">
+                    {t("profile.developer")}
+                  </span>
+                  <span className="font-medium text-neutral-900 dark:text-white">
+                    Fadil Bafagih
+                  </span>
+                </div>
+
+                <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4 flex justify-between items-center text-sm">
+                  <span className="text-neutral-500 dark:text-neutral-400">
+                    {t("profile.version")}
+                  </span>
+                  <span className="font-medium text-neutral-900 dark:text-white">
+                    v{process.env.NEXT_PUBLIC_APP_VERSION || "0.1.0"}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+      </div>
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>

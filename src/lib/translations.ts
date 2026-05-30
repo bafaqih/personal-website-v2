@@ -446,6 +446,9 @@ export const translations = {
       pwd_desc: "Description",
       view_image: "View Image",
       uploading: "Uploading...",
+      system_info: "System Information",
+      developer: "Developer",
+      version: "Version",
     },
   },
   id: {
@@ -889,6 +892,9 @@ export const translations = {
       pwd_desc: "Deskripsi",
       view_image: "Lihat Gambar",
       uploading: "Mengunggah...",
+      system_info: "Informasi Sistem",
+      developer: "Pengembang",
+      version: "Versi",
     },
   },
 };
