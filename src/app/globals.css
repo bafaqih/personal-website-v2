@@ -281,3 +281,32 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .dark .link-card-custom {
   --spotlight-color: rgba(255, 255, 255, 0.12);
 }
+
+/* --- Main Card Shimmer --- */
+.main-card-shimmer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.main-card-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: shimmer-sweep-slow 1s ease-in-out forwards;
+}
+
+@keyframes shimmer-sweep-slow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

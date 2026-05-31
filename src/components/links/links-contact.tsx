@@ -150,6 +150,14 @@ export function LinksContact({ locale }: LinksContactProps) {
     { value: tLinks(locale, "subject_other"), label: tLinks(locale, "subject_other") },
   ];
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  };
+
   return (
     <motion.section
       className="px-6 pt-6 pb-6"
@@ -160,8 +168,17 @@ export function LinksContact({ locale }: LinksContactProps) {
     >
       <motion.div 
         variants={cardVariants}
-        className="rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm p-5 dark:border-white/10 dark:bg-neutral-900/80"
+        onMouseMove={handleMouseMove}
+        className="link-card-custom group relative overflow-hidden rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm p-5 dark:border-white/10 dark:bg-neutral-900/80"
       >
+        {/* Spotlight cursor overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(250px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), var(--spotlight-color), transparent 80%)`,
+          }}
+        />
+
         {/* Icon + Heading */}
         <motion.div 
           variants={iconVariants}

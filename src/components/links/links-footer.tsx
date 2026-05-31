@@ -39,7 +39,7 @@ export function LinksFooter({ locale }: LinksFooterProps) {
           href="https://bafdev.id/"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-bold text-neutral-900 hover:underline dark:text-white transition-colors"
+          className="inline-block align-baseline relative font-bold text-neutral-900 dark:text-white transition-colors after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100"
         >
           Bafdev
         </a>

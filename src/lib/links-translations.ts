@@ -78,7 +78,7 @@ const linksTranslations: Record<LinksLocale, Record<string, string>> = {
   },
   id: {
     // Profile section
-    open_to_remote: "Terbuka untuk Remote",
+    open_to_remote: "Open to Remote",
 
     // Section labels
     main: "Utama",
