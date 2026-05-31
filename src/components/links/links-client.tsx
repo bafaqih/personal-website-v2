@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { LinksHeader } from "@/src/components/links/links-header";
 import { LinksProfile } from "@/src/components/links/links-profile";
@@ -17,6 +18,21 @@ interface LinksClientProps {
 
 export function LinksClient({ locale, initialData }: LinksClientProps) {
   const data = initialData;
+
+  useEffect(() => {
+    // Disable automatic browser scroll restoration on refresh/load
+    if (typeof window !== "undefined") {
+      const originalScrollRestoration = window.history.scrollRestoration;
+      window.history.scrollRestoration = "manual";
+      
+      // Force scroll to top on page mount
+      window.scrollTo(0, 0);
+
+      return () => {
+        window.history.scrollRestoration = originalScrollRestoration;
+      };
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950 md:bg-neutral-50 md:dark:bg-neutral-950 relative">
