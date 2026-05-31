@@ -64,9 +64,10 @@ interface LinkCardProps {
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   index: number;
+  isMain?: boolean;
 }
 
-function LinkCard({ href, title, description, icon: Icon, index }: LinkCardProps) {
+function LinkCard({ href, title, description, icon: Icon, index, isMain = false }: LinkCardProps) {
   const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -74,6 +75,60 @@ function LinkCard({ href, title, description, icon: Icon, index }: LinkCardProps
     e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
     e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
   };
+
+  if (isMain) {
+    return (
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -3 }}
+        viewport={{ once: true, margin: "-30px" }}
+        transition={{
+          duration: 0.4,
+          ease: "easeOut" as const,
+          delay: index * 0.08,
+        }}
+        onMouseMove={handleMouseMove}
+        className="link-card-custom group relative p-[2px] rounded-[16px] border-none cursor-pointer bg-[radial-gradient(circle_80px_at_80%_-10%,#ffffff,#181b1b)] block w-full"
+      >
+        {/* Glow behind button (Top-Right) */}
+        <div className="absolute top-0 right-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
+
+        {/* Glow behind button (Bottom-Left) */}
+        <div className="absolute bottom-0 left-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
+
+        {/* Inner content */}
+        <div className="relative flex items-center gap-4 rounded-[14px] bg-[radial-gradient(circle_80px_at_80%_-50%,#777777,#0f1111)] px-4 py-3.5 transition-colors duration-300 z-10 overflow-hidden">
+          {/* Spotlight cursor overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none rounded-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-3"
+            style={{
+              background: `radial-gradient(150px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 255, 255, 0.15), transparent 80%)`,
+            }}
+          />
+
+          {/* Inner glow layer */}
+          <div className="absolute inset-0 rounded-[14px] bg-[radial-gradient(circle_70px_at_0%_100%,#ffffff33,#ffffff0d,transparent)] z-[-1]" />
+
+          <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10 text-neutral-300 transition-colors group-hover:bg-white group-hover:text-neutral-900">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="relative z-10 flex-1 min-w-0">
+            <p className="text-sm font-semibold text-white">
+              {title}
+            </p>
+            <p className="text-xs text-neutral-400 truncate">
+              {description}
+            </p>
+          </div>
+          <ExternalLink className="relative z-10 h-4 w-4 shrink-0 text-neutral-400 transition-colors duration-300 group-hover:text-white" />
+        </div>
+      </motion.a>
+    );
+  }
 
   return (
     <motion.a
@@ -191,7 +246,7 @@ export function LinksSection({ contact, locale }: LinksSectionProps) {
         </motion.p>
         <div className="space-y-2.5">
           {mainLinks.map((link, index) => (
-            <LinkCard key={link.href} {...link} index={index} />
+            <LinkCard key={link.href} {...link} index={index} isMain={true} />
           ))}
         </div>
       </div>
