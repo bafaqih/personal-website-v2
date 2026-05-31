@@ -76,6 +76,7 @@ export function LinksProfile({
   locale,
 }: LinksProfileProps) {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   // Cycle through roles every 3 seconds
   useEffect(() => {
@@ -115,7 +116,10 @@ export function LinksProfile({
           transition={{ delay: 0.1, duration: 0.4 }}
           className="mb-4"
         >
-          <div className="relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 shadow-lg">
+          <div className="relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 shadow-lg bg-neutral-100 dark:bg-neutral-900">
+            {isImageLoading && (
+              <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 animate-pulse z-10" />
+            )}
             <Image
               src={profile.photo_url}
               alt={profile.full_name || "Profile"}
@@ -123,6 +127,7 @@ export function LinksProfile({
               className="object-cover"
               sizes="112px"
               priority
+              onLoad={() => setIsImageLoading(false)}
             />
           </div>
         </motion.div>
