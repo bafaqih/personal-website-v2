@@ -235,3 +235,81 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .dark input[type="date"]::-webkit-calendar-picker-indicator {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E") !important;
 }
+
+/* ═══════════════════════════════════════════════
+   Links Page — Premium Hover & Idle Animations
+   ═══════════════════════════════════════════════ */
+
+/* --- Profile Photo Shimmer (Hover) --- */
+.profile-photo-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-photo-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-photo-shimmer:hover::after {
+  opacity: 1;
+  animation: shimmer-sweep 0.7s ease-in-out;
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* --- Link Card — Rotating Gradient Border (Always Active) --- */
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.link-card-main {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0.8)) padding-box,
+    conic-gradient(from var(--border-angle), #e5e5e5 0%, #a3a3a3 25%, #e5e5e5 50%, #d4d4d4 75%, #e5e5e5 100%) border-box;
+  animation: rotate-border 4s linear infinite;
+  transition: box-shadow 0.3s;
+}
+
+.link-card-main:hover {
+  background:
+    linear-gradient(to right, rgba(255,255,255,0.85), rgba(255,255,255,0.85)) padding-box,
+    conic-gradient(from var(--border-angle), #d4d4d4 0%, #737373 25%, #d4d4d4 50%, #a3a3a3 75%, #d4d4d4 100%) border-box;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.06);
+}
+
+.dark .link-card-main {
+  background:
+    linear-gradient(to right, rgba(23,23,23,0.85), rgba(23,23,23,0.85)) padding-box,
+    conic-gradient(from var(--border-angle), rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.2) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.15) 75%, rgba(255,255,255,0.06) 100%) border-box;
+}
+
+.dark .link-card-main:hover {
+  background:
+    linear-gradient(to right, rgba(23,23,23,0.9), rgba(23,23,23,0.9)) padding-box,
+    conic-gradient(from var(--border-angle), rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.3) 75%, rgba(255,255,255,0.1) 100%) border-box;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.04);
+}
+
+@keyframes rotate-border {
+  to { --border-angle: 360deg; }
+}
