@@ -116,9 +116,9 @@ export function LinksContact({ locale }: LinksContactProps) {
           access_key: accessKey,
           name: data.name,
           email: data.email,
-          subject: `[Links] ${data.subject}`,
+          subject: `[Get In Touch] ${data.subject}`,
           message: data.message,
-          from_name: "Fadil Bafagih Links",
+          from_name: "Fadil Bafagih | Personal Website",
         }),
       });
 
