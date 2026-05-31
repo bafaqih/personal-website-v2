@@ -50,7 +50,7 @@ function TikTokIcon({ className }: { className?: string }) {
 function VerifiedBadge() {
   return (
     <svg
-      className="h-5 w-5 text-blue-500 inline-block ml-1.5 shrink-0"
+      className="h-5 w-5 text-blue-500 shrink-0"
       viewBox="0 0 24 24"
       fill="currentColor"
     >
@@ -130,13 +130,17 @@ export function LinksProfile({
 
       {/* Name + Verified Badge */}
       <motion.h1
-        className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center"
+        className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white relative"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.4 }}
       >
-        {profile?.full_name || "Fadil Bafagih"}
-        <VerifiedBadge />
+        <span className="relative inline-block">
+          {profile?.full_name || "Fadil Bafagih"}
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-1.5 flex items-center">
+            <VerifiedBadge />
+          </span>
+        </span>
       </motion.h1>
 
       {/* Role with cycling animation */}
