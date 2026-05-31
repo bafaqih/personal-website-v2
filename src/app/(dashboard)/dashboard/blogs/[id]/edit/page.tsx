@@ -35,10 +35,10 @@ const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
   title_id: z.string().min(1, "Title (ID) is required"),
   title_en: z.string().min(1, "Title (EN) is required"),
-  type_id: z.string().optional(),
-  category_id: z.string().optional(),
+  type_id: z.string().min(1, "Type is required"),
+  category_id: z.string().min(1, "Category is required"),
   is_published: z.boolean(),
-  tags: z.array(z.string()).default([])
+  tags: z.array(z.string()).min(1, "At least one tag is required")
 });
 
 type FormData = z.infer<typeof schema>;
@@ -93,14 +93,23 @@ export default function BlogEditPage() {
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting, isDirty }
+    formState: { errors, isSubmitting, isDirty, isValid }
   } = useForm<FormData>({
-    resolver: zodResolver(schema) as any
+    resolver: zodResolver(schema) as any,
+    mode: "onChange"
   });
 
   const hasContentChanged = contentId !== initialContentId || contentEn !== initialContentEn;
   const hasImageChanged = thumbFile !== null;
-  const isSaveDisabled = isSubmitting || (!isDirty && !hasContentChanged && !hasImageChanged);
+  const isSaveDisabled = 
+    isSubmitting || 
+    !isValid || 
+    (!isDirty && !hasContentChanged && !hasImageChanged) ||
+    !contentId?.trim() ||
+    contentId === "<p></p>" ||
+    !contentEn?.trim() ||
+    contentEn === "<p></p>" ||
+    (!currentImageUrl && !thumbFile);
 
   useEffect(() => {
     if (blog) {
@@ -332,7 +341,7 @@ export default function BlogEditPage() {
                     </Button>
                     <Button type="submit"
                       disabled={isSaveDisabled}
-                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                       {isSubmitting ? (
                         <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                       ) : (

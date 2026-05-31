@@ -34,10 +34,10 @@ const schema = z.object({
   slug: z.string().min(1, "Slug is required"),
   title_id: z.string().min(1, "Title (ID) is required"),
   title_en: z.string().min(1, "Title (EN) is required"),
-  type_id: z.string().optional(),
-  category_id: z.string().optional(),
+  type_id: z.string().min(1, "Type is required"),
+  category_id: z.string().min(1, "Category is required"),
   is_published: z.boolean(),
-  tags: z.array(z.string()).default([])
+  tags: z.array(z.string()).min(1, "At least one tag is required")
 });
 
 type FormData = z.infer<typeof schema>;
@@ -73,7 +73,7 @@ export default function BlogAddPage() {
     handleSubmit, 
     setValue, 
     watch, 
-    formState: { errors, isSubmitting } 
+    formState: { errors, isSubmitting, isValid } 
   } = useForm<FormData>({ 
     resolver: zodResolver(schema) as any, 
     defaultValues: { 
@@ -82,9 +82,20 @@ export default function BlogAddPage() {
       title_id: "",
       title_en: "",
       type_id: "",
-      category_id: ""
-    } 
+      category_id: "",
+      tags: []
+    },
+    mode: "onChange"
   });
+
+  const isSubmitDisabled =
+    isSubmitting ||
+    !isValid ||
+    !thumbFile ||
+    !contentId?.trim() ||
+    contentId === "<p></p>" ||
+    !contentEn?.trim() ||
+    contentEn === "<p></p>";
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -249,8 +260,8 @@ export default function BlogAddPage() {
                   <X className="h-4 w-4" /> {t("common.cancel")}
                 </Button>
                 <Button type="submit" 
-                  disabled={isSubmitting} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+                  disabled={isSubmitDisabled} 
+                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                   {isSubmitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> {language === "en" ? "Creating..." : "Membuat..."}</>
                   ) : (

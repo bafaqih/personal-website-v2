@@ -82,16 +82,16 @@ export default function ProjectEditPage() {
     slug: z.string().min(1, t("common.required_field")),
     title_id: z.string().min(1, t("common.required_field")),
     title_en: z.string().min(1, t("common.required_field")),
-    bio_id: z.string().optional(),
-    bio_en: z.string().optional(),
+    bio_id: z.string().min(1, t("common.required_field")),
+    bio_en: z.string().min(1, t("common.required_field")),
     type_id: z.string().optional(),
     category_id: z.string().optional(),
-    project_date: z.string().optional(),
+    project_date: z.string().min(1, t("common.required_field")),
     github_url: z.string().optional(),
     live_url: z.string().optional(),
     video_url: z.string().optional(),
-    overview_id: z.string().optional(),
-    overview_en: z.string().optional(),
+    overview_id: z.string().min(1, t("common.required_field")),
+    overview_en: z.string().min(1, t("common.required_field")),
     challenge_intro_id: z.string().optional(),
     challenge_intro_en: z.string().optional(),
     challenge_points_id: z.array(z.string()).optional(),
@@ -118,6 +118,14 @@ export default function ProjectEditPage() {
     resolver: zodResolver(schema),
     defaultValues: {
       is_published: true,
+      slug: "",
+      title_id: "",
+      title_en: "",
+      bio_id: "",
+      bio_en: "",
+      project_date: "",
+      overview_id: "",
+      overview_en: "",
       challenge_points_id: [], challenge_points_en: [],
       result_points_id: [], result_points_en: [],
       lesson_points_id: [], lesson_points_en: [],
@@ -764,7 +772,7 @@ export default function ProjectEditPage() {
                 <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5 cursor-pointer">
                   <X className="h-4 w-4" /> {t("common.cancel")}
                 </Button>
-                <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+                <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !hasImageChanges)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                   {isSubmitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                   ) : (
