@@ -166,7 +166,7 @@ export default function BlogEditPage() {
       
       <div className="w-full">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+          <Card className="overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
             <CardContent className="p-6 space-y-8">
               {/* Thumbnail Section - Large Banner Style */}
               <div className="space-y-3">
