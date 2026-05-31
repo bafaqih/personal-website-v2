@@ -102,7 +102,7 @@ export default function SkillAddPage() {
               <ImageUpload accept="image" onChange={(file) => setIconFile(file)} />
             </div>
             <div className="flex items-center gap-3">
-              <Switch checked={watch("is_active")} onCheckedChange={(v) => setValue("is_active", v)} />
+              <Switch checked={watch("is_active")} onCheckedChange={(v) => setValue("is_active", v, { shouldValidate: true, shouldDirty: true })} />
               <Label>{t("skills.active")}</Label>
             </div>
             <div className="flex justify-end gap-3">

@@ -311,7 +311,7 @@ export default function BlogEditPage() {
                 ) : (
                   <Switch 
                     checked={!!watch("is_published")} 
-                    onCheckedChange={(v) => setValue("is_published", v)} 
+                    onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} 
                   />
                 )}
                 <Label>{t("common.publish")}</Label>

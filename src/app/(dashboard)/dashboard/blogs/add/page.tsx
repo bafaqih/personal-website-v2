@@ -237,7 +237,7 @@ export default function BlogAddPage() {
               <div className="flex items-center gap-3 pt-2">
                 <Switch 
                   checked={watch("is_published")} 
-                  onCheckedChange={(v) => setValue("is_published", v)} 
+                  onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} 
                 />
                 <Label>{t("common.publish")}</Label>
               </div>

@@ -131,7 +131,7 @@ export default function SkillEditPage() {
               {loading ? (
                 <Skeleton className="h-6 w-10 rounded-full" />
               ) : (
-                <Switch checked={!!watch("is_active")} onCheckedChange={(v) => setValue("is_active", v)} />
+                <Switch checked={!!watch("is_active")} onCheckedChange={(v) => setValue("is_active", v, { shouldValidate: true, shouldDirty: true })} />
               )}
               <Label>{t("skills.active")}</Label>
             </div>

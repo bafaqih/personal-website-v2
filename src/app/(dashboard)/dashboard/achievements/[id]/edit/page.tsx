@@ -271,7 +271,7 @@ export default function AchievementEditPage() {
                 ) : (
                   <Switch 
                     checked={!!watch("is_published")} 
-                    onCheckedChange={(v) => setValue("is_published", v, { shouldDirty: true })} 
+                    onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} 
                   />
                 )}
                 <Label>{t("common.publish")}</Label>
