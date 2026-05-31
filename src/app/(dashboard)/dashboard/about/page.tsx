@@ -540,8 +540,15 @@ export default function AboutPage() {
             </Button>
             <Button
               onClick={handleRoleModalSubmit}
-              disabled={isRoleSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer"
+              disabled={
+                isRoleSubmitting ||
+                (editingRole
+                  ? roleFormData.role_id.trim() === editingRole.role_id &&
+                    roleFormData.role_en.trim() === editingRole.role_en &&
+                    roleFormData.is_active === editingRole.is_active
+                  : !roleFormData.role_id.trim() || !roleFormData.role_en.trim())
+              }
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRoleSubmitting ? (
                 <>

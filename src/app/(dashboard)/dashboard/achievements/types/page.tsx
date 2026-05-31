@@ -227,8 +227,15 @@ export default function AchievementTypesPage() {
               <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
             <Button onClick={handleModalSubmit}
-              disabled={isSubmitting}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+              disabled={
+                isSubmitting ||
+                (editingType
+                  ? formData.name_id.trim() === editingType.name_id &&
+                    formData.name_en.trim() === editingType.name_en &&
+                    formData.is_active === editingType.is_active
+                  : !formData.name_id.trim() || !formData.name_en.trim())
+              }
+              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingType ? (
