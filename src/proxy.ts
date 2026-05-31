@@ -9,6 +9,29 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // 1. Check if the path needs locale redirection (only for root "/" and "/links" without prefix)
+  const isRoot = pathname === "/";
+  const isLinksWithoutLocale = pathname === "/links";
+
+  if (isRoot || isLinksWithoutLocale) {
+    const cookieLanguage = request.cookies.get("admin-language")?.value;
+    let locale = "en";
+    if (cookieLanguage === "en" || cookieLanguage === "id") {
+      locale = cookieLanguage;
+    } else {
+      const acceptLanguage = request.headers.get("accept-language") || "";
+      if (acceptLanguage.toLowerCase().includes("id")) {
+        locale = "id";
+      }
+    }
+
+    const redirectPathname = isRoot ? `/${locale}` : `/${locale}/links`;
+    const url = request.nextUrl.clone();
+    url.pathname = redirectPathname;
+    return NextResponse.redirect(url);
+  }
+
   const hostname = request.headers.get("host") || "";
 
   // Determine if this is the admin subdomain
