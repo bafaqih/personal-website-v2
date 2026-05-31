@@ -46,22 +46,15 @@ const socialIconMap: Record<string, React.ComponentType<{ className?: string }>>
   tiktok: TikTokIcon,
 };
 
-/** Stagger animation variants for card lists */
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-};
+/** Animation variants for section elements */
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 16 },
+const subtitleVariants = {
+  hidden: { opacity: 0, y: 15, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.35, ease: "easeOut" as const },
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
   },
 };
 
@@ -70,16 +63,25 @@ interface LinkCardProps {
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
+  index: number;
 }
 
-function LinkCard({ href, title, description, icon: Icon }: LinkCardProps) {
+function LinkCard({ href, title, description, icon: Icon, index }: LinkCardProps) {
   return (
     <motion.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      variants={cardVariants}
-      className="group flex items-center gap-4 rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm px-4 py-3.5 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 dark:border-white/10 dark:bg-neutral-900/80 dark:hover:shadow-white/5"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{
+        duration: 0.4,
+        ease: "easeOut" as const,
+        delay: index * 0.08,
+      }}
+      className="group flex items-center gap-4 rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm px-4 py-3.5 transition-[box-shadow,background-color,border-color] duration-300 hover:shadow-md dark:border-white/10 dark:bg-neutral-900/80 dark:hover:shadow-white/5"
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 transition-colors group-hover:bg-neutral-900 group-hover:text-white dark:bg-white/10 dark:text-neutral-400 dark:group-hover:bg-white dark:group-hover:text-neutral-900">
         <Icon className="h-5 w-5" />
@@ -92,7 +94,7 @@ function LinkCard({ href, title, description, icon: Icon }: LinkCardProps) {
           {description}
         </p>
       </div>
-      <ExternalLink className="h-4 w-4 shrink-0 text-neutral-400 transition-all duration-300 group-hover:text-neutral-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 dark:text-neutral-500 dark:group-hover:text-neutral-300" />
+      <ExternalLink className="h-4 w-4 shrink-0 text-neutral-400 transition-colors duration-300 group-hover:text-neutral-600 dark:text-neutral-500 dark:group-hover:text-neutral-300" />
     </motion.a>
   );
 }
@@ -151,52 +153,67 @@ export function LinksSection({ contact, locale }: LinksSectionProps) {
   return (
     <div className="px-6 space-y-6">
       {/* Separator */}
-      <div className="border-t border-neutral-200/60 dark:border-white/10" />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="border-t border-neutral-200/60 dark:border-white/10" 
+      />
 
       {/* Main section */}
       <div className="space-y-3">
-        <p className="text-center text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-          {tLinks(locale, "main")}
-        </p>
-        <motion.div
-          className="space-y-2.5"
-          variants={containerVariants}
+        <motion.p
+          variants={subtitleVariants}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="text-center text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500"
         >
-          {mainLinks.map((link) => (
-            <LinkCard key={link.href} {...link} />
+          {tLinks(locale, "main")}
+        </motion.p>
+        <div className="space-y-2.5">
+          {mainLinks.map((link, index) => (
+            <LinkCard key={link.href} {...link} index={index} />
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Social Media section */}
       {socialLinks.length > 0 && (
         <div className="space-y-3">
-          <p className="text-center text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-            {tLinks(locale, "social_media")}
-          </p>
-          <motion.div
-            className="space-y-2.5"
-            variants={containerVariants}
+          <motion.p
+            variants={subtitleVariants}
             initial="hidden"
-            animate="visible"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-40px" }}
+            className="text-center text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500"
           >
-            {socialLinks.map((link) => (
+            {tLinks(locale, "social_media")}
+          </motion.p>
+          <div className="space-y-2.5">
+            {socialLinks.map((link, index) => (
               <LinkCard
                 key={link.key}
                 href={link.url!}
                 title={tLinks(locale, link.titleKey)}
                 description={tLinks(locale, link.descKey)}
                 icon={socialIconMap[link.key] || Globe}
+                index={index}
               />
             ))}
-          </motion.div>
+          </div>
         </div>
       )}
 
       {/* Separator */}
-      <div className="border-t border-neutral-200/60 dark:border-white/10" />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="border-t border-neutral-200/60 dark:border-white/10" 
+      />
     </div>
   );
 }

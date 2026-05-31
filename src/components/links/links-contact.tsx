@@ -33,6 +33,53 @@ interface LinksContactProps {
   locale: LinksLocale;
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
+const iconVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
+
+const textBlurVariants = {
+  hidden: { opacity: 0, y: 12, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
+
 /**
  * Get in Touch section with contact form.
  * Sends email via Web3Forms API.
@@ -106,21 +153,34 @@ export function LinksContact({ locale }: LinksContactProps) {
   return (
     <motion.section
       className="px-6 pt-6 pb-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.6, duration: 0.5 }}
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-40px" }}
     >
-      <div className="rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm p-5 dark:border-white/10 dark:bg-neutral-900/80">
+      <motion.div 
+        variants={cardVariants}
+        className="rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm p-5 dark:border-white/10 dark:bg-neutral-900/80"
+      >
         {/* Icon + Heading */}
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 mb-4 dark:bg-white/10 dark:text-neutral-400">
+        <motion.div 
+          variants={iconVariants}
+          className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 mb-4 dark:bg-white/10 dark:text-neutral-400"
+        >
           <Mail className="h-5 w-5" />
-        </div>
-        <h2 className="text-lg font-bold text-neutral-900 dark:text-white">
+        </motion.div>
+        <motion.h2 
+          variants={textBlurVariants}
+          className="text-lg font-bold text-neutral-900 dark:text-white"
+        >
           {tLinks(locale, "get_in_touch")}
-        </h2>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 mb-5">
+        </motion.h2>
+        <motion.p 
+          variants={textBlurVariants}
+          className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 mb-5"
+        >
           {tLinks(locale, "get_in_touch_desc")}
-        </p>
+        </motion.p>
 
         {/* Form */}
         <form
@@ -128,7 +188,7 @@ export function LinksContact({ locale }: LinksContactProps) {
           className="space-y-4"
         >
           {/* Name */}
-          <div className="space-y-1.5">
+          <motion.div variants={fieldVariants} className="space-y-1.5">
             <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "name")}
             </Label>
@@ -137,10 +197,10 @@ export function LinksContact({ locale }: LinksContactProps) {
               placeholder={tLinks(locale, "name_placeholder")}
               className="h-10"
             />
-          </div>
+          </motion.div>
 
           {/* Email */}
-          <div className="space-y-1.5">
+          <motion.div variants={fieldVariants} className="space-y-1.5">
             <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "email")}
             </Label>
@@ -150,10 +210,10 @@ export function LinksContact({ locale }: LinksContactProps) {
               placeholder={tLinks(locale, "email_placeholder")}
               className="h-10"
             />
-          </div>
+          </motion.div>
 
           {/* Subject */}
-          <div className="space-y-1.5">
+          <motion.div variants={fieldVariants} className="space-y-1.5">
             <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "subject")}
             </Label>
@@ -179,10 +239,10 @@ export function LinksContact({ locale }: LinksContactProps) {
                 </Select>
               )}
             />
-          </div>
+          </motion.div>
 
           {/* Message */}
-          <div className="space-y-1.5">
+          <motion.div variants={fieldVariants} className="space-y-1.5">
             <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "message")}
             </Label>
@@ -192,28 +252,30 @@ export function LinksContact({ locale }: LinksContactProps) {
               rows={4}
               className="min-h-[80px] resize-none"
             />
-          </div>
+          </motion.div>
 
           {/* Submit */}
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {tLinks(locale, "sending")}
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4" />
-                {tLinks(locale, "send_message")}
-              </>
-            )}
-          </Button>
+          <motion.div variants={fieldVariants}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {tLinks(locale, "sending")}
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  {tLinks(locale, "send_message")}
+                </>
+              )}
+            </Button>
+          </motion.div>
         </form>
-      </div>
+      </motion.div>
     </motion.section>
   );
 }

@@ -69,6 +69,46 @@ interface LinksProfileProps {
 /**
  * Profile section — avatar, name, typing role animation, location badges, social icons.
  */
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const avatarVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
+const textBlurVariants = {
+  hidden: { opacity: 0, y: 15, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
+const slideUpVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
+
+
+
 export function LinksProfile({
   profile,
   roles,
@@ -104,16 +144,14 @@ export function LinksProfile({
   return (
     <motion.section
       className="flex flex-col items-center text-center px-6 pt-8 pb-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
     >
       {/* Avatar — Square with rounded corners */}
       {profile?.photo_url && (
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.4 }}
+          variants={avatarVariants}
           className="mb-4"
         >
           <div className="relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 shadow-lg bg-neutral-100 dark:bg-neutral-900">
@@ -136,9 +174,7 @@ export function LinksProfile({
       {/* Name + Verified Badge */}
       <motion.h1
         className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white relative"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.4 }}
+        variants={textBlurVariants}
       >
         <span className="relative inline-block">
           {profile?.full_name || "Fadil Bafagih"}
@@ -151,9 +187,7 @@ export function LinksProfile({
       {/* Role with cycling animation */}
       <motion.div
         className="h-6 mt-1 overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.4 }}
+        variants={textBlurVariants}
       >
         <AnimatePresence mode="wait">
           <motion.p
@@ -172,9 +206,7 @@ export function LinksProfile({
       {/* Location badges */}
       <motion.div
         className="flex items-center gap-2 mt-4 flex-wrap justify-center"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.4 }}
+        variants={slideUpVariants}
       >
         {contact?.location && (
           <span className="inline-flex items-center gap-1.5 rounded-lg bg-transparent px-3.5 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
@@ -189,36 +221,40 @@ export function LinksProfile({
       </motion.div>
 
       {/* Social media icons */}
+      {/* Social media icons — each icon animated individually with index-based delay */}
       {socialLinks.length > 0 && (
         <TooltipProvider>
-          <motion.div
-            className="flex items-center gap-3 mt-5"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-          >
-            {socialLinks.map(({ url, icon: Icon, label }) => (
+          <div className="flex items-center gap-3 mt-5">
+            {socialLinks.map(({ url, icon: Icon, label }, index) => (
               <Tooltip key={label}>
                 <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
-                  <a
+                  <motion.a
                     href={url!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{
+                      duration: 0.35,
+                      ease: "easeOut" as const,
+                      delay: 0.6 + index * 0.06,
+                    }}
+                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
                     aria-label={label}
                     onClick={(e) => {
                       e.currentTarget.blur();
                     }}
                   >
                     <Icon className="h-5 w-5" />
-                  </a>
+                  </motion.a>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   <p>{label}</p>
                 </TooltipContent>
               </Tooltip>
             ))}
-          </motion.div>
+          </div>
         </TooltipProvider>
       )}
     </motion.section>

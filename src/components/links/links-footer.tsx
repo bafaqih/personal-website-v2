@@ -11,13 +11,24 @@ interface LinksFooterProps {
  * Footer for the /links page.
  * Shows copyright and "Build with Bafdev" credit — same style as login page footer.
  */
+const footerVariants = {
+  hidden: { opacity: 0, y: 15, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
 export function LinksFooter({ locale }: LinksFooterProps) {
   return (
     <motion.footer
       className="py-6 px-6 space-y-1 text-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.8, duration: 0.5 }}
+      variants={footerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-20px" }}
     >
       <p className="text-xs text-neutral-400 dark:text-neutral-500">
         © {new Date().getFullYear()} Fadil Bafagih. {tLinks(locale, "all_rights")}

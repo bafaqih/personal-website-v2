@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Share2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -66,9 +67,9 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Wait for client-side mount to avoid hydration mismatch with theme
-  useState(() => {
+  useEffect(() => {
     setMounted(true);
-  });
+  }, []);
 
   const otherLocale = locale === "en" ? "id" : "en";
 
@@ -124,7 +125,12 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
 
   return (
     <TooltipProvider>
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-3.5 bg-white/70 backdrop-blur-xl border-b border-neutral-200/60 dark:bg-neutral-950/70 dark:border-white/10">
+      <motion.header
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="sticky top-0 z-30 flex h-14 items-center justify-between px-3.5 bg-white/70 backdrop-blur-xl border-b border-neutral-200/60 dark:bg-neutral-950/70 dark:border-white/10"
+      >
         {/* Logo */}
         <Link href={`/${locale}/links`} className="relative flex items-center h-7">
           <img
@@ -262,7 +268,7 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
             </TooltipContent>
           </Tooltip>
         </div>
-      </header>
+      </motion.header>
     </TooltipProvider>
   );
 }
