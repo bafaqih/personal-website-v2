@@ -24,6 +24,18 @@ export default function DashboardLayout({
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
 
+  // Lock body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 overflow-x-hidden">
       <DashboardHeader
@@ -41,18 +53,20 @@ export default function DashboardLayout({
         onMobileClose={() => setMobileOpen(false)}
       />
 
-      {/* Mobile backdrop overlay to close sidebar on click outside */}
+      {/* Mobile backdrop overlay to close sidebar on click outside or when trying to scroll */}
       {mobileOpen && (
         <div
           className="lg:hidden fixed inset-0 z-10 cursor-pointer"
           onClick={() => setMobileOpen(false)}
+          onWheel={() => setMobileOpen(false)}
+          onTouchMove={() => setMobileOpen(false)}
         />
       )}
 
       {/* Main content area */}
       <div
         className={cn(
-          "transition-all duration-300 pt-16 w-full",
+          "transition-all duration-300 pt-14 w-full",
           collapsed ? "lg:ml-[72px] lg:w-[calc(100%-72px)]" : "lg:ml-[260px] lg:w-[calc(100%-260px)]",
           "max-lg:translate-x-0",
           mobileOpen ? "max-lg:translate-x-[260px]" : ""

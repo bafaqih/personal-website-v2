@@ -196,7 +196,7 @@ export function DashboardHeader({
   return (
     <TooltipProvider>
       <header
-        className="fixed top-0 left-0 w-full z-30 flex h-16 items-center justify-between border-b border-neutral-200/60 bg-white/70 pl-4 sm:pl-5 pr-4 sm:pr-5 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
+        className="fixed top-0 left-0 w-full z-30 flex h-14 items-center justify-between border-b border-neutral-200/60 bg-white/70 px-3.5 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-neutral-950/70"
       >
         {/* Left Side: Mobile/Desktop Toggle and Logo */}
         <div className="flex items-center gap-4">
@@ -206,7 +206,7 @@ export function DashboardHeader({
               variant="ghost"
               size="icon"
               onClick={onToggleMobileSidebar}
-              className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+              className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-lg flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
             >
               <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
                 <span className="w-full h-[2px] bg-current rounded-full" />
@@ -227,7 +227,7 @@ export function DashboardHeader({
                     onToggleSidebar?.();
                     e.currentTarget.blur();
                   }}
-                  className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+                  className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-lg flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
                 >
                   <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
                     <span className="w-full h-[2px] bg-current rounded-full" />
@@ -251,17 +251,17 @@ export function DashboardHeader({
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            className="relative flex items-center h-8 w-[141px]"
+            className="relative flex items-center h-7"
           >
             <img
               src={logoBlack.src}
               alt="Fadil Bafagih"
-              className="dark:hidden h-8 w-[141px] min-w-[141px]"
+              className="dark:hidden h-7 w-auto"
             />
             <img
               src={logoWhite.src}
               alt="Fadil Bafagih"
-              className="hidden dark:block h-8 w-[141px] min-w-[141px]"
+              className="hidden dark:block h-7 w-auto"
             />
           </Link>
         </div>

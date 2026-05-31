@@ -257,9 +257,9 @@ export function DashboardSidebar({
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "flex h-[calc(100vh-64px)] flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300 overflow-x-hidden",
+          "flex h-[calc(100vh-56px)] flex-col border-r border-neutral-200/60 bg-white/90 backdrop-blur-xl transition-all duration-300 overflow-x-hidden",
           "dark:border-white/10 dark:bg-neutral-950/90",
-          "fixed top-16 z-20",
+          "fixed top-14 z-20",
           collapsed ? "lg:w-[72px]" : "lg:w-[260px]",
           "w-[260px] max-lg:left-0 max-lg:transition-transform max-lg:duration-300",
           mobileOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-full"
