@@ -1,5 +1,5 @@
-import NotFoundErrorPage from "./errors/404/page";
+import NotFoundErrorContent from "@/src/components/errors/NotFoundErrorContent";
 
 export default function NotFound() {
-  return <NotFoundErrorPage />;
+  return <NotFoundErrorContent />;
 }

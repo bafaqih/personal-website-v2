@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import NotFoundErrorContent from "../errors/404/NotFoundErrorContent";
+import NotFoundErrorContent from "@/src/components/errors/NotFoundErrorContent";
 
 export async function generateMetadata({
   params,

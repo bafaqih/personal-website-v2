@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/src/app/lib/utils";
 import { ThemeProvider } from "@/components/dashboard/theme-provider";
-import NotFoundErrorPage from "./[locale]/errors/404/page";
+import NotFoundErrorContent from "@/src/components/errors/NotFoundErrorContent";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -23,7 +23,7 @@ export default function RootNotFound() {
           enableSystem
           disableTransitionOnChange
         >
-          <NotFoundErrorPage />
+          <NotFoundErrorContent />
         </ThemeProvider>
       </body>
     </html>
