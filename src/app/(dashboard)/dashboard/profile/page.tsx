@@ -171,7 +171,7 @@ export default function ProfilePage() {
 
       // Validate size (5MB)
       if (croppedFile.size > 5 * 1024 * 1024) {
-        toast.error(t("common.image_upload.file_too_large", { 
+        toast.error(t("common.image_upload.file_too_large", {
           size: (croppedFile.size / (1024 * 1024)).toFixed(1),
           max: "5"
         }));
@@ -239,116 +239,116 @@ export default function ProfilePage() {
         <Card className="h-full border-none bg-white shadow-sm dark:bg-neutral-900">
           <CardContent className="p-8 space-y-6 flex flex-col h-full">
             <div className="flex-1 space-y-6">
-            {/* Avatar & Basic Info (Centered on mobile, Row & Left-aligned on sm and larger) */}
-            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 sm:gap-6 pb-6 border-b border-neutral-100 dark:border-neutral-800">
-              <div className="relative group">
-                <button
-                  onClick={() => setIsViewerOpen(true)}
-                  disabled={isUploading || isDeletingImage || loading}
-                  className="relative h-32 w-32 p-1 bg-neutral-50 dark:bg-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
-                >
-                  <div className="w-full h-full relative rounded-xl overflow-hidden isolate">
-                    {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
-                    {!loading && (
-                      <Avatar className={cn("h-full w-full rounded-xl", showSkeleton && "invisible")}>
-                        <AvatarImage
-                          src={profile?.photo_url || undefined}
-                          alt={profile?.full_name}
-                          className="object-cover rounded-xl h-full w-full transition-all duration-300 group-hover:scale-105"
-                          onLoadingStatusChange={(status) => {
-                            setImageStatus(status);
-                          }}
-                        />
-                        <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full transition-all duration-300 group-hover:scale-105">
-                          <UserIcon className="h-10 w-10 text-white dark:text-neutral-900" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+              {/* Avatar & Basic Info (Centered on mobile, Row & Left-aligned on sm and larger) */}
+              <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 sm:gap-6 pb-6 border-b border-neutral-100 dark:border-neutral-800">
+                <div className="relative group">
+                  <button
+                    onClick={() => setIsViewerOpen(true)}
+                    disabled={isUploading || isDeletingImage || loading}
+                    className="relative h-32 w-32 p-1 bg-neutral-50 dark:bg-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
+                  >
+                    <div className="w-full h-full relative rounded-xl overflow-hidden isolate">
+                      {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
+                      {!loading && (
+                        <Avatar className={cn("h-full w-full rounded-xl", showSkeleton && "invisible")}>
+                          <AvatarImage
+                            src={profile?.photo_url || undefined}
+                            alt={profile?.full_name}
+                            className="object-cover rounded-xl h-full w-full transition-all duration-300 group-hover:scale-105"
+                            onLoadingStatusChange={(status) => {
+                              setImageStatus(status);
+                            }}
+                          />
+                          <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full transition-all duration-300 group-hover:scale-105">
+                            <UserIcon className="h-10 w-10 text-white dark:text-neutral-900" />
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
 
-                    {showSkeleton && (
-                      <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
-                    )}
+                      {showSkeleton && (
+                        <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
+                      )}
 
-                    {/* Hover overlay / Uploading state */}
-                    {!showSkeleton && (
-                      <div className={cn(
-                        "absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-xl",
-                        isUploading || isDeletingImage ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                      )}>
-                        {isUploading ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            <span className="text-[10px] font-medium tracking-wide">{t("profile.uploading")}</span>
-                          </>
-                        ) : isDeletingImage ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            <span className="text-[10px] font-medium tracking-wide">{t("common.deleting")}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="h-5 w-5" />
-                            <span className="text-[10px] font-medium tracking-wide">{t("profile.view_image")}</span>
-                          </>
-                        )}
-                      </div>
-                    )}
+                      {/* Hover overlay / Uploading state */}
+                      {!showSkeleton && (
+                        <div className={cn(
+                          "absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-xl",
+                          isUploading || isDeletingImage ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                        )}>
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              <span className="text-[10px] font-medium tracking-wide">{t("profile.uploading")}</span>
+                            </>
+                          ) : isDeletingImage ? (
+                            <>
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              <span className="text-[10px] font-medium tracking-wide">{t("common.deleting")}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="h-5 w-5" />
+                              <span className="text-[10px] font-medium tracking-wide">{t("profile.view_image")}</span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                <div className="space-y-1 flex-1">
+                  {loading ? (
+                    <div className="space-y-1.5 flex flex-col items-center sm:items-start">
+                      <Skeleton className="h-6 w-44" />
+                      <Skeleton className="h-4 w-28" />
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                        {profile?.full_name}
+                      </h2>
+                      <p className="text-base text-neutral-500 dark:text-neutral-400">
+                        @{profile?.username}
+                      </p>
+                    </>
+                  )}
+                  <div className="pt-1.5 flex justify-center sm:justify-start">
+                    <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
+                      Administrator
+                    </span>
                   </div>
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-              </div>
-
-              <div className="space-y-1 flex-1">
-                {loading ? (
-                  <div className="space-y-1.5 flex flex-col items-center sm:items-start">
-                    <Skeleton className="h-6 w-44" />
-                    <Skeleton className="h-4 w-28" />
-                  </div>
-                ) : (
-                  <>
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">
-                      {profile?.full_name}
-                    </h2>
-                    <p className="text-base text-neutral-500 dark:text-neutral-400">
-                      @{profile?.username}
-                    </p>
-                  </>
-                )}
-                <div className="pt-1.5 flex justify-center sm:justify-start">
-                  <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-inset ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:ring-neutral-700">
-                    Administrator
-                  </span>
                 </div>
               </div>
-            </div>
 
-            {/* Personal Information Header */}
-            <div className="flex items-center justify-between pt-4">
-              <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                {t("profile.personal_info")}
-              </h3>
-              {loading ? (
-                <Skeleton className="h-9 w-28" />
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleEditClick}
-                  className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
-                >
-                  <Pencil className="h-4 w-4" />
-                  {t("profile.edit_profile")}
-                </Button>
-              )}
-            </div>
+              {/* Personal Information Header */}
+              <div className="flex items-center justify-between pt-4">
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                  {t("profile.personal_info")}
+                </h3>
+                {loading ? (
+                  <Skeleton className="h-9 w-28" />
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleEditClick}
+                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                  >
+                    <Pencil className="h-4 w-4" />
+                    {t("profile.edit_profile")}
+                  </Button>
+                )}
+              </div>
 
-            <div className="grid gap-4 pt-2">
+              <div className="grid gap-4 pt-2">
                 <InfoCard
                   label={t("profile.full_name")}
                   value={profile?.full_name || "-"}
@@ -375,7 +375,7 @@ export default function ProfilePage() {
         {/* Box Kanan: Form Change Password & System Information */}
         <div className="space-y-8">
           <Card className="border-none bg-white shadow-sm dark:bg-neutral-900">
-          <CardContent className="p-8 space-y-6">
+            <CardContent className="p-8 space-y-6">
               <div className="space-y-1">
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
                   {t("profile.change_password")}
@@ -509,7 +509,7 @@ export default function ProfilePage() {
               <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
                 {t("profile.system_info")}
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-neutral-500 dark:text-neutral-400">
@@ -519,7 +519,7 @@ export default function ProfilePage() {
                     Personal Website
                   </span>
                 </div>
-                
+
                 <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4 flex justify-between items-center text-sm">
                   <span className="text-neutral-500 dark:text-neutral-400">
                     {t("profile.developer")}
@@ -605,7 +605,7 @@ export default function ProfilePage() {
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  {t("common.save")}
+                  {t("common.save_changes")}
                 </>
               )}
             </Button>

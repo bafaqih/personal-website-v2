@@ -13,12 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { ImageUpload } from "@/components/dashboard/image-upload";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -71,13 +71,13 @@ export default function AchievementEditPage() {
 
   const loading = isAchievementLoading || isTypesLoading || isCategoriesLoading;
 
-  const { 
-    register, 
-    handleSubmit, 
-    setValue, 
-    watch, 
-    reset, 
-    formState: { errors, isSubmitting, isValid, isDirty } 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting, isValid, isDirty }
   } = useForm<FormData>({
     resolver: zodResolver(schema)
   });
@@ -85,7 +85,7 @@ export default function AchievementEditPage() {
   useEffect(() => {
     if (achievement) {
       setCurrentImageUrl(achievement.image_url);
-      
+
       reset({
         title_id: achievement.title_id,
         title_en: achievement.title_en,
@@ -106,35 +106,35 @@ export default function AchievementEditPage() {
         const r = await StorageService.uploadImage(STORAGE_PATHS.ACHIEVEMENTS, imageFile);
         image_url = r.publicUrl;
       }
-      
-      await AchievementService.update(id, { 
-        ...data, 
+
+      await AchievementService.update(id, {
+        ...data,
         image_url,
         credential_url: data.credential_url || null
       });
-      
+
       toast.success(t("achievements.saved_success"));
       await queryClient.invalidateQueries({ queryKey: ["achievements"] });
       router.push("/dashboard/achievements/list");
     } catch (e: unknown) {
-      toast.error(t("achievements.saved_failed"), { 
-        description: e instanceof Error ? e.message : "An unexpected error occurred" 
+      toast.error(t("achievements.saved_failed"), {
+        description: e instanceof Error ? e.message : "An unexpected error occurred"
       });
     }
   };
 
   return (
     <>
-      <PageHeader 
-        title={t("achievements.edit_achievement")} 
+      <PageHeader
+        title={t("achievements.edit_achievement")}
         icon={Trophy}
         breadcrumbs={[
-          { label: t("dashboard.title"), href: "/dashboard" }, 
-          { label: t("achievements.title"), href: "/dashboard/achievements/list" }, 
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("achievements.title"), href: "/dashboard/achievements/list" },
           { label: t("common.edit") }
-        ]} 
+        ]}
       />
-      
+
       <div className="w-full">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <Card className="overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
@@ -145,8 +145,8 @@ export default function AchievementEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input 
-                      {...register("title_id")} 
+                    <Input
+                      {...register("title_id")}
                       placeholder="Judul sertifikat..."
                     />
                   )}
@@ -157,8 +157,8 @@ export default function AchievementEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input 
-                      {...register("title_en")} 
+                    <Input
+                      {...register("title_en")}
                       placeholder="Certificate title..."
                     />
                   )}
@@ -172,8 +172,8 @@ export default function AchievementEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input 
-                      {...register("publisher")} 
+                    <Input
+                      {...register("publisher")}
                       placeholder="e.g., Google, Microsoft, Udemy"
                     />
                   )}
@@ -199,8 +199,8 @@ export default function AchievementEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Select 
-                      onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
+                    <Select
+                      onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })}
                       value={watch("type_id")}
                     >
                       <SelectTrigger>
@@ -220,8 +220,8 @@ export default function AchievementEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Select 
-                      onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
+                    <Select
+                      onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })}
                       value={watch("category_id")}
                     >
                       <SelectTrigger>
@@ -243,9 +243,9 @@ export default function AchievementEditPage() {
                 {loading ? (
                   <Skeleton className="h-10 w-full" />
                 ) : (
-                  <Input 
-                    {...register("credential_url")} 
-                    placeholder="https://verify.example.com/certificate/123" 
+                  <Input
+                    {...register("credential_url")}
+                    placeholder="https://verify.example.com/certificate/123"
                   />
                 )}
               </div>
@@ -255,12 +255,12 @@ export default function AchievementEditPage() {
                 {loading ? (
                   <Skeleton className="h-[120px] w-full rounded-xl" />
                 ) : (
-                  <ImageUpload 
-                    accept="image" 
+                  <ImageUpload
+                    accept="image"
                     value={currentImageUrl || undefined}
                     onChange={(f) => {
                       setImageFile(f);
-                    }} 
+                    }}
                   />
                 )}
               </div>
@@ -269,9 +269,9 @@ export default function AchievementEditPage() {
                 {loading ? (
                   <Skeleton className="h-6 w-10 rounded-full" />
                 ) : (
-                  <Switch 
-                    checked={!!watch("is_published")} 
-                    onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} 
+                  <Switch
+                    checked={!!watch("is_published")}
+                    onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })}
                   />
                 )}
                 <Label>{t("common.publish")}</Label>
@@ -285,18 +285,18 @@ export default function AchievementEditPage() {
                   </>
                 ) : (
                   <>
-                    <Button type="button" 
-                      variant="outline" 
+                    <Button type="button"
+                      variant="outline"
                       onClick={() => router.back()} className="gap-1.5 cursor-pointer">
                       <X className="h-4 w-4" /> {t("common.cancel")}
                     </Button>
-                    <Button type="submit" 
-                      disabled={isSubmitting || !isValid || (!isDirty && !imageFile)} 
+                    <Button type="submit"
+                      disabled={isSubmitting || !isValid || (!isDirty && !imageFile)}
                       className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                       {isSubmitting ? (
                         <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                       ) : (
-                        <><Save className="h-4 w-4" /> {t("common.save")}</>
+                        <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
                       )}
                     </Button>
                   </>

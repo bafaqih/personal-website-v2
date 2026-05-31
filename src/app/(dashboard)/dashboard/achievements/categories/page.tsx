@@ -41,12 +41,12 @@ export default function AchievementCategoriesPage() {
   });
 
   const loading = isLoading;
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingCategory, setEditingCategory] = useState<AchievementCategory | null>(null);
-  
+
   // Form states
   const [formData, setFormData] = useState({ name_id: "", name_en: "", is_active: true });
 
@@ -75,7 +75,7 @@ export default function AchievementCategoriesPage() {
       toast.error(language === "en" ? "Please fill in all fields" : "Silakan isi semua kolom");
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       if (editingCategory) {
@@ -179,7 +179,7 @@ export default function AchievementCategoriesPage() {
                 <Pencil className="mr-2 h-4 w-4" />
                 {t("common.edit")}
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 variant="destructive"
                 className="cursor-pointer"
                 onClick={() => setDeleteId(cat.id)}
@@ -232,7 +232,7 @@ export default function AchievementCategoriesPage() {
               {isSubmitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingCategory ? (
-                <><Save className="h-4 w-4" /> {t("common.save")}</>
+                <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
               ) : (
                 <><Plus className="h-4 w-4" /> {t("achievements.add_category")}</>
               )}

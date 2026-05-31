@@ -549,7 +549,7 @@ export default function AboutPage() {
                 </>
               ) : editingRole ? (
                 <>
-                  <Save className="h-4 w-4" /> {t("common.save")}
+                  <Save className="h-4 w-4" /> {t("common.save_changes")}
                 </>
               ) : (
                 <>

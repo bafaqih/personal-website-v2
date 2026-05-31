@@ -34,7 +34,7 @@ export default function ProjectEditPage() {
   const { t, language } = useLanguage();
   const { id } = useParams() as { id: string };
   const queryClient = useQueryClient();
-  
+
   const { data: project, isLoading: isProjectLoading } = useQuery({
     queryKey: ["project", id],
     queryFn: () => ProjectService.getById(id),
@@ -116,7 +116,7 @@ export default function ProjectEditPage() {
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting, isValid, isDirty } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { 
+    defaultValues: {
       is_published: true,
       challenge_points_id: [], challenge_points_en: [],
       result_points_id: [], result_points_en: [],
@@ -228,24 +228,24 @@ export default function ProjectEditPage() {
       const f_id = data.features_id || [];
       const f_en = data.features_en || [];
       const maxFeatLen = Math.max(f_id.length, f_en.length);
-      for(let i=0; i<maxFeatLen; i++) {
-         const idStr = f_id[i] || "";
-         const enStr = f_en[i] || "";
-         const idParts = idStr.split(":");
-         const enParts = enStr.split(":");
-         
-         const title_id = idParts[0]?.trim() || "";
-         const desc_id = idParts.slice(1).join(":").trim() || "";
-         const title_en = enParts[0]?.trim() || title_id; // fallback
-         const desc_en = enParts.slice(1).join(":").trim() || desc_id; // fallback
-         
-         if(title_id || desc_id || title_en || desc_en) {
-             parsedFeatures.push({
-                 title_id, description_id: desc_id,
-                 title_en, description_en: desc_en,
-                 sort_order: i
-             });
-         }
+      for (let i = 0; i < maxFeatLen; i++) {
+        const idStr = f_id[i] || "";
+        const enStr = f_en[i] || "";
+        const idParts = idStr.split(":");
+        const enParts = enStr.split(":");
+
+        const title_id = idParts[0]?.trim() || "";
+        const desc_id = idParts.slice(1).join(":").trim() || "";
+        const title_en = enParts[0]?.trim() || title_id; // fallback
+        const desc_en = enParts.slice(1).join(":").trim() || desc_id; // fallback
+
+        if (title_id || desc_id || title_en || desc_en) {
+          parsedFeatures.push({
+            title_id, description_id: desc_id,
+            title_en, description_en: desc_en,
+            sort_order: i
+          });
+        }
       }
 
       // 3. Parse Responsibilities
@@ -253,14 +253,14 @@ export default function ProjectEditPage() {
       const r_id = data.responsibilities_id || [];
       const r_en = data.responsibilities_en || [];
       const rMaxLen = Math.max(r_id.length, r_en.length);
-      for(let i=0; i<rMaxLen; i++) {
-          if(r_id[i] || r_en[i]) {
-              parsedResponsibilities.push({
-                  content_id: r_id[i] || "",
-                  content_en: r_en[i] || "",
-                  sort_order: i
-              })
-          }
+      for (let i = 0; i < rMaxLen; i++) {
+        if (r_id[i] || r_en[i]) {
+          parsedResponsibilities.push({
+            content_id: r_id[i] || "",
+            content_en: r_en[i] || "",
+            sort_order: i
+          })
+        }
       }
 
       // 4. Prepare Core Data
@@ -314,9 +314,9 @@ export default function ProjectEditPage() {
           { label: t("common.edit") },
         ]}
       />
-      
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        
+
         {/* Basic Information */}
         <Card className="overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
@@ -490,11 +490,11 @@ export default function ProjectEditPage() {
               )}
             </div>
             <p className="text-sm text-neutral-500">
-              {language === "en" 
-                ? "The first image in the list will automatically become the project thumbnail." 
+              {language === "en"
+                ? "The first image in the list will automatically become the project thumbnail."
                 : "Gambar pertama dalam daftar akan otomatis menjadi thumbnail proyek."}
             </p>
-            
+
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {loading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
@@ -512,10 +512,10 @@ export default function ProjectEditPage() {
                     <div className="absolute -top-3 -left-3 bg-neutral-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10 border-2 border-white dark:border-neutral-900 shadow-sm">
                       {index + 1}
                     </div>
-                    <ImageUpload 
-                      accept="image" 
+                    <ImageUpload
+                      accept="image"
                       value={slot.existingUrl}
-                      onChange={(f, p) => updateImageSlot(slot.id, f, p || undefined)} 
+                      onChange={(f, p) => updateImageSlot(slot.id, f, p || undefined)}
                       onViewImage={() => {
                         const url = slot.existingUrl || slot.previewUrl;
                         if (!url) return;
@@ -551,7 +551,7 @@ export default function ProjectEditPage() {
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
             <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Responsibilities & Key Features" : "Tanggung Jawab & Fitur Utama"}</h3>
-            
+
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label>{language === "en" ? "Responsibilities (ID)" : "Tanggung Jawab (ID)"}</Label>
@@ -616,7 +616,7 @@ export default function ProjectEditPage() {
         <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-8">
             <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Deep Dive Sections" : "Bagian Deep Dive"}</h3>
-            
+
             {/* Challenge */}
             <div className="space-y-4">
               <h4 className="font-medium text-primary">{language === "en" ? "Challenge" : "Tantangan"}</h4>
@@ -768,7 +768,7 @@ export default function ProjectEditPage() {
                   {isSubmitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                   ) : (
-                    <><Save className="h-4 w-4" /> {t("common.save")}</>
+                    <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
                   )}
                 </Button>
               </>

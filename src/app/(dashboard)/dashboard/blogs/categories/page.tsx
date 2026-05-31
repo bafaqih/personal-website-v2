@@ -41,12 +41,12 @@ export default function BlogCategoriesPage() {
   });
 
   const loading = isLoading;
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingCategory, setEditingCategory] = useState<BlogCategory | null>(null);
-  
+
   // Form states
   const [formData, setFormData] = useState({ name_id: "", name_en: "", is_active: true });
 
@@ -75,7 +75,7 @@ export default function BlogCategoriesPage() {
       toast.error(language === "en" ? "Please fill in all fields" : "Mohon isi semua field");
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       if (editingCategory) {
@@ -179,7 +179,7 @@ export default function BlogCategoriesPage() {
                 <Pencil className="mr-2 h-4 w-4" />
                 {t("common.edit")}
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 variant="destructive"
                 className="cursor-pointer"
                 onClick={() => setDeleteId(cat.id)}
@@ -232,7 +232,7 @@ export default function BlogCategoriesPage() {
               {isSubmitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingCategory ? (
-                <><Save className="h-4 w-4" /> {t("common.save")}</>
+                <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
               ) : (
                 <><Plus className="h-4 w-4" /> {t("blogs.add_category")}</>
               )}

@@ -13,12 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { ImageUpload } from "@/components/dashboard/image-upload";
 import { RichTextEditor } from "@/components/dashboard/rich-text-editor";
@@ -87,15 +87,15 @@ export default function BlogEditPage() {
 
   const loading = isBlogLoading || isTypesLoading || isCategoriesLoading || isAllTagsLoading || isCurrentTagsLoading;
 
-  const { 
-    register, 
-    handleSubmit, 
-    setValue, 
-    watch, 
-    reset, 
-    formState: { errors, isSubmitting, isDirty } 
-  } = useForm<FormData>({ 
-    resolver: zodResolver(schema) as any 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting, isDirty }
+  } = useForm<FormData>({
+    resolver: zodResolver(schema) as any
   });
 
   const hasContentChanged = contentId !== initialContentId || contentEn !== initialContentEn;
@@ -146,24 +146,24 @@ export default function BlogEditPage() {
       await queryClient.invalidateQueries({ queryKey: ["blogs"] });
       router.push("/dashboard/blogs/list");
     } catch (e: unknown) {
-      toast.error(t("blogs.saved_failed"), { 
-        description: e instanceof Error ? e.message : "An unexpected error occurred" 
+      toast.error(t("blogs.saved_failed"), {
+        description: e instanceof Error ? e.message : "An unexpected error occurred"
       });
     }
   };
 
   return (
     <>
-      <PageHeader 
-        title={t("blogs.edit_blog")} 
+      <PageHeader
+        title={t("blogs.edit_blog")}
         icon={FileText}
         breadcrumbs={[
-          { label: t("dashboard.title"), href: "/dashboard" }, 
-          { label: t("blogs.title"), href: "/dashboard/blogs/list" }, 
+          { label: t("dashboard.title"), href: "/dashboard" },
+          { label: t("blogs.title"), href: "/dashboard/blogs/list" },
           { label: t("common.edit") }
-        ]} 
+        ]}
       />
-      
+
       <div className="w-full">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <Card className="overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
@@ -177,13 +177,13 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="aspect-video w-full rounded-xl" />
                   ) : (
-                    <ImageUpload 
-                      accept="image" 
-                      value={currentImageUrl || undefined} 
+                    <ImageUpload
+                      accept="image"
+                      value={currentImageUrl || undefined}
                       onChange={(f) => {
                         setThumbFile(f);
                         if (!f) setCurrentImageUrl(null);
-                      }} 
+                      }}
                       previewClassName="aspect-video w-full"
                     />
                   )}
@@ -196,9 +196,9 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input 
-                      {...register("title_id")} 
-                      placeholder="e.g., Cara membuat aplikasi Next.js" 
+                    <Input
+                      {...register("title_id")}
+                      placeholder="e.g., Cara membuat aplikasi Next.js"
                     />
                   )}
                   {errors.title_id && <p className="text-xs text-red-500">{errors.title_id.message}</p>}
@@ -208,9 +208,9 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input 
-                      {...register("title_en")} 
-                      placeholder="e.g., How to build a Next.js application" 
+                    <Input
+                      {...register("title_en")}
+                      placeholder="e.g., How to build a Next.js application"
                     />
                   )}
                   {errors.title_en && <p className="text-xs text-red-500">{errors.title_en.message}</p>}
@@ -221,9 +221,9 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Input 
-                      {...register("slug")} 
-                      placeholder="e.g., how-to-build-nextjs-app" 
+                    <Input
+                      {...register("slug")}
+                      placeholder="e.g., how-to-build-nextjs-app"
                     />
                   )}
                   {errors.slug && <p className="text-xs text-red-500">{errors.slug.message}</p>}
@@ -233,11 +233,11 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <TagsInput 
-                      value={watch("tags") || []} 
+                    <TagsInput
+                      value={watch("tags") || []}
                       onChange={(tags) => {
                         setValue("tags", tags, { shouldDirty: true });
-                      }} 
+                      }}
                       suggestions={allTags}
                       placeholder={language === "en" ? "Type tag and press space/enter..." : "Ketik tag lalu tekan spasi/enter..."}
                     />
@@ -249,8 +249,8 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Select 
-                      onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })} 
+                    <Select
+                      onValueChange={(v) => setValue("type_id", v, { shouldValidate: true, shouldDirty: true })}
                       value={watch("type_id")}
                     >
                       <SelectTrigger>
@@ -269,8 +269,8 @@ export default function BlogEditPage() {
                   {loading ? (
                     <Skeleton className="h-10 w-full" />
                   ) : (
-                    <Select 
-                      onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })} 
+                    <Select
+                      onValueChange={(v) => setValue("category_id", v, { shouldValidate: true, shouldDirty: true })}
                       value={watch("category_id")}
                     >
                       <SelectTrigger>
@@ -309,9 +309,9 @@ export default function BlogEditPage() {
                 {loading ? (
                   <Skeleton className="h-6 w-10 rounded-full" />
                 ) : (
-                  <Switch 
-                    checked={!!watch("is_published")} 
-                    onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })} 
+                  <Switch
+                    checked={!!watch("is_published")}
+                    onCheckedChange={(v) => setValue("is_published", v, { shouldValidate: true, shouldDirty: true })}
                   />
                 )}
                 <Label>{t("common.publish")}</Label>
@@ -325,18 +325,18 @@ export default function BlogEditPage() {
                   </>
                 ) : (
                   <>
-                    <Button type="button" 
-                      variant="outline" 
+                    <Button type="button"
+                      variant="outline"
                       onClick={() => router.back()} className="gap-1.5 cursor-pointer">
                       <X className="h-4 w-4" /> {t("common.cancel")}
                     </Button>
-                    <Button type="submit" 
-                      disabled={isSaveDisabled} 
+                    <Button type="submit"
+                      disabled={isSaveDisabled}
                       className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
                       {isSubmitting ? (
                         <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                       ) : (
-                        <><Save className="h-4 w-4" /> {t("common.save")}</>
+                        <><Save className="h-4 w-4" /> {t("common.save_changes")}</>
                       )}
                     </Button>
                   </>
