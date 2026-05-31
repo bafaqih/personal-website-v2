@@ -129,7 +129,7 @@ export function LinksContact({ locale }: LinksContactProps) {
         >
           {/* Name */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+            <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "name")}
             </Label>
             <Input
@@ -141,7 +141,7 @@ export function LinksContact({ locale }: LinksContactProps) {
 
           {/* Email */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+            <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "email")}
             </Label>
             <Input
@@ -154,7 +154,7 @@ export function LinksContact({ locale }: LinksContactProps) {
 
           {/* Subject */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+            <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "subject")}
             </Label>
             <Controller
@@ -164,6 +164,7 @@ export function LinksContact({ locale }: LinksContactProps) {
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
+                  searchable={false}
                 >
                   <SelectTrigger className="h-10!">
                     <SelectValue placeholder={tLinks(locale, "select_subject")} />
@@ -182,7 +183,7 @@ export function LinksContact({ locale }: LinksContactProps) {
 
           {/* Message */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+            <Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {tLinks(locale, "message")}
             </Label>
             <Textarea

@@ -17,6 +17,7 @@ interface SelectContextType {
   setPlaceholder: (placeholder: string) => void
   selectedLabel: string
   setSelectedLabel: (label: string) => void
+  searchable?: boolean
 }
 
 const SelectContext = createContext<SelectContextType | null>(null)
@@ -58,11 +59,13 @@ function Select({
   value,
   onValueChange,
   defaultValue,
+  searchable = true,
 }: {
   children: React.ReactNode
   value?: string
   onValueChange?: (value: string) => void
   defaultValue?: string
+  searchable?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
@@ -110,6 +113,7 @@ function Select({
         setPlaceholder,
         selectedLabel,
         setSelectedLabel,
+        searchable,
       }}
     >
       <div className="relative w-full">{children}</div>
@@ -171,15 +175,15 @@ function SelectTrigger({
 }) {
   const context = useContext(SelectContext)
   if (!context) throw new Error("SelectTrigger must be used within Select")
-  const { open, setOpen, triggerRef, selectedLabel, placeholder, search, setSearch } = context
+  const { open, setOpen, triggerRef, selectedLabel, placeholder, search, setSearch, searchable = true } = context
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Focus input when open
   useEffect(() => {
-    if (open) {
+    if (open && searchable) {
       inputRef.current?.focus()
     }
-  }, [open])
+  }, [open, searchable])
 
   // Handle click outside to close
   useEffect(() => {
@@ -198,7 +202,7 @@ function SelectTrigger({
 
   return (
     <div ref={triggerRef} className="relative w-full">
-      {open ? (
+      {open && searchable ? (
         <div className="relative w-full flex items-center">
           <input
             ref={inputRef}
@@ -219,7 +223,7 @@ function SelectTrigger({
           type="button"
           data-slot="select-trigger"
           data-size={size}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpen(!open)}
           className={cn(
             "group flex w-full items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-8 pl-2.5 text-base md:text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
             className
