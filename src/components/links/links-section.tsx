@@ -67,6 +67,14 @@ interface LinkCardProps {
 }
 
 function LinkCard({ href, title, description, icon: Icon, index }: LinkCardProps) {
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  };
+
   return (
     <motion.a
       href={href}
@@ -74,19 +82,28 @@ function LinkCard({ href, title, description, icon: Icon, index }: LinkCardProps
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -3 }}
       viewport={{ once: true, margin: "-30px" }}
       transition={{
         duration: 0.4,
         ease: "easeOut" as const,
         delay: index * 0.08,
       }}
-      className="group flex items-center gap-4 rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm px-4 py-3.5 transition-[box-shadow,background-color,border-color] duration-300 hover:shadow-md dark:border-white/10 dark:bg-neutral-900/80 dark:hover:shadow-white/5"
+      onMouseMove={handleMouseMove}
+      className="link-card-custom group relative overflow-hidden flex items-center gap-4 rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm px-4 py-3.5 transition-colors duration-300 hover:shadow-md dark:border-white/10 dark:bg-neutral-900/80 dark:hover:shadow-white/5"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 transition-colors group-hover:bg-neutral-900 group-hover:text-white dark:bg-white/10 dark:text-neutral-400 dark:group-hover:bg-white dark:group-hover:text-neutral-900">
+      {/* Spotlight cursor overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-3"
+        style={{
+          background: `radial-gradient(150px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), var(--spotlight-color), transparent 80%)`,
+        }}
+      />
+
+      <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600 transition-colors group-hover:bg-neutral-900 group-hover:text-white dark:bg-white/10 dark:text-neutral-400 dark:group-hover:bg-white dark:group-hover:text-neutral-900">
         <Icon className="h-5 w-5" />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="relative z-10 flex-1 min-w-0">
         <p className="text-sm font-semibold text-neutral-900 dark:text-white">
           {title}
         </p>
@@ -94,7 +111,7 @@ function LinkCard({ href, title, description, icon: Icon, index }: LinkCardProps
           {description}
         </p>
       </div>
-      <ExternalLink className="h-4 w-4 shrink-0 text-neutral-400 transition-colors duration-300 group-hover:text-neutral-600 dark:text-neutral-500 dark:group-hover:text-neutral-300" />
+      <ExternalLink className="relative z-10 h-4 w-4 shrink-0 text-neutral-400 transition-colors duration-300 group-hover:text-neutral-600 dark:text-neutral-500 dark:group-hover:text-neutral-300" />
     </motion.a>
   );
 }

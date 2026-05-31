@@ -273,43 +273,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   100% { transform: translateX(100%); }
 }
 
-/* --- Link Card — Rotating Gradient Border (Always Active) --- */
-@property --border-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
+/* --- Link Card Base --- */
+.link-card-custom {
+  --spotlight-color: rgba(0, 0, 0, 0.05);
 }
 
-.link-card-main {
-  position: relative;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0.8)) padding-box,
-    conic-gradient(from var(--border-angle), #e5e5e5 0%, #a3a3a3 25%, #e5e5e5 50%, #d4d4d4 75%, #e5e5e5 100%) border-box;
-  animation: rotate-border 4s linear infinite;
-  transition: box-shadow 0.3s;
-}
-
-.link-card-main:hover {
-  background:
-    linear-gradient(to right, rgba(255,255,255,0.85), rgba(255,255,255,0.85)) padding-box,
-    conic-gradient(from var(--border-angle), #d4d4d4 0%, #737373 25%, #d4d4d4 50%, #a3a3a3 75%, #d4d4d4 100%) border-box;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.06);
-}
-
-.dark .link-card-main {
-  background:
-    linear-gradient(to right, rgba(23,23,23,0.85), rgba(23,23,23,0.85)) padding-box,
-    conic-gradient(from var(--border-angle), rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.2) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.15) 75%, rgba(255,255,255,0.06) 100%) border-box;
-}
-
-.dark .link-card-main:hover {
-  background:
-    linear-gradient(to right, rgba(23,23,23,0.9), rgba(23,23,23,0.9)) padding-box,
-    conic-gradient(from var(--border-angle), rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.3) 75%, rgba(255,255,255,0.1) 100%) border-box;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.04);
-}
-
-@keyframes rotate-border {
-  to { --border-angle: 360deg; }
+.dark .link-card-custom {
+  --spotlight-color: rgba(255, 255, 255, 0.12);
 }
