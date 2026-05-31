@@ -10,11 +10,15 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Check if the path needs locale redirection (only for root "/" and "/links" without prefix)
-  const isRoot = pathname === "/";
-  const isLinksWithoutLocale = pathname === "/links";
+  // 1. Check if the path needs locale redirection (any public route without en/id locale prefix)
+  const hasLocale = pathname.startsWith("/en") || pathname.startsWith("/id");
+  const isDashboardPath = pathname.startsWith("/dashboard");
+  const isLoginPath = pathname === "/login";
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isApiRoute = pathname.startsWith("/api");
+  const isStaticFile = pathname.includes(".");
 
-  if (isRoot || isLinksWithoutLocale) {
+  if (!hasLocale && !isDashboardPath && !isLoginPath && !isAdminRoute && !isApiRoute && !isStaticFile) {
     const cookieLanguage = request.cookies.get("admin-language")?.value;
     let locale = "en";
     if (cookieLanguage === "en" || cookieLanguage === "id") {
@@ -26,7 +30,7 @@ export async function proxy(request: NextRequest) {
       }
     }
 
-    const redirectPathname = isRoot ? `/${locale}` : `/${locale}/links`;
+    const redirectPathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
     const url = request.nextUrl.clone();
     url.pathname = redirectPathname;
     return NextResponse.redirect(url);
