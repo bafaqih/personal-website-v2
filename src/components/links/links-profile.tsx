@@ -211,12 +211,12 @@ export function LinksProfile({
         variants={slideUpVariants}
       >
         {contact?.location && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-transparent px-3.5 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
+          <span className="inline-flex items-center justify-center gap-1.5 w-36 rounded-lg bg-transparent py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
             <MapPin className="h-3 w-3" />
             {contact.location}
           </span>
         )}
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-transparent px-3.5 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
+        <span className="inline-flex items-center justify-center gap-1.5 w-36 rounded-lg bg-transparent py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
           <Globe className="h-3 w-3" />
           {tLinks(locale, "open_to_remote")}
         </span>
