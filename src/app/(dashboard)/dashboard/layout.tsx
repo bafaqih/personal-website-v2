@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { cn } from "@/src/app/lib/utils";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { AuthService } from "@/src/services/auth.service";
 
 /**
  * Inner dashboard layout — provides sidebar + header shell.
@@ -16,9 +17,38 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  // Redirect to login if user session is not found
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await AuthService.getUser();
+        if (!user) {
+          router.replace("/login");
+        }
+      } catch {
+        router.replace("/login");
+      }
+    };
+    checkAuth();
+  }, [router, pathname]);
+
+  // Force page reload if navigated to from back-forward cache (bfcache)
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
