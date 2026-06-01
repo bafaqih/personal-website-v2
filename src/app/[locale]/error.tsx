@@ -225,7 +225,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
             <Button
               asChild
               variant="outline"
-              className="flex-1 sm:flex-initial w-auto px-6 h-11 border border-neutral-200 bg-transparent text-neutral-900 hover:bg-neutral-50 dark:border-white/10 dark:text-white dark:hover:bg-neutral-900/50 gap-2 font-semibold cursor-pointer shadow-none"
+              className="flex-1 sm:flex-initial w-auto px-6 h-11 border border-neutral-200 bg-transparent text-neutral-900 hover:bg-transparent hover:text-neutral-700 hover:border-neutral-300 dark:border-white/10 dark:text-white dark:bg-transparent dark:hover:bg-transparent dark:hover:text-neutral-300 dark:hover:border-white/20 gap-2 font-semibold cursor-pointer shadow-none"
             >
               <Link href={`/`}>
                 <Home className="h-4 w-4" />
