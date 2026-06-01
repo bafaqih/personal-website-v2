@@ -88,12 +88,12 @@ export default function NotFoundErrorContent() {
       </div>
 
       <TooltipProvider>
-        {/* Transparent Header matching LinksHeader spacing */}
+        {/* Header matching LinksHeader spacing and style */}
         <motion.header
           initial={{ y: -60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="sticky top-0 z-30 flex h-14 w-full items-center justify-between px-3.5 sm:px-12 md:px-24 lg:px-36 bg-transparent"
+          className="sticky top-0 z-30 flex h-14 w-full items-center justify-between px-3.5 sm:px-12 md:px-24 lg:px-36 bg-white/70 backdrop-blur-xl border-b border-neutral-200/60 dark:bg-neutral-950/70 dark:border-white/10"
         >
           {/* Logo */}
           <Link href={`/`} className="relative flex items-center h-7 cursor-pointer">
