@@ -153,6 +153,7 @@ export function LinksProfile({
         <motion.div
           variants={avatarVariants}
           whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 1.03 }}
           transition={{ duration: 0.3 }}
           className="mb-4 cursor-pointer"
         >
@@ -237,6 +238,7 @@ export function LinksProfile({
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 1.05 }}
                     transition={{
                       duration: 0.35,
                       ease: "easeOut" as const,

@@ -132,7 +132,18 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
         className="sticky top-0 z-30 flex h-14 items-center justify-between px-3.5 bg-white/70 backdrop-blur-xl border-b border-neutral-200/60 dark:bg-neutral-950/70 dark:border-white/10"
       >
         {/* Logo */}
-        <Link href={`/${locale}/links`} className="relative flex items-center h-7">
+        <Link
+          href={`/${locale}/links`}
+          prefetch={false}
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          }}
+          className="relative flex items-center h-7 cursor-pointer"
+        >
           <img
             src={logoBlack.src}
             alt="Fadil Bafagih"
@@ -160,7 +171,7 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
                   e.currentTarget.blur();
                 }}
               >
-                <Link href={`/${otherLocale}/links`}>
+                <Link href={`/${otherLocale}/links`} prefetch={false}>
                   <svg
                     className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
                     xmlns="http://www.w3.org/2000/svg"
@@ -234,10 +245,9 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
                 className="w-[200px] p-2.5"
                 onCloseAutoFocus={(e) => e.preventDefault()}
               >
-                <DropdownMenuLabel className="text-xs font-semibold px-2 py-1 text-neutral-500 dark:text-neutral-400">
+                <DropdownMenuLabel className="text-xs font-semibold px-0 pt-0.5 pb-2 text-neutral-500 dark:text-neutral-400">
                   {tLinks(locale, "share_links")}
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="my-1.5" />
 
                 {/* Social Share Grid (X, Facebook, LinkedIn) */}
                 <div className="grid grid-cols-3 gap-1.5 mb-2">
