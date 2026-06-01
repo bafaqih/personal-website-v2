@@ -142,7 +142,7 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
               behavior: "smooth",
             });
           }}
-          className="relative flex items-center h-7 cursor-pointer"
+          className="relative flex items-center h-7 cursor-pointer outline-none"
         >
           <img
             src={logoBlack.src}
