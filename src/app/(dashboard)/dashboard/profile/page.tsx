@@ -82,6 +82,14 @@ export default function ProfilePage() {
 
   const isPasswordFormValid = oldPassword.trim() !== "" && newPassword.trim() !== "" && confirmPassword.trim() !== "";
 
+  const isProfileFormValid =
+    fullName.trim() !== "" &&
+    username.trim() !== "" &&
+    email.trim() !== "" &&
+    (fullName.trim() !== (profile?.full_name || "") ||
+     username.trim() !== (profile?.username || "") ||
+     email.trim() !== (profile?.email || ""));
+
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -123,12 +131,12 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    if (profile) {
+    if (profile && isEditModalOpen) {
       setFullName(profile.full_name || "");
       setUsername(profile.username || "");
       setEmail(profile.email || "");
     }
-  }, [profile]);
+  }, [profile, isEditModalOpen]);
 
   const handleEditClick = () => {
     setIsEditModalOpen(true);
@@ -594,8 +602,8 @@ export default function ProfilePage() {
             </Button>
             <Button
               onClick={handleSaveProfile}
-              disabled={isSaving}
-              className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5 cursor-pointer"
+              disabled={isSaving || !isProfileFormValid}
+              className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? (
                 <>
