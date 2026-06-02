@@ -24,7 +24,7 @@ const footerVariants = {
 export function LinksFooter({ locale }: LinksFooterProps) {
   return (
     <motion.footer
-      className="py-6 px-6 space-y-1 text-center"
+      className="py-6 px-3.5 space-y-1 text-center"
       variants={footerVariants}
       initial="hidden"
       whileInView="visible"

@@ -160,7 +160,7 @@ export function LinksContact({ locale }: LinksContactProps) {
 
   return (
     <motion.section
-      className="px-6 pt-6 pb-6"
+      className="px-3.5 pt-6 pb-6"
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"

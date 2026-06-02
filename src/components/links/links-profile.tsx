@@ -143,7 +143,7 @@ export function LinksProfile({
 
   return (
     <motion.section
-      className="flex flex-col items-center text-center px-6 pt-8 pb-6"
+      className="flex flex-col items-center text-center px-3.5 pt-8 pb-6"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

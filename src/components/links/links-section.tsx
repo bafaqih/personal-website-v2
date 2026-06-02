@@ -242,7 +242,7 @@ export function LinksSection({ contact, locale }: LinksSectionProps) {
   ].filter((link) => link.url);
 
   return (
-    <div className="px-6 space-y-6">
+    <div className="px-3.5 space-y-6">
       {/* Separator */}
       <motion.div 
         initial={{ opacity: 0 }}
