@@ -15,6 +15,14 @@ export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    let originalScrollRestoration: ScrollRestoration | undefined;
+    
+    if (typeof window !== "undefined") {
+      originalScrollRestoration = window.history.scrollRestoration;
+      window.history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+    }
+
     const toggleVisibility = () => {
       // Use setTimeout to ensure Radix UI has finished updating DOM attributes
       setTimeout(() => {
@@ -45,6 +53,9 @@ export function ScrollToTop() {
     return () => {
       window.removeEventListener("scroll", toggleVisibility);
       observer.disconnect();
+      if (typeof window !== "undefined" && originalScrollRestoration) {
+        window.history.scrollRestoration = originalScrollRestoration;
+      }
     };
   }, []);
 
