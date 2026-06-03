@@ -139,7 +139,7 @@ export function MainHero({ profile, roles, about, contact, locale }: MainHeroPro
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -15, opacity: 0 }}
                 transition={{ duration: 0.35, ease: "easeInOut" }}
-                className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-300 font-light"
+                className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-300 font-regular"
               >
                 {currentRole || "Full-Stack Developer"}
               </motion.h2>

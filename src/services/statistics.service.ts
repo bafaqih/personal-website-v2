@@ -26,6 +26,7 @@ export const StatisticsService = {
       total_educations: educations.count ?? 0,
       total_organizations: organizations.count ?? 0,
       total_blogs: blogs.count ?? 0,
+      years_of_experience: 0,
     };
   },
 };

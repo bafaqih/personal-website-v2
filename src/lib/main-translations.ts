@@ -36,6 +36,18 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     nav_achievements: "Achievements",
     nav_blogs: "Blogs",
     nav_contact: "Contact",
+
+    // About
+    about_me: "About Me",
+    skills: "Skills",
+    skills_desc: "Technologies and tools I master",
+    total_projects: "Total Projects",
+    total_achievements: "Achievements",
+    years_experience: "Years of Experience",
+    download_cv: "Download CV",
+    my_activity: "My Activity",
+    all_skills: "All",
+    view_all: "View All",
   },
   id: {
     // Header
@@ -72,6 +84,18 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     nav_achievements: "Pencapaian",
     nav_blogs: "Blog",
     nav_contact: "Kontak",
+
+    // About
+    about_me: "Tentang Saya",
+    skills: "Keahlian",
+    skills_desc: "Teknologi dan alat yang saya kuasai",
+    total_projects: "Total Proyek",
+    total_achievements: "Pencapaian",
+    years_experience: "Tahun Pengalaman",
+    download_cv: "Unduh CV",
+    my_activity: "Aktivitas Saya",
+    all_skills: "Semua",
+    view_all: "Lihat Semua",
   },
 };
 

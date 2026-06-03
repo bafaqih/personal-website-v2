@@ -310,3 +310,62 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+/* Thin Scrollbar Utility */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.556 0 0);
+}
+
+/* Ensure GitHub calendar inherits font family (Inter) */
+.react-activity-calendar {
+  font-family: var(--font-sans), sans-serif !important;
+}
+.react-activity-calendar text {
+  font-family: var(--font-sans), sans-serif !important;
+}
+
+/* Custom Scrollbar for GitHub Calendar Scroll Container */
+.react-activity-calendar__scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+.react-activity-calendar__scroll-container::-webkit-scrollbar {
+  height: 5px !important;
+  width: 5px !important;
+}
+
+.react-activity-calendar__scroll-container::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.react-activity-calendar__scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-radius: 9999px !important;
+}
+
+.dark .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.react-activity-calendar__scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
