@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Mail, MapPin, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -71,6 +72,7 @@ const footerVariants = {
 };
 
 export function MainFooter({ about, contact, locale }: MainFooterProps) {
+  const pathname = usePathname();
   const bioText = locale === "id" ? about?.bio_id : about?.bio_en;
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -114,7 +116,16 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
           
           {/* Col 1: Brand & Desc */}
           <div className="flex flex-col gap-6 w-full lg:max-w-[320px]">
-            <Link href={`/${locale}`} className="inline-block">
+            <Link
+              href={`/${locale}`}
+              onClick={(e) => {
+                if (pathname === `/${locale}` || pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+              className="inline-block"
+            >
               <img
                 src={logoBlack.src}
                 alt="Fadil Bafagih"
@@ -194,13 +205,10 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
             </h3>
             <div className="flex flex-col gap-3">
               {contact?.email && (
-                <a 
-                  href={`mailto:${contact.email}`}
-                  className="flex items-center gap-2 text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
-                >
+                <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
                   <Mail className="h-4 w-4 shrink-0" />
                   <span className="truncate">{contact.email}</span>
-                </a>
+                </div>
               )}
               {contact?.location && (
                 <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">

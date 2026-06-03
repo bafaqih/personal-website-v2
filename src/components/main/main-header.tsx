@@ -48,6 +48,12 @@ export function MainHeader({ locale, hireMeEmail }: MainHeaderProps) {
         {/* Logo */}
         <Link
           href={`/${locale}`}
+          onClick={(e) => {
+            if (pathname === `/${locale}` || pathname === "/") {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
           className="relative flex items-center h-7 cursor-pointer outline-none"
         >
           <img
