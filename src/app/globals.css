@@ -338,34 +338,46 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   font-family: var(--font-sans), sans-serif !important;
 }
 
-/* Custom Scrollbar for GitHub Calendar Scroll Container */
+/* Custom Scrollbar for GitHub Calendar Scroll Container & Category Nav */
+.scrollbar-custom,
 .react-activity-calendar__scroll-container {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
 }
 
+.dark .scrollbar-custom,
+.dark .react-activity-calendar__scroll-container {
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar,
 .react-activity-calendar__scroll-container::-webkit-scrollbar {
   height: 5px !important;
   width: 5px !important;
 }
 
+.scrollbar-custom::-webkit-scrollbar-track,
 .react-activity-calendar__scroll-container::-webkit-scrollbar-track {
   background: transparent !important;
 }
 
+.scrollbar-custom::-webkit-scrollbar-thumb,
 .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15) !important;
+  background: rgba(0, 0, 0, 0.25) !important;
   border-radius: 9999px !important;
 }
 
+.dark .scrollbar-custom::-webkit-scrollbar-thumb,
 .dark .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
 }
 
+.scrollbar-custom::-webkit-scrollbar-thumb:hover,
 .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3) !important;
+  background: rgba(0, 0, 0, 0.45) !important;
 }
 
+.dark .scrollbar-custom::-webkit-scrollbar-thumb:hover,
 .dark .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
 }

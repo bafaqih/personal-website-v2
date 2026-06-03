@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef, cloneElement } from "react";
+import { useState, useEffect, useRef, cloneElement, MouseEvent } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate, useInView } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Globe, MapPin, Download, Quote, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
+import { Globe, MapPin, Download, Quote, LayoutGrid, ChevronLeft, ChevronRight, User, Code2, Eye } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Profile, Role, Contact, About, Statistics, Skill, SkillCategory } from "@/src/types/database";
 import { Button } from "@/components/ui/button";
@@ -125,9 +125,25 @@ export function MainAbout({
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
+  const [maxPreviewSkills, setMaxPreviewSkills] = useState(16);
+  const [skillsCardHeight, setSkillsCardHeight] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activityYear, setActivityYear] = useState<number>(() => new Date().getFullYear() || 2026);
   const [hoveredActivity, setHoveredActivity] = useState<{ date: string; count: number } | null>(null);
+
+  const isModalOpenRef = useRef(false);
+  isModalOpenRef.current = isSkillsModalOpen;
+
+  const maxPreviewSkillsRef = useRef(maxPreviewSkills);
+  maxPreviewSkillsRef.current = maxPreviewSkills;
+
+  const profileCardRef = useRef<HTMLDivElement>(null);
+  const githubCardRef = useRef<HTMLDivElement>(null);
+  const aboutMeRef = useRef<HTMLDivElement>(null);
+  const skillsHeaderRef = useRef<HTMLDivElement>(null);
+  const skillsCardRef = useRef<HTMLDivElement>(null);
+  const pillsContainerRef = useRef<HTMLDivElement>(null);
+  const overflowLimitRef = useRef<number | null>(null);
 
   const formatDate = (dateStr: string) => {
     const parts = dateStr.split("-");
@@ -135,6 +151,11 @@ export function MainAbout({
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
     return dateStr;
+  };
+
+  const handleCategoryClick = (e: MouseEvent<HTMLButtonElement>, categoryId: string) => {
+    setSelectedCategory(categoryId);
+    e.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   };
 
   const padActivityData = (data: Array<{ date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }>) => {
@@ -184,18 +205,165 @@ export function MainAbout({
 
   const githubChartUrl = `https://ghchart.rshah.org/${resolvedTheme === "dark" ? "10b981" : "10b981"}/${githubUsername}`;
 
-  // Filter Active Skills & Categories
-  const activeCategories = skillCategories.filter((c) => c.is_active);
-  const activeSkills = skills.filter((s) => s.is_active && activeCategories.some(c => c.id === s.category_id));
+  // Filter & Sort Active Skills & Categories (from oldest to newest)
+  const activeCategories = skillCategories
+    .filter((c) => c.is_active)
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  const activeSkills = skills
+    .filter((s) => s.is_active && activeCategories.some(c => c.id === s.category_id))
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-  // Determine top 16 skills for the preview, and use Modal if more than 16
-  const MAX_PREVIEW_SKILLS = 16;
-  const hasMoreSkills = activeSkills.length > MAX_PREVIEW_SKILLS;
-  
-  // Filter for Modal
-  const modalSkills = selectedCategory === "all"
+  // Filter for display based on selected category
+  const displaySkills = selectedCategory === "all"
     ? activeSkills
     : activeSkills.filter((s) => s.category_id === selectedCategory);
+
+  const displaySkillsRef = useRef(displaySkills);
+  displaySkillsRef.current = displaySkills;
+
+  const calculateLimitGlobalRef = useRef<() => void>(undefined);
+
+  // Reset overflow limit and recalculate when category changes
+  useEffect(() => {
+    overflowLimitRef.current = null;
+    calculateLimitGlobalRef.current?.();
+  }, [selectedCategory, displaySkills.length]);
+
+  // Resize handler to dynamically calculate preview limit to align left and right columns
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const calculateLimit = () => {
+      // If modal is open, ignore to prevent scrollbar layout shift interference
+      if (isModalOpenRef.current) return;
+
+      // If we are on mobile/tablet (less than lg layout, which is 1024px)
+      if (window.innerWidth < 1024) {
+        setMaxPreviewSkills(16);
+        setSkillsCardHeight(null);
+        return;
+      }
+
+      if (
+        githubCardRef.current &&
+        skillsCardRef.current &&
+        pillsContainerRef.current
+      ) {
+        const githubRect = githubCardRef.current.getBoundingClientRect();
+        const skillsCardRect = skillsCardRef.current.getBoundingClientRect();
+        const pillsContainerRect = pillsContainerRef.current.getBoundingClientRect();
+
+        // Calculate target card height to align bottom with GitHub card
+        const targetCardHeight = githubRect.bottom - skillsCardRect.top;
+
+        // Available height for pills (paddingBottom = 20px)
+        const paddingBottom = 20;
+        const targetCardBottom = skillsCardRect.top + targetCardHeight;
+        const pillsSpace = targetCardBottom - pillsContainerRect.top - paddingBottom;
+
+        const rowHeight = 42;
+        // Since we explicitly control the card height to be aligned,
+        // we can use a generous tolerance (+26px) so that pills fill the card
+        // nicely without leaving a large empty gap at the bottom.
+        const maxRows = Math.max(1, Math.floor((pillsSpace + 26) / rowHeight));
+
+        const children = Array.from(pillsContainerRef.current.children) as HTMLElement[];
+        if (children.length === 0) {
+          setSkillsCardHeight(targetCardHeight);
+          return;
+        }
+
+        // Group all children (including View All button) by row
+        const rows: HTMLElement[][] = [];
+        children.forEach((child) => {
+          const lastRow = rows[rows.length - 1];
+          if (!lastRow || Math.abs(lastRow[0].offsetTop - child.offsetTop) > 10) {
+            rows.push([child]);
+          } else {
+            lastRow.push(child);
+          }
+        });
+
+        const currentRows = rows.length;
+        const prev = maxPreviewSkillsRef.current;
+        let newLimit = prev;
+
+        if (currentRows > maxRows) {
+          // Exceeded! Slice back to only the pills that fit in maxRows.
+          let count = 0;
+          for (let i = 0; i < Math.min(maxRows, rows.length); i++) {
+            count += rows[i].length;
+          }
+          newLimit = Math.max(4, count);
+          // Record this newLimit + 1 as an overflow limit to prevent incrementing back to it
+          overflowLimitRef.current = newLimit + 1;
+        } else if (currentRows < maxRows) {
+          // We have extra rows! We can add skills.
+          if (prev < displaySkillsRef.current.length) {
+            const averagePillsPerRow = Math.max(3, children.length / Math.max(1, currentRows));
+            const remainingRows = maxRows - currentRows;
+            newLimit = Math.min(displaySkillsRef.current.length, prev + Math.ceil(remainingRows * averagePillsPerRow));
+          }
+        } else {
+          // We are at exactly maxRows!
+          // Can we fit more in the last row?
+          const lastRow = rows[rows.length - 1];
+          if (lastRow && lastRow.length > 0) {
+            const lastRowWidth = lastRow.reduce((sum, p) => sum + p.offsetWidth + 8, 0);
+            const containerWidth = pillsContainerRef.current.offsetWidth || 400;
+            const remainingWidth = containerWidth - lastRowWidth;
+            
+            // If the remaining width is enough to hold another pill, we increment by 1
+            // BUT only if we haven't already marked it as an overflow limit!
+            const targetNext = prev + 1;
+            if (
+              remainingWidth > 95 && 
+              displaySkillsRef.current.length > prev &&
+              overflowLimitRef.current !== targetNext
+            ) {
+              newLimit = Math.min(displaySkillsRef.current.length, targetNext);
+            }
+          }
+        }
+
+        setSkillsCardHeight(targetCardHeight);
+        if (newLimit !== prev) {
+          setMaxPreviewSkills(newLimit);
+        }
+      }
+    };
+
+    calculateLimitGlobalRef.current = calculateLimit;
+
+    // Run initially after DOM settles
+    const timer = setTimeout(() => {
+      calculateLimit();
+    }, 100);
+
+    const resizeObserver = new ResizeObserver(() => {
+      calculateLimit();
+    });
+
+    if (profileCardRef.current) resizeObserver.observe(profileCardRef.current);
+    if (githubCardRef.current) resizeObserver.observe(githubCardRef.current);
+    if (aboutMeRef.current) resizeObserver.observe(aboutMeRef.current);
+    if (skillsHeaderRef.current) resizeObserver.observe(skillsHeaderRef.current);
+    if (skillsCardRef.current) resizeObserver.observe(skillsCardRef.current);
+
+    window.addEventListener("resize", calculateLimit);
+
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", calculateLimit);
+    };
+  }, []);
+
+  // Determine top dynamic preview skills, and use Modal if more than the limit
+  const displayedSkillsPreview = displaySkills.slice(0, maxPreviewSkills);
+  const hasMoreSkills = displaySkills.length > maxPreviewSkills;
+  // Filter for Modal
+  const modalSkills = displaySkills;
 
   return (
     <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 py-12 md:py-24">
@@ -208,6 +376,7 @@ export function MainAbout({
           
           {/* 1. Main Profile Card */}
           <motion.div 
+            ref={profileCardRef}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -330,6 +499,7 @@ export function MainAbout({
 
           {/* 2. Github Activity Section */}
           <motion.div 
+            ref={githubCardRef}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -406,6 +576,7 @@ export function MainAbout({
           
           {/* About Me Section */}
           <motion.div 
+            ref={aboutMeRef}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -413,19 +584,17 @@ export function MainAbout({
           >
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2.5">
-                <Globe className="h-[26px] w-[26px] text-neutral-900 dark:text-white" />
+                <User className="h-[26px] w-[26px] text-neutral-900 dark:text-white" />
                 <h2 className="text-[28px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
                   {tMain(locale, "about_me")}
                 </h2>
               </div>
-              {about?.badge_en && (
-                <p className="text-[15px] font-medium text-neutral-500 dark:text-neutral-400">
-                  {locale === "id" ? about.badge_id : about.badge_en}
-                </p>
-              )}
+              <p className="text-[15px] font-regular text-neutral-500 dark:text-neutral-400">
+                {tMain(locale, "about_subtitle")}
+              </p>
             </div>
             
-            <hr className="border-neutral-200 dark:border-white/10 my-5" />
+            <hr className="border-neutral-200 dark:border-white/10 my-3" />
 
             {bioText && (
               <div 
@@ -442,28 +611,32 @@ export function MainAbout({
             viewport={{ once: true }}
             className="flex flex-col"
           >
-            <div className="flex flex-col gap-1.5">
+            <div ref={skillsHeaderRef} className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2.5">
-                <Globe className="h-[26px] w-[26px] text-neutral-900 dark:text-white" />
-                <h2 className="text-[28px] leading-none font-mediumtracking-tight text-neutral-900 dark:text-white">
+                <Code2 className="h-[26px] w-[26px] text-neutral-900 dark:text-white" />
+                <h2 className="text-[28px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
                   {tMain(locale, "skills")}
                 </h2>
               </div>
-              <p className="text-[15px] font-medium text-neutral-500 dark:text-neutral-400">
+              <p className="text-[15px] font-regular text-neutral-500 dark:text-neutral-400">
                 {tMain(locale, "skills_desc")}
               </p>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 p-5 sm:p-6">
+            <div 
+              ref={skillsCardRef} 
+              style={skillsCardHeight ? { height: `${skillsCardHeight}px` } : undefined}
+              className="mt-5 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 pt-3 pb-4 px-4 sm:pt-4 sm:pb-5 sm:px-5"
+            >
               
               {/* Category Nav */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex flex-row flex-nowrap items-center gap-2 mb-2.5 overflow-x-auto pb-1.5 scrollbar-custom">
                 <button
-                  onClick={() => setSelectedCategory("all")}
-                  className={`text-[13px] font-semibold transition-colors whitespace-nowrap px-4 py-1.5 rounded-xl ${
+                  onClick={(e) => handleCategoryClick(e, "all")}
+                  className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
                     selectedCategory === "all"
                       ? "bg-black text-white dark:bg-white dark:text-black"
-                      : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
                   }`}
                 >
                   {tMain(locale, "all_skills")}
@@ -471,11 +644,11 @@ export function MainAbout({
                 {activeCategories.map((cat) => (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`text-[13px] font-semibold transition-colors whitespace-nowrap px-4 py-1.5 rounded-xl ${
+                    onClick={(e) => handleCategoryClick(e, cat.id)}
+                    className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
                       selectedCategory === cat.id
                         ? "bg-black text-white dark:bg-white dark:text-black"
-                        : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                        : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
                     }`}
                   >
                     {locale === "id" ? cat.name_id : cat.name_en}
@@ -483,29 +656,38 @@ export function MainAbout({
                 ))}
               </div>
 
+              <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-5 mb-4" />
+
               {/* Skills Pills */}
-              <div className="flex flex-wrap gap-2.5">
-                {activeSkills.slice(0, MAX_PREVIEW_SKILLS).map((skill) => (
-                  <div 
+              <div ref={pillsContainerRef} className="flex flex-wrap gap-2">
+                {displayedSkillsPreview.map((skill) => (
+                  <motion.div 
                     key={skill.id}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-800 shadow-sm text-[13px] font-medium text-neutral-700 dark:text-neutral-300 transition-colors hover:border-neutral-300 dark:hover:border-white/20"
+                    layout
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-all hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
                   >
                     {skill.icon_url ? (
-                      <img src={skill.icon_url} alt={skill.name} className="w-3.5 h-3.5 object-contain" />
+                      <img 
+                        src={skill.icon_url} 
+                        alt={skill.name} 
+                        className="w-3.5 h-3.5 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110" 
+                      />
                     ) : (
-                      <Globe className="w-3.5 h-3.5 text-neutral-400" />
+                      <Code2 className="w-3.5 h-3.5 text-black dark:text-white transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />
                     )}
                     <span>{skill.name}</span>
-                  </div>
+                  </motion.div>
                 ))}
                 
                 {/* View All Pill */}
                 {hasMoreSkills && (
                   <button
                     onClick={() => setIsSkillsModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-neutral-200 bg-neutral-50 dark:bg-neutral-800/50 dark:border-white/5 text-[13px] font-medium text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-white/10 bg-transparent text-sm font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
                   >
-                    {tMain(locale, "view_all").replace("{count}", `+${activeSkills.length - MAX_PREVIEW_SKILLS}`)}
+                    <Eye className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
+                    <span>+{displaySkills.length - maxPreviewSkills}</span>
+                    <span>{tMain(locale, "view_all")}</span>
                   </button>
                 )}
               </div>
@@ -532,10 +714,10 @@ export function MainAbout({
           
           <div className="flex flex-col gap-6">
             {/* Category Filters */}
-            <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-neutral-200/60 dark:border-white/10">
+            <div className="flex flex-row flex-nowrap items-center gap-2 overflow-x-auto pb-2 scrollbar-custom border-b border-neutral-200/60 dark:border-white/10">
               <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-3.5 py-1.5 rounded-xl text-sm font-medium transition-colors ${
+                onClick={(e) => handleCategoryClick(e, "all")}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
                   selectedCategory === "all"
                     ? "bg-black text-white dark:bg-white dark:text-black"
                     : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-white/10"
@@ -546,8 +728,8 @@ export function MainAbout({
               {activeCategories.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-sm font-medium transition-colors ${
+                  onClick={(e) => handleCategoryClick(e, cat.id)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
                     selectedCategory === cat.id
                       ? "bg-black text-white dark:bg-white dark:text-black"
                       : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-white/10"
@@ -559,7 +741,7 @@ export function MainAbout({
             </div>
 
             {/* Modal Skills List */}
-            <div className="flex flex-wrap items-center gap-2.5 overflow-y-auto max-h-[60vh] pb-4">
+            <div className="flex flex-wrap items-center gap-2 overflow-y-auto max-h-[60vh] pb-4">
               <AnimatePresence mode="popLayout">
                 {modalSkills.map((skill) => (
                   <motion.div
@@ -569,12 +751,16 @@ export function MainAbout({
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.2 }}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-800 shadow-sm text-[13px] font-medium text-neutral-700 dark:text-neutral-300 transition-colors"
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-all hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
                   >
                     {skill.icon_url ? (
-                      <img src={skill.icon_url} alt={skill.name} className="w-4 h-4 object-contain" />
+                      <img 
+                        src={skill.icon_url} 
+                        alt={skill.name} 
+                        className="w-3.5 h-3.5 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110" 
+                      />
                     ) : (
-                      <Globe className="w-4 h-4 text-neutral-400" />
+                      <Code2 className="w-3.5 h-3.5 text-black dark:text-white transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />
                     )}
                     <span>{skill.name}</span>
                   </motion.div>

@@ -39,6 +39,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
 
     // About
     about_me: "About Me",
+    about_subtitle: "Turning visions into creative digital realities",
     skills: "Skills",
     skills_desc: "Technologies and tools I master",
     total_projects: "Total Projects",
@@ -87,6 +88,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
 
     // About
     about_me: "Tentang Saya",
+    about_subtitle: "Mengubah visi menjadi realitas digital yang kreatif",
     skills: "Keahlian",
     skills_desc: "Teknologi dan alat yang saya kuasai",
     total_projects: "Total Proyek",
