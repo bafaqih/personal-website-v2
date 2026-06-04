@@ -532,12 +532,12 @@ export function MainAbout({
               className="border-neutral-200 dark:border-white/10" 
             />
 
-            {/* Stats Row */}
+             {/* Stats Row */}
             <motion.div 
-              variants={{
-                hidden: { filter: "blur(6px)", opacity: 0 },
-                visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
-              }}
+              initial={{ filter: "blur(6px)", opacity: 0, y: 20 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
               className="grid grid-cols-3 gap-3"
             >
               <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 text-center">
@@ -563,10 +563,10 @@ export function MainAbout({
             {/* Quotes */}
             {quotesText && (
               <motion.div 
-                variants={{
-                  hidden: { filter: "blur(6px)", opacity: 0 },
-                  visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
-                }}
+                initial={{ filter: "blur(6px)", opacity: 0, y: 20 }}
+                whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
                 className="py-3 px-4 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 text-center flex flex-col items-center justify-center"
               >
                 <div className="flex items-start gap-2 justify-center">
@@ -581,10 +581,10 @@ export function MainAbout({
             {/* Download CV Button */}
             {about?.cv_url && (
               <motion.a
-                variants={{
-                  hidden: { filter: "blur(6px)", opacity: 0 },
-                  visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
-                }}
+                initial={{ filter: "blur(6px)", opacity: 0, y: 20 }}
+                whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 href={about.cv_url}
