@@ -64,6 +64,8 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     years: "Years",
     month: "Month",
     months: "Months",
+    all_skills_title: "All Skills",
+    skills_at: "Skills at",
   },
   id: {
     // Header
@@ -128,6 +130,8 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     years: "Tahun",
     month: "Bulan",
     months: "Bulan",
+    all_skills_title: "Semua Keahlian",
+    skills_at: "Keahlian di",
   },
 };
 

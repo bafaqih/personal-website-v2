@@ -864,7 +864,7 @@ export function MainAbout({
           <DialogHeader className="mb-0">
             <div className="flex items-center gap-3 mb-1">
               <Code2 className="h-6 w-6 text-neutral-900 dark:text-white" />
-              <DialogTitle className="text-2xl font-bold tracking-tight">
+              <DialogTitle className="text-2xl font-semibold tracking-tight">
                 {tMain(locale, "skills")}
               </DialogTitle>
             </div>

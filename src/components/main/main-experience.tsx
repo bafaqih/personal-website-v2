@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Briefcase,
@@ -8,9 +8,12 @@ import {
   Users,
   ChevronRight,
   Calendar,
-  MapPin
+  MapPin,
+  Eye,
+  Code2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Career, Education, Organization } from "@/src/types/database";
 
@@ -23,9 +26,37 @@ interface MainExperienceProps {
 
 type TabType = "career" | "education" | "organizations";
 
+// Helper to check if a YYYY-MM-DD date is in the future compared to the current month/year
+function isFutureDate(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const parts = dateStr.split("-");
+  if (parts.length < 2) return false;
+
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+
+  const today = new Date();
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth() + 1; // 1-indexed
+
+  if (year > todayYear) return true;
+  if (year === todayYear && month > todayMonth) return true;
+  return false;
+}
+
 // Timezone-safe date formatting helper (YYYY-MM-DD to "MMM YYYY")
 function formatDate(dateStr: string, locale: MainLocale): string {
   if (!dateStr) return "";
+  
+  const normalized = dateStr.trim().toLowerCase();
+  if (normalized === "present" || normalized === "sekarang" || normalized === "current" || normalized === "") {
+    return tMain(locale, "present");
+  }
+
+  if (isFutureDate(dateStr)) {
+    return tMain(locale, "present");
+  }
+
   const parts = dateStr.split("-");
   if (parts.length < 2) return dateStr;
 
@@ -52,15 +83,27 @@ function calculateDuration(startDateStr: string, endDateStr: string | null, loca
   let endYear: number;
   let endMonth: number;
 
-  if (endDateStr) {
-    const endParts = endDateStr.split("-");
-    if (endParts.length < 2) return "";
-    endYear = parseInt(endParts[0], 10);
-    endMonth = parseInt(endParts[1], 10);
-  } else {
+  const isPresent = !endDateStr || 
+                    endDateStr.trim().toLowerCase() === "present" || 
+                    endDateStr.trim().toLowerCase() === "sekarang" || 
+                    endDateStr.trim().toLowerCase() === "current" || 
+                    endDateStr.trim() === "" ||
+                    isFutureDate(endDateStr);
+
+  if (isPresent) {
     const today = new Date();
     endYear = today.getFullYear();
     endMonth = today.getMonth() + 1; // 1-indexed
+  } else {
+    const endParts = endDateStr!.split("-");
+    if (endParts.length < 2) {
+      const today = new Date();
+      endYear = today.getFullYear();
+      endMonth = today.getMonth() + 1;
+    } else {
+      endYear = parseInt(endParts[0], 10);
+      endMonth = parseInt(endParts[1], 10);
+    }
   }
 
   const totalMonths = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
@@ -89,6 +132,26 @@ export function MainExperience({
 }: MainExperienceProps) {
   const [activeTab, setActiveTab] = useState<TabType>("career");
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [activeModalItem, setActiveModalItem] = useState<{
+    logoUrl?: string | null;
+    name: string;
+    role: string;
+    skills: any[];
+  } | null>(null);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 1200);
+      return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
+    }
+  }, [isModalOpen]);
 
   const toggleItem = (id: string) => {
     setExpandedItems((prev) => ({
@@ -328,31 +391,95 @@ export function MainExperience({
                                     ))}
                                   </ul>
                                 )}
-
                                 {/* Skills Pills */}
                                 {item.career_skills && item.career_skills.length > 0 && (
-                                  <div className="flex flex-wrap gap-2 pt-3">
-                                    {item.career_skills.map((cs) => {
-                                      if (!cs.skill) return null;
-                                      return (
-                                        <div
-                                          key={cs.skill.id}
-                                          className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                                  <>
+                                    {/* Desktop view skill pills */}
+                                    <div className="hidden sm:flex flex-wrap gap-2 pt-3">
+                                      {item.career_skills.slice(0, 5).map((cs) => {
+                                        if (!cs.skill) return null;
+                                        return (
+                                          <div
+                                            key={cs.skill.id}
+                                            className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                                          >
+                                            {cs.skill.icon_url ? (
+                                              <img
+                                                src={cs.skill.icon_url}
+                                                alt={cs.skill.name}
+                                                className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
+                                              />
+                                            ) : (
+                                              <Code2 className="w-3 h-3 text-neutral-400" />
+                                            )}
+                                            <span>{cs.skill.name}</span>
+                                          </div>
+                                        );
+                                      })}
+                                      {item.career_skills.length > 5 && (
+                                        <button
+                                          onClick={() => {
+                                            setActiveModalItem({
+                                              logoUrl: item.logo_url,
+                                              name: item.company,
+                                              role: locale === "id" ? item.role_id : item.role_en,
+                                              skills: item.career_skills || []
+                                            });
+                                            setIsAnimating(true);
+                                            setIsModalOpen(true);
+                                          }}
+                                          className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
                                         >
-                                          {cs.skill.icon_url ? (
-                                            <img
-                                              src={cs.skill.icon_url}
-                                              alt={cs.skill.name}
-                                              className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
-                                            />
-                                          ) : (
-                                            <Calendar className="w-3 h-3 text-neutral-400" />
-                                          )}
-                                          <span>{cs.skill.name}</span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
+                                          <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
+                                          <span>+{item.career_skills.length - 5}</span>
+                                          <span>{tMain(locale, "view_all")}</span>
+                                        </button>
+                                      )}
+                                    </div>
+
+                                    {/* Mobile view skill pills */}
+                                    <div className="flex sm:hidden flex-wrap gap-2 pt-3">
+                                      {item.career_skills.slice(0, 3).map((cs) => {
+                                        if (!cs.skill) return null;
+                                        return (
+                                          <div
+                                            key={cs.skill.id}
+                                            className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                                          >
+                                            {cs.skill.icon_url ? (
+                                              <img
+                                                src={cs.skill.icon_url}
+                                                alt={cs.skill.name}
+                                                className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
+                                              />
+                                            ) : (
+                                              <Code2 className="w-3 h-3 text-neutral-400" />
+                                            )}
+                                            <span>{cs.skill.name}</span>
+                                          </div>
+                                        );
+                                      })}
+                                      {item.career_skills.length > 3 && (
+                                        <button
+                                          onClick={() => {
+                                            setActiveModalItem({
+                                              logoUrl: item.logo_url,
+                                              name: item.company,
+                                              role: locale === "id" ? item.role_id : item.role_en,
+                                              skills: item.career_skills || []
+                                            });
+                                            setIsAnimating(true);
+                                            setIsModalOpen(true);
+                                          }}
+                                          className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
+                                        >
+                                          <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
+                                          <span>+{item.career_skills.length - 3}</span>
+                                          <span>{tMain(locale, "view_all")}</span>
+                                        </button>
+                                      )}
+                                    </div>
+                                  </>
                                 )}
                               </div>
                             </motion.div>
@@ -690,6 +817,86 @@ export function MainExperience({
         </motion.div>
 
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-lg bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border border-neutral-200 dark:border-white/10 ring-0 shadow-2xl p-6 rounded-2xl">
+          {activeModalItem && (
+            <div className="flex flex-col gap-3.5">
+              <DialogHeader className="mb-0 text-left">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="h-8 w-8 rounded-lg border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center p-1 overflow-hidden shrink-0">
+                    {activeModalItem.logoUrl ? (
+                      <img
+                        src={activeModalItem.logoUrl}
+                        alt={activeModalItem.name}
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <Briefcase className="h-4.5 w-4.5 text-neutral-500" />
+                    )}
+                  </div>
+                  <DialogTitle className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white leading-none">
+                    {tMain(locale, "all_skills_title")}
+                  </DialogTitle>
+                </div>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {tMain(locale, "skills_at")} {activeModalItem.name} &middot; {activeModalItem.role}
+                </p>
+              </DialogHeader>
+
+              <div className="w-full min-w-0 rounded-2xl border border-neutral-200 bg-neutral-50/50 dark:border-white/10 dark:bg-neutral-950/20 pl-4 py-4 pr-1 sm:pl-5 sm:py-5 sm:pr-1.5 overflow-hidden">
+                <motion.div
+                  key={activeModalItem.name}
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: {
+                      transition: {
+                        staggerChildren: 0.03
+                      }
+                    }
+                  }}
+                  className={`flex flex-wrap items-center gap-2 max-h-[40vh] scrollbar-custom pr-3 sm:pr-3.5 ${isAnimating ? "overflow-hidden" : "overflow-y-auto"}`}
+                >
+                  {activeModalItem.skills.map((cs) => {
+                    if (!cs.skill) return null;
+                    return (
+                      <motion.div
+                        key={cs.skill.id}
+                        variants={{
+                          hidden: { opacity: 0, filter: "blur(6px)", y: 6 },
+                          visible: {
+                            opacity: 1,
+                            filter: "blur(0px)",
+                            y: 0,
+                            transition: {
+                              duration: 0.4,
+                              ease: "easeOut"
+                            }
+                          }
+                        }}
+                        className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                      >
+                        {cs.skill.icon_url ? (
+                          <img
+                            src={cs.skill.icon_url}
+                            alt={cs.skill.name}
+                            className="w-3.5 h-3.5 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
+                          />
+                        ) : (
+                          <Code2 className="w-3.5 h-3.5 text-black dark:text-white transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />
+                        )}
+                        <span>{cs.skill.name}</span>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
