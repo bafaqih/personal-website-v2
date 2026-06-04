@@ -157,7 +157,7 @@ export function LinksProfile({
           transition={{ duration: 0.3 }}
           className="mb-4 cursor-pointer"
         >
-          <div className="profile-photo-shimmer relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 shadow-lg bg-neutral-100 dark:bg-neutral-900">
+          <div className="profile-photo-shimmer relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 bg-neutral-100 dark:bg-neutral-900">
             {isImageLoading && (
               <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 animate-pulse z-10" />
             )}
