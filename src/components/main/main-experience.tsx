@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Briefcase, 
-  GraduationCap, 
-  Users, 
-  ChevronRight, 
-  Calendar, 
+import {
+  Briefcase,
+  GraduationCap,
+  Users,
+  ChevronRight,
+  Calendar,
   MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,16 +28,16 @@ function formatDate(dateStr: string, locale: MainLocale): string {
   if (!dateStr) return "";
   const parts = dateStr.split("-");
   if (parts.length < 2) return dateStr;
-  
+
   const year = parts[0];
   const monthVal = parseInt(parts[1], 10);
-  
+
   const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthNamesId = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-  
+
   const monthNames = locale === "id" ? monthNamesId : monthNamesEn;
   const monthName = monthNames[monthVal - 1] || "";
-  
+
   return `${monthName} ${year}`;
 }
 
@@ -48,10 +48,10 @@ function calculateDuration(startDateStr: string, endDateStr: string | null, loca
   if (startParts.length < 2) return "";
   const startYear = parseInt(startParts[0], 10);
   const startMonth = parseInt(startParts[1], 10);
-  
+
   let endYear: number;
   let endMonth: number;
-  
+
   if (endDateStr) {
     const endParts = endDateStr.split("-");
     if (endParts.length < 2) return "";
@@ -62,16 +62,16 @@ function calculateDuration(startDateStr: string, endDateStr: string | null, loca
     endYear = today.getFullYear();
     endMonth = today.getMonth() + 1; // 1-indexed
   }
-  
+
   const totalMonths = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
   if (totalMonths <= 0) return "";
-  
+
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
-  
+
   const yrText = locale === "id" ? tMain(locale, "year") : (years === 1 ? tMain(locale, "year") : tMain(locale, "years"));
   const moText = locale === "id" ? tMain(locale, "month") : (months === 1 ? tMain(locale, "month") : tMain(locale, "months"));
-  
+
   if (years > 0) {
     if (months > 0) {
       return `${years} ${yrText} ${months} ${moText}`;
@@ -112,9 +112,9 @@ export function MainExperience({
   return (
     <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-12 md:pt-6 md:pb-24 bg-transparent">
       <div className="w-full flex flex-col gap-6">
-        
+
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -140,7 +140,7 @@ export function MainExperience({
           transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           className="rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 pt-3 pb-6 px-4 sm:pt-4 sm:pb-6 sm:px-6"
         >
-          
+
           {/* Tab Navigation */}
           <div className="flex flex-row flex-nowrap items-center gap-2 mb-0 overflow-x-auto pb-3 sm:pb-4 scrollbar-custom -mx-4 sm:-mx-6 px-4 sm:px-6">
             {tabs.map((tab) => {
@@ -157,11 +157,10 @@ export function MainExperience({
                       inline: "center"
                     });
                   }}
-                  className={`flex items-center gap-2 text-sm font-semibold transition-colors whitespace-nowrap px-4 py-2 rounded-lg ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 text-sm font-semibold transition-colors whitespace-nowrap px-4 py-2 rounded-lg ${activeTab === tab.id
                       ? "bg-black text-white dark:bg-white dark:text-black"
                       : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
-                  }`}
+                    }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
                   <span>{tab.label}</span>
@@ -174,10 +173,10 @@ export function MainExperience({
 
           {/* Experience List Container */}
           <div className="relative">
-            
+
             {/* Active Tab Content with Staggered Entry Animation */}
             <AnimatePresence mode="wait">
-              
+
               {/* Tab: Careers */}
               {activeTab === "career" && (
                 <motion.div
@@ -198,9 +197,8 @@ export function MainExperience({
 
                   {publishedCareers.map((item) => {
                     const isExpanded = !!expandedItems[item.id];
-                    const dateRange = `${formatDate(item.start_date, locale)} - ${
-                      item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
-                    }`;
+                    const dateRange = `${formatDate(item.start_date, locale)} - ${item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
+                      }`;
                     const duration = calculateDuration(item.start_date, item.end_date, locale);
 
                     return (
@@ -208,9 +206,9 @@ export function MainExperience({
                         key={item.id}
                         variants={{
                           hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
-                          visible: { 
-                            opacity: 1, 
-                            filter: "blur(0px)", 
+                          visible: {
+                            opacity: 1,
+                            filter: "blur(0px)",
                             y: 0,
                             transition: { duration: 0.4, ease: "easeOut" }
                           }
@@ -218,7 +216,7 @@ export function MainExperience({
                         className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
                       >
                         {/* Bullet Dot */}
-                        <div className="absolute left-[-5px] top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+                        <div className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
 
                         {/* Top Metadata & Header Info */}
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
@@ -299,16 +297,16 @@ export function MainExperience({
                           </div>
 
                           {/* Date Range & Duration Badge (Desktop only) */}
-                           <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
-                             <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                               {dateRange}
-                             </span>
-                             {duration && (
-                               <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                 {duration}
-                               </span>
-                             )}
-                           </div>
+                          <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                            <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                              {dateRange}
+                            </span>
+                            {duration && (
+                              <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                {duration}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Detail Drawer Content (Slide-down & Staggered Skills) */}
@@ -321,10 +319,10 @@ export function MainExperience({
                               transition={{ duration: 0.25, ease: "easeInOut" }}
                               className="overflow-hidden pl-[72px] sm:pl-[88px]"
                             >
-                              <div className="pt-0.5 flex flex-col">
+                              <div className="flex flex-col">
                                 {/* Bullet Points list */}
                                 {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
-                                  <ul className="list-disc list-outside pl-5 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                  <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
                                     {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
                                       <li key={i}>{point}</li>
                                     ))}
@@ -333,7 +331,7 @@ export function MainExperience({
 
                                 {/* Skills Pills */}
                                 {item.career_skills && item.career_skills.length > 0 && (
-                                  <div className="flex flex-wrap gap-2 pt-3 pl-1">
+                                  <div className="flex flex-wrap gap-2 pt-3">
                                     {item.career_skills.map((cs) => {
                                       if (!cs.skill) return null;
                                       return (
@@ -392,9 +390,8 @@ export function MainExperience({
 
                   {publishedEducations.map((item) => {
                     const isExpanded = !!expandedItems[item.id];
-                    const dateRange = `${formatDate(item.start_date, locale)} - ${
-                      item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
-                    }`;
+                    const dateRange = `${formatDate(item.start_date, locale)} - ${item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
+                      }`;
                     const duration = calculateDuration(item.start_date, item.end_date, locale);
 
                     return (
@@ -402,9 +399,9 @@ export function MainExperience({
                         key={item.id}
                         variants={{
                           hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
-                          visible: { 
-                            opacity: 1, 
-                            filter: "blur(0px)", 
+                          visible: {
+                            opacity: 1,
+                            filter: "blur(0px)",
                             y: 0,
                             transition: { duration: 0.4, ease: "easeOut" }
                           }
@@ -412,7 +409,7 @@ export function MainExperience({
                         className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
                       >
                         {/* Bullet Dot */}
-                        <div className="absolute left-[-5px] top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+                        <div className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
 
                         {/* Top Metadata & Header Info */}
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
@@ -488,16 +485,16 @@ export function MainExperience({
                           </div>
 
                           {/* Date Range & Duration Badge (Desktop only) */}
-                           <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
-                             <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                               {dateRange}
-                             </span>
-                             {duration && (
-                               <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                 {duration}
-                               </span>
-                             )}
-                           </div>
+                          <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                            <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                              {dateRange}
+                            </span>
+                            {duration && (
+                              <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                {duration}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Detail Drawer Content */}
@@ -512,7 +509,7 @@ export function MainExperience({
                             >
                               <div className="pt-0.5 flex flex-col">
                                 {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
-                                  <ul className="list-disc list-outside pl-5 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                  <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
                                     {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
                                       <li key={i}>{point}</li>
                                     ))}
@@ -554,9 +551,8 @@ export function MainExperience({
 
                   {publishedOrganizations.map((item) => {
                     const isExpanded = !!expandedItems[item.id];
-                    const dateRange = `${formatDate(item.start_date, locale)} - ${
-                      item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
-                    }`;
+                    const dateRange = `${formatDate(item.start_date, locale)} - ${item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
+                      }`;
                     const duration = calculateDuration(item.start_date, item.end_date, locale);
 
                     return (
@@ -564,9 +560,9 @@ export function MainExperience({
                         key={item.id}
                         variants={{
                           hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
-                          visible: { 
-                            opacity: 1, 
-                            filter: "blur(0px)", 
+                          visible: {
+                            opacity: 1,
+                            filter: "blur(0px)",
                             y: 0,
                             transition: { duration: 0.4, ease: "easeOut" }
                           }
@@ -574,7 +570,7 @@ export function MainExperience({
                         className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
                       >
                         {/* Bullet Dot */}
-                        <div className="absolute left-[-5px] top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+                        <div className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
 
                         {/* Top Metadata & Header Info */}
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
@@ -641,16 +637,16 @@ export function MainExperience({
                           </div>
 
                           {/* Date Range & Duration Badge (Desktop only) */}
-                           <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
-                             <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                               {dateRange}
-                             </span>
-                             {duration && (
-                               <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                 {duration}
-                               </span>
-                             )}
-                           </div>
+                          <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                            <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                              {dateRange}
+                            </span>
+                            {duration && (
+                              <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                {duration}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Detail Drawer Content */}
@@ -665,7 +661,7 @@ export function MainExperience({
                             >
                               <div className="pt-0.5 flex flex-col">
                                 {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
-                                  <ul className="list-disc list-outside pl-5 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                  <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
                                     {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
                                       <li key={i}>{point}</li>
                                     ))}
