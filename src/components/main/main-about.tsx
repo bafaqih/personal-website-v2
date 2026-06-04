@@ -412,9 +412,17 @@ export function MainAbout({
           {/* 1. Main Profile Card */}
           <motion.div 
             ref={profileCardRef}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { 
+                opacity: 1, 
+                y: 0,
+                transition: { duration: 0.5, ease: "easeOut" }
+              }
+            }}
             className="p-5 sm:p-6 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 flex flex-col gap-4"
           >
             {/* Top: Avatar & Info */}
@@ -422,9 +430,12 @@ export function MainAbout({
               {/* Avatar */}
               {profile?.photo_url && (
                 <motion.div
+                  variants={{
+                    hidden: { filter: "blur(6px)", opacity: 0 },
+                    visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
+                  }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 1.03 }}
-                  transition={{ duration: 0.3 }}
                   className="cursor-pointer shrink-0"
                 >
                   <div className="profile-photo-shimmer relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 bg-neutral-100 dark:bg-neutral-900">
@@ -446,12 +457,24 @@ export function MainAbout({
 
               {/* Info */}
               <div className="flex flex-col items-start text-left mt-1">
-                <h2 className="text-[26px] leading-tight font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5">
+                <motion.h2
+                  variants={{
+                    hidden: { filter: "blur(6px)", opacity: 0 },
+                    visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
+                  }}
+                  className="text-[26px] leading-tight font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5"
+                >
                   {profile?.full_name || "Fadil Bafagih"}
                   <VerifiedBadge />
-                </h2>
+                </motion.h2>
                 
-                <div className="h-6 mt-1 overflow-hidden">
+                <motion.div
+                  variants={{
+                    hidden: { filter: "blur(6px)", opacity: 0 },
+                    visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
+                  }}
+                  className="h-6 mt-1 overflow-hidden"
+                >
                   <AnimatePresence mode="wait">
                     <motion.p
                       key={currentRoleIndex}
@@ -464,7 +487,7 @@ export function MainAbout({
                       {currentRole}
                     </motion.p>
                   </AnimatePresence>
-                </div>
+                </motion.div>
 
                 {/* Desktop Badges: Location & Status (hidden on mobile, visible on sm and larger) */}
                 <div className="hidden sm:flex items-center gap-2 mt-3 flex-wrap justify-start w-full">
@@ -497,10 +520,26 @@ export function MainAbout({
               </span>
             </div>
 
-            <hr className="border-neutral-200 dark:border-white/10" />
+            <motion.hr 
+              variants={{
+                hidden: { scaleX: 0 },
+                visible: { 
+                  scaleX: 1, 
+                  transition: { duration: 0.6, ease: "easeInOut" } 
+                }
+              }}
+              style={{ originX: 0 }}
+              className="border-neutral-200 dark:border-white/10" 
+            />
 
             {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-3">
+            <motion.div 
+              variants={{
+                hidden: { filter: "blur(6px)", opacity: 0 },
+                visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
+              }}
+              className="grid grid-cols-3 gap-3"
+            >
               <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 text-center">
                 <span className="text-[22px] leading-none font-bold text-neutral-900 dark:text-white">
                   <AnimatedNumber value={statistics.total_projects || 0} />
@@ -519,32 +558,44 @@ export function MainAbout({
                 </span>
                 <span className="text-[11px] text-neutral-500 mt-1.5 font-medium">{tMain(locale, "years_experience")}</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Quotes */}
             {quotesText && (
-              <div className="py-3 px-4 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 text-center flex flex-col items-center justify-center">
+              <motion.div 
+                variants={{
+                  hidden: { filter: "blur(6px)", opacity: 0 },
+                  visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
+                }}
+                className="py-3 px-4 rounded-xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 text-center flex flex-col items-center justify-center"
+              >
                 <div className="flex items-start gap-2 justify-center">
                   <Quote className="h-4.5 w-4.5 text-neutral-400 dark:text-neutral-500 shrink-0 mt-1" strokeWidth={1.5} />
                   <p className="text-[15px] font-medium text-neutral-900 dark:text-white font-sans leading-relaxed text-left">
                     <TypingQuote text={quotesText} />
                   </p>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* Download CV Button */}
             {about?.cv_url && (
-              <a
+              <motion.a
+                variants={{
+                  hidden: { filter: "blur(6px)", opacity: 0 },
+                  visible: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } }
+                }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 href={about.cv_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("cv_download")}
-                className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-black px-4 py-3 text-[15px] font-semibold text-white transition-transform hover:scale-[1.02] dark:bg-white dark:text-neutral-900 cursor-pointer"
+                className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-black px-4 py-3 text-[15px] font-semibold text-white transition-colors duration-200 dark:bg-white dark:text-neutral-900 cursor-pointer"
               >
                 <Download className="h-5 w-5" />
                 {tMain(locale, "download_cv")}
-              </a>
+              </motion.a>
             )}
           </motion.div>
 
@@ -554,6 +605,7 @@ export function MainAbout({
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="flex flex-col gap-3"
           >
             {/* Header: Icon, Title & Year Nav (Outside the box) */}
@@ -626,57 +678,75 @@ export function MainAbout({
         <div className="lg:col-span-7 flex flex-col gap-10">
           
           {/* About Me Section */}
-          <motion.div 
-            ref={aboutMeRef}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col"
-          >
-            <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col">
+            <motion.div 
+              ref={aboutMeRef}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="flex flex-col gap-1.5"
+            >
               <div className="flex items-center gap-2.5">
-                <User className="h-[26px] w-[26px] text-neutral-900 dark:text-white" />
-                <h2 className="text-[28px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
+                <User className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
+                <h2 className="text-[24px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
                   {tMain(locale, "about_me")}
                 </h2>
               </div>
               <p className="text-[15px] font-regular text-neutral-500 dark:text-neutral-400">
                 {tMain(locale, "about_subtitle")}
               </p>
-            </div>
+            </motion.div>
             
-            <hr className="border-neutral-200 dark:border-white/10 my-3" />
+            <motion.hr 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              style={{ originX: 0 }}
+              className="border-neutral-200 dark:border-white/10 my-3" 
+            />
 
             {bioText && (
-              <div 
+              <motion.div 
+                initial={{ filter: "blur(8px)", opacity: 0, y: 20 }}
+                whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
                 className="prose prose-neutral dark:prose-invert max-w-none text-[15px] text-neutral-600 dark:text-neutral-400 leading-[1.8]"
                 dangerouslySetInnerHTML={{ __html: bioText.replace(/\n/g, '<br />') }}
               />
             )}
-          </motion.div>
+          </div>
 
           {/* Skills Section */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col"
-          >
-            <div ref={skillsHeaderRef} className="flex flex-col gap-1.5">
+          <div className="flex flex-col">
+            <motion.div 
+              ref={skillsHeaderRef}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="flex flex-col gap-1.5"
+            >
               <div className="flex items-center gap-2.5">
-                <Code2 className="h-[26px] w-[26px] text-neutral-900 dark:text-white" />
-                <h2 className="text-[28px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
+                <Code2 className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
+                <h2 className="text-[24px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
                   {tMain(locale, "skills")}
                 </h2>
               </div>
               <p className="text-[15px] font-regular text-neutral-500 dark:text-neutral-400">
                 {tMain(locale, "skills_desc")}
               </p>
-            </div>
+            </motion.div>
 
-            <div 
+            <motion.div 
               ref={skillsCardRef} 
               style={skillsCardHeight && hasMoreSkills ? { height: `${skillsCardHeight}px` } : undefined}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
               className="mt-5 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 pt-3 pb-4 px-4 sm:pt-4 sm:pb-5 sm:px-5 transition-[height] duration-300"
             >
               
@@ -710,12 +780,39 @@ export function MainAbout({
               <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-5 mb-4 mt-0" />
 
               {/* Skills Pills */}
-              <div ref={pillsContainerRef} className="flex flex-wrap gap-2">
+              <motion.div 
+                key={selectedCategory}
+                ref={pillsContainerRef} 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.03
+                    }
+                  }
+                }}
+                className="flex flex-wrap gap-2"
+              >
                 {displayedSkillsPreview.map((skill) => (
                   <motion.div 
                     key={skill.id}
                     layout
-                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-all hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                    variants={{
+                      hidden: { opacity: 0, filter: "blur(6px)", y: 6 },
+                      visible: { 
+                        opacity: 1, 
+                        filter: "blur(0px)", 
+                        y: 0,
+                        transition: {
+                          duration: 0.4,
+                          ease: "easeOut"
+                        }
+                      }
+                    }}
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
                   >
                     {skill.icon_url ? (
                       <img 
@@ -732,18 +829,31 @@ export function MainAbout({
                 
                 {/* View All Pill */}
                 {hasMoreSkills && (
-                  <button
+                  <motion.button
+                    key="view-all"
+                    variants={{
+                      hidden: { opacity: 0, filter: "blur(6px)", y: 6 },
+                      visible: { 
+                        opacity: 1, 
+                        filter: "blur(0px)", 
+                        y: 0,
+                        transition: {
+                          duration: 0.4,
+                          ease: "easeOut"
+                        }
+                      }
+                    }}
                     onClick={() => setIsSkillsModalOpen(true)}
                     className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-white/10 bg-transparent text-sm font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <Eye className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
                     <span>+{displaySkills.length - maxPreviewSkills}</span>
                     <span>{tMain(locale, "view_all")}</span>
-                  </button>
+                  </motion.button>
                 )}
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
 
         </div>
       </div>
@@ -794,37 +904,56 @@ export function MainAbout({
             <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-5 mb-0 mt-0" />
 
             {/* Modal Skills List */}
-            <div className="flex flex-wrap items-center gap-2 overflow-y-auto max-h-[50vh] pt-4 pb-4 px-4 sm:pt-5 sm:pb-5 sm:px-5 -mx-4 sm:-mx-5 scrollbar-custom">
-              <AnimatePresence mode="popLayout">
-                {modalSkills.map((skill) => (
-                  <motion.div
-                    key={skill.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.2 }}
-                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-all hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
-                  >
-                    {skill.icon_url ? (
-                      <img 
-                        src={skill.icon_url} 
-                        alt={skill.name} 
-                        className="w-3.5 h-3.5 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110" 
-                      />
-                    ) : (
-                      <Code2 className="w-3.5 h-3.5 text-black dark:text-white transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />
-                    )}
-                    <span>{skill.name}</span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+            <motion.div 
+              key={selectedModalCategory}
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.03
+                  }
+                }
+              }}
+              className="flex flex-wrap items-center gap-2 overflow-y-auto max-h-[50vh] pt-4 pb-4 px-4 sm:pt-5 sm:pb-5 sm:px-5 -mx-4 sm:-mx-5 scrollbar-custom"
+            >
+              {modalSkills.map((skill) => (
+                <motion.div
+                  key={skill.id}
+                  layout
+                  variants={{
+                    hidden: { opacity: 0, filter: "blur(6px)", y: 6 },
+                    visible: { 
+                      opacity: 1, 
+                      filter: "blur(0px)", 
+                      y: 0,
+                      transition: {
+                        duration: 0.4,
+                        ease: "easeOut"
+                      }
+                    }
+                  }}
+                  className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                >
+                  {skill.icon_url ? (
+                    <img 
+                      src={skill.icon_url} 
+                      alt={skill.name} 
+                      className="w-3.5 h-3.5 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110" 
+                    />
+                  ) : (
+                    <Code2 className="w-3.5 h-3.5 text-black dark:text-white transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />
+                  )}
+                  <span>{skill.name}</span>
+                </motion.div>
+              ))}
               {modalSkills.length === 0 && (
                 <p className="text-sm text-neutral-500 italic w-full text-center py-8">
                   No skills found in this category.
                 </p>
               )}
-            </div>
+            </motion.div>
           </div>
         </DialogContent>
       </Dialog>

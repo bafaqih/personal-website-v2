@@ -71,11 +71,10 @@ function DialogContent({
           <DialogPrimitive.Close data-slot="dialog-close" asChild>
             <Button
               variant="ghost"
-              className="absolute top-4 right-4"
+              className="absolute top-4 right-4 rounded-lg border border-neutral-200 dark:border-white/10 bg-white/50 dark:bg-neutral-950/50 backdrop-blur-md hover:bg-neutral-100/80 dark:hover:bg-neutral-800/80 transition-colors cursor-pointer"
               size="icon-sm"
             >
-              <XIcon
-              />
+              <XIcon />
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>
