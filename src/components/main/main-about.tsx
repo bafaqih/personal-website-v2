@@ -128,6 +128,7 @@ export function MainAbout({
   const [maxPreviewSkills, setMaxPreviewSkills] = useState(16);
   const [skillsCardHeight, setSkillsCardHeight] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedModalCategory, setSelectedModalCategory] = useState<string>("all");
   const [activityYear, setActivityYear] = useState<number>(() => new Date().getFullYear() || 2026);
   const [hoveredActivity, setHoveredActivity] = useState<{ date: string; count: number } | null>(null);
 
@@ -154,6 +155,11 @@ export function MainAbout({
 
   const handleCategoryClick = (e: MouseEvent<HTMLButtonElement>, categoryId: string) => {
     setSelectedCategory(categoryId);
+    e.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  };
+
+  const handleModalCategoryClick = (e: MouseEvent<HTMLButtonElement>, categoryId: string) => {
+    setSelectedModalCategory(categoryId);
     e.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   };
 
@@ -226,6 +232,7 @@ export function MainAbout({
   useEffect(() => {
     if (isSkillsModalOpen) {
       isModalOpenRef.current = true;
+      setSelectedModalCategory(selectedCategory);
     } else {
       const timer = setTimeout(() => {
         isModalOpenRef.current = false;
@@ -233,7 +240,7 @@ export function MainAbout({
       }, 400);
       return () => clearTimeout(timer);
     }
-  }, [isSkillsModalOpen]);
+  }, [isSkillsModalOpen, selectedCategory]);
 
   // Reset overflow limit and recalculate when category changes
   useEffect(() => {
@@ -249,11 +256,9 @@ export function MainAbout({
       // If modal is open, ignore to prevent scrollbar layout shift interference
       if (isModalOpenRef.current) return;
 
-      // If we are on mobile/tablet (less than lg layout, which is 1024px)
-      if (window.innerWidth < 1024) {
-        setMaxPreviewSkills(16);
+      const isMobile = window.innerWidth < 1024;
+      if (isMobile) {
         setSkillsCardHeight(null);
-        return;
       }
 
       if (
@@ -261,27 +266,34 @@ export function MainAbout({
         skillsCardRef.current &&
         pillsContainerRef.current
       ) {
-        const githubRect = githubCardRef.current.getBoundingClientRect();
-        const skillsCardRect = skillsCardRef.current.getBoundingClientRect();
-        const pillsContainerRect = pillsContainerRef.current.getBoundingClientRect();
+        let maxRows = 3;
+        let targetCardHeight = null;
 
-        // Calculate target card height to align bottom with GitHub card
-        const targetCardHeight = githubRect.bottom - skillsCardRect.top;
+        if (!isMobile) {
+          const githubRect = githubCardRef.current.getBoundingClientRect();
+          const skillsCardRect = skillsCardRef.current.getBoundingClientRect();
+          const pillsContainerRect = pillsContainerRef.current.getBoundingClientRect();
 
-        // Available height for pills (paddingBottom = 20px)
-        const paddingBottom = 20;
-        const targetCardBottom = skillsCardRect.top + targetCardHeight;
-        const pillsSpace = targetCardBottom - pillsContainerRect.top - paddingBottom;
+          // Calculate target card height to align bottom with GitHub card
+          targetCardHeight = githubRect.bottom - skillsCardRect.top;
 
-        const rowHeight = 42;
-        // Since we explicitly control the card height to be aligned,
-        // we can use a generous tolerance (+26px) so that pills fill the card
-        // nicely without leaving a large empty gap at the bottom.
-        const maxRows = Math.max(1, Math.floor((pillsSpace + 26) / rowHeight));
+          // Available height for pills (paddingBottom = 20px)
+          const paddingBottom = 20;
+          const targetCardBottom = skillsCardRect.top + targetCardHeight;
+          const pillsSpace = targetCardBottom - pillsContainerRect.top - paddingBottom;
+
+          const rowHeight = 42;
+          // Since we explicitly control the card height to be aligned,
+          // we can use a generous tolerance (+26px) so that pills fill the card
+          // nicely without leaving a large empty gap at the bottom.
+          maxRows = Math.max(1, Math.floor((pillsSpace + 26) / rowHeight));
+        }
 
         const children = Array.from(pillsContainerRef.current.children) as HTMLElement[];
         if (children.length === 0) {
-          setSkillsCardHeight(targetCardHeight);
+          if (!isMobile && targetCardHeight !== null) {
+            setSkillsCardHeight(targetCardHeight);
+          }
           return;
         }
 
@@ -303,10 +315,17 @@ export function MainAbout({
         if (currentRows > maxRows) {
           // Exceeded! Slice back to only the pills that fit in maxRows.
           let count = 0;
+          let viewAllIsInPreview = false;
           for (let i = 0; i < Math.min(maxRows, rows.length); i++) {
+            rows[i].forEach((child) => {
+              if (child.tagName === "BUTTON") {
+                viewAllIsInPreview = true;
+              }
+            });
             count += rows[i].length;
           }
-          newLimit = Math.max(4, count);
+          const hasMore = displaySkillsRef.current.length > prev;
+          newLimit = Math.max(4, hasMore && !viewAllIsInPreview ? count - 1 : count);
           // Record this newLimit + 1 as an overflow limit to prevent incrementing back to it
           overflowLimitRef.current = newLimit + 1;
         } else if (currentRows < maxRows) {
@@ -338,7 +357,9 @@ export function MainAbout({
           }
         }
 
-        setSkillsCardHeight(targetCardHeight);
+        if (!isMobile && targetCardHeight !== null) {
+          setSkillsCardHeight(targetCardHeight);
+        }
         if (newLimit !== prev) {
           setMaxPreviewSkills(newLimit);
         }
@@ -375,7 +396,9 @@ export function MainAbout({
   const displayedSkillsPreview = displaySkills.slice(0, maxPreviewSkills);
   const hasMoreSkills = displaySkills.length > maxPreviewSkills;
   // Filter for Modal
-  const modalSkills = displaySkills;
+  const modalSkills = selectedModalCategory === "all"
+    ? activeSkills
+    : activeSkills.filter((s) => s.category_id === selectedModalCategory);
 
   return (
     <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 py-12 md:py-24">
@@ -395,7 +418,7 @@ export function MainAbout({
             className="p-5 sm:p-6 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 flex flex-col gap-4"
           >
             {/* Top: Avatar & Info */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            <div className="flex flex-row items-center gap-4">
               {/* Avatar */}
               {profile?.photo_url && (
                 <motion.div
@@ -422,7 +445,7 @@ export function MainAbout({
               )}
 
               {/* Info */}
-              <div className="flex flex-col items-center sm:items-start text-center sm:text-left mt-1">
+              <div className="flex flex-col items-start text-left mt-1">
                 <h2 className="text-[26px] leading-tight font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5">
                   {profile?.full_name || "Fadil Bafagih"}
                   <VerifiedBadge />
@@ -443,7 +466,8 @@ export function MainAbout({
                   </AnimatePresence>
                 </div>
 
-                <div className="flex items-center gap-2 mt-3.5 flex-wrap justify-center sm:justify-start w-full">
+                {/* Desktop Badges: Location & Status (hidden on mobile, visible on sm and larger) */}
+                <div className="hidden sm:flex items-center gap-2 mt-3 flex-wrap justify-start w-full">
                   {contact?.location && (
                     <span className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10">
                       <MapPin className="h-3.5 w-3.5" />
@@ -455,7 +479,22 @@ export function MainAbout({
                     Open to Remote
                   </span>
                 </div>
+
               </div>
+            </div>
+
+            {/* Mobile Badges: Location & Status (visible on mobile, hidden on sm and larger) */}
+            <div className={`grid ${contact?.location ? 'grid-cols-2' : 'grid-cols-1'} gap-2 w-full sm:hidden`}>
+              {contact?.location && (
+                <span className="inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10 w-full">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {contact.location}
+                </span>
+              )}
+              <span className="inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-600 border border-neutral-200 dark:text-neutral-400 dark:border-white/10 w-full">
+                <Globe className="h-3.5 w-3.5" />
+                Open to Remote
+              </span>
             </div>
 
             <hr className="border-neutral-200 dark:border-white/10" />
@@ -637,12 +676,12 @@ export function MainAbout({
 
             <div 
               ref={skillsCardRef} 
-              style={skillsCardHeight ? { height: `${skillsCardHeight}px` } : undefined}
-              className="mt-5 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 pt-3 pb-4 px-4 sm:pt-4 sm:pb-5 sm:px-5"
+              style={skillsCardHeight && hasMoreSkills ? { height: `${skillsCardHeight}px` } : undefined}
+              className="mt-5 rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 pt-3 pb-4 px-4 sm:pt-4 sm:pb-5 sm:px-5 transition-[height] duration-300"
             >
               
               {/* Category Nav */}
-              <div className="flex flex-row flex-nowrap items-center gap-2 mb-2.5 overflow-x-auto pb-1.5 scrollbar-custom">
+              <div className="flex flex-row flex-nowrap items-center gap-2 mb-0 overflow-x-auto pb-3 sm:pb-4 scrollbar-custom -mx-4 sm:-mx-5 px-4 sm:px-5">
                 <button
                   onClick={(e) => handleCategoryClick(e, "all")}
                   className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
@@ -668,7 +707,7 @@ export function MainAbout({
                 ))}
               </div>
 
-              <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-5 mb-4" />
+              <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-5 mb-4 mt-0" />
 
               {/* Skills Pills */}
               <div ref={pillsContainerRef} className="flex flex-wrap gap-2">
@@ -711,10 +750,10 @@ export function MainAbout({
 
       {/* Skills Modal using shadcn Dialog */}
       <Dialog open={isSkillsModalOpen} onOpenChange={setIsSkillsModalOpen}>
-        <DialogContent className="max-w-2xl bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border-neutral-200/60 dark:border-white/10">
-          <DialogHeader className="mb-4">
+        <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-lg md:max-w-3xl lg:max-w-4xl bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border border-neutral-200 dark:border-white/10 ring-0 shadow-2xl">
+          <DialogHeader className="mb-0">
             <div className="flex items-center gap-3 mb-1">
-              <LayoutGrid className="h-6 w-6 text-neutral-900 dark:text-white" />
+              <Code2 className="h-6 w-6 text-neutral-900 dark:text-white" />
               <DialogTitle className="text-2xl font-bold tracking-tight">
                 {tMain(locale, "skills")}
               </DialogTitle>
@@ -724,15 +763,15 @@ export function MainAbout({
             </p>
           </DialogHeader>
           
-          <div className="flex flex-col gap-6">
+          <div className="w-full min-w-0 rounded-2xl border border-neutral-200 bg-neutral-50/50 dark:border-white/10 dark:bg-neutral-950/20 pt-3 pb-0 px-4 sm:pt-4 sm:pb-0 sm:px-5 overflow-hidden">
             {/* Category Filters */}
-            <div className="flex flex-row flex-nowrap items-center gap-2 overflow-x-auto pb-2 scrollbar-custom border-b border-neutral-200/60 dark:border-white/10">
+            <div className="min-w-0 flex flex-row flex-nowrap items-center gap-2 mb-0 overflow-x-auto pb-3 sm:pb-4 scrollbar-custom -mx-4 sm:-mx-5 px-4 sm:px-5">
               <button
-                onClick={(e) => handleCategoryClick(e, "all")}
-                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
-                  selectedCategory === "all"
+                onClick={(e) => handleModalCategoryClick(e, "all")}
+                className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
+                  selectedModalCategory === "all"
                     ? "bg-black text-white dark:bg-white dark:text-black"
-                    : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-white/10"
+                    : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
                 }`}
               >
                 {tMain(locale, "all_skills")}
@@ -740,11 +779,11 @@ export function MainAbout({
               {activeCategories.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={(e) => handleCategoryClick(e, cat.id)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
-                    selectedCategory === cat.id
+                  onClick={(e) => handleModalCategoryClick(e, cat.id)}
+                  className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
+                    selectedModalCategory === cat.id
                       ? "bg-black text-white dark:bg-white dark:text-black"
-                      : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-white/10"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
                   }`}
                 >
                   {locale === "id" ? cat.name_id : cat.name_en}
@@ -752,8 +791,10 @@ export function MainAbout({
               ))}
             </div>
 
+            <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-5 mb-0 mt-0" />
+
             {/* Modal Skills List */}
-            <div className="flex flex-wrap items-center gap-2 overflow-y-auto max-h-[60vh] pb-4">
+            <div className="flex flex-wrap items-center gap-2 overflow-y-auto max-h-[50vh] pt-4 pb-4 px-4 sm:pt-5 sm:pb-5 sm:px-5 -mx-4 sm:-mx-5 scrollbar-custom">
               <AnimatePresence mode="popLayout">
                 {modalSkills.map((skill) => (
                   <motion.div
