@@ -9,7 +9,7 @@ export const CareerService = {
     const supabase = createClient();
     const { data, error } = await supabase
       .from("careers")
-      .select("*")
+      .select("*, career_skills(skill_id, skill:skills(*))")
       .order("start_date", { ascending: false });
     if (error) throw error;
     return data as Career[];

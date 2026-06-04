@@ -1,9 +1,13 @@
 import { LinksService } from "@/src/services/links.service";
 import { SkillService } from "@/src/services/skill.service";
 import { StatisticsService } from "@/src/services/statistics.service";
+import { CareerService } from "@/src/services/career.service";
+import { EducationService } from "@/src/services/education.service";
+import { OrganizationService } from "@/src/services/organization.service";
 import { MainHeader } from "@/src/components/main/main-header";
 import { MainHero } from "@/src/components/main/main-hero";
 import { MainAbout } from "@/src/components/main/main-about";
+import { MainExperience } from "@/src/components/main/main-experience";
 import { MainFooter } from "@/src/components/main/main-footer";
 import type { MainLocale } from "@/src/lib/main-translations";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -21,12 +25,18 @@ export default async function Home({
     { profile, roles, about, contact },
     statistics,
     skills,
-    skillCategories
+    skillCategories,
+    careers,
+    educations,
+    organizations
   ] = await Promise.all([
     LinksService.getAll(),
     StatisticsService.getAll(),
     SkillService.getAll(),
     SkillService.getCategories(),
+    CareerService.getAll(),
+    EducationService.getAll(),
+    OrganizationService.getAll(),
   ]);
 
   return (
@@ -52,7 +62,13 @@ export default async function Home({
           skillCategories={skillCategories}
           locale={locale}
         />
-        {/* Other sections like experience, project, achievement, blogs will go here in the future */}
+
+        <MainExperience
+          careers={careers}
+          educations={educations}
+          organizations={organizations}
+          locale={locale}
+        />
       </main>
 
       <MainFooter 

@@ -1,0 +1,699 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Briefcase, 
+  GraduationCap, 
+  Users, 
+  ChevronRight, 
+  Calendar, 
+  MapPin
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { tMain, type MainLocale } from "@/src/lib/main-translations";
+import type { Career, Education, Organization } from "@/src/types/database";
+
+interface MainExperienceProps {
+  careers: Career[];
+  educations: Education[];
+  organizations: Organization[];
+  locale: MainLocale;
+}
+
+type TabType = "career" | "education" | "organizations";
+
+// Timezone-safe date formatting helper (YYYY-MM-DD to "MMM YYYY")
+function formatDate(dateStr: string, locale: MainLocale): string {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-");
+  if (parts.length < 2) return dateStr;
+  
+  const year = parts[0];
+  const monthVal = parseInt(parts[1], 10);
+  
+  const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNamesId = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+  
+  const monthNames = locale === "id" ? monthNamesId : monthNamesEn;
+  const monthName = monthNames[monthVal - 1] || "";
+  
+  return `${monthName} ${year}`;
+}
+
+// Localized duration calculation helper
+function calculateDuration(startDateStr: string, endDateStr: string | null, locale: MainLocale): string {
+  if (!startDateStr) return "";
+  const startParts = startDateStr.split("-");
+  if (startParts.length < 2) return "";
+  const startYear = parseInt(startParts[0], 10);
+  const startMonth = parseInt(startParts[1], 10);
+  
+  let endYear: number;
+  let endMonth: number;
+  
+  if (endDateStr) {
+    const endParts = endDateStr.split("-");
+    if (endParts.length < 2) return "";
+    endYear = parseInt(endParts[0], 10);
+    endMonth = parseInt(endParts[1], 10);
+  } else {
+    const today = new Date();
+    endYear = today.getFullYear();
+    endMonth = today.getMonth() + 1; // 1-indexed
+  }
+  
+  const totalMonths = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
+  if (totalMonths <= 0) return "";
+  
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  
+  const yrText = locale === "id" ? tMain(locale, "year") : (years === 1 ? tMain(locale, "year") : tMain(locale, "years"));
+  const moText = locale === "id" ? tMain(locale, "month") : (months === 1 ? tMain(locale, "month") : tMain(locale, "months"));
+  
+  if (years > 0) {
+    if (months > 0) {
+      return `${years} ${yrText} ${months} ${moText}`;
+    }
+    return `${years} ${yrText}`;
+  }
+  return `${totalMonths} ${moText}`;
+}
+
+export function MainExperience({
+  careers,
+  educations,
+  organizations,
+  locale
+}: MainExperienceProps) {
+  const [activeTab, setActiveTab] = useState<TabType>("career");
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+
+  const toggleItem = (id: string) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // Filter published items
+  const publishedCareers = careers.filter((c) => c.is_published);
+  const publishedEducations = educations.filter((e) => e.is_published);
+  const publishedOrganizations = organizations.filter((o) => o.is_published);
+
+  // Tab definitions
+  const tabs = [
+    { id: "career", label: tMain(locale, "tab_career"), icon: Briefcase, count: publishedCareers.length },
+    { id: "education", label: tMain(locale, "tab_education"), icon: GraduationCap, count: publishedEducations.length },
+    { id: "organizations", label: tMain(locale, "tab_organizations"), icon: Users, count: publishedOrganizations.length },
+  ] as const;
+
+  return (
+    <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-12 md:pt-6 md:pb-24 bg-transparent">
+      <div className="w-full flex flex-col gap-6">
+        
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="flex flex-col gap-1.5"
+        >
+          <div className="flex items-center gap-2.5">
+            <Briefcase className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
+            <h2 className="text-[24px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
+              {tMain(locale, "experiences_title")}
+            </h2>
+          </div>
+          <p className="text-[15px] font-regular text-neutral-500 dark:text-neutral-400">
+            {tMain(locale, "experiences_desc")}
+          </p>
+        </motion.div>
+
+        {/* Section Main Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 pt-3 pb-6 px-4 sm:pt-4 sm:pb-6 sm:px-6"
+        >
+          
+          {/* Tab Navigation */}
+          <div className="flex flex-row flex-nowrap items-center gap-2 mb-0 overflow-x-auto pb-3 sm:pb-4 scrollbar-custom -mx-4 sm:-mx-6 px-4 sm:px-6">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={(e) => {
+                    setActiveTab(tab.id as TabType);
+                    setExpandedItems({});
+                    e.currentTarget.scrollIntoView({
+                      behavior: "smooth",
+                      block: "nearest",
+                      inline: "center"
+                    });
+                  }}
+                  className={`flex items-center gap-2 text-sm font-semibold transition-colors whitespace-nowrap px-4 py-2 rounded-lg ${
+                    activeTab === tab.id
+                      ? "bg-black text-white dark:bg-white dark:text-black"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
+                  }`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <hr className="border-neutral-200 dark:border-white/10 -mx-4 sm:-mx-6 mb-6 mt-0" />
+
+          {/* Experience List Container */}
+          <div className="relative">
+            
+            {/* Active Tab Content with Staggered Entry Animation */}
+            <AnimatePresence mode="wait">
+              
+              {/* Tab: Careers */}
+              {activeTab === "career" && (
+                <motion.div
+                  key="career-tab"
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.08 } }
+                  }}
+                  className="relative flex flex-col"
+                >
+                  {/* Timeline Vertical Line (Melorot ke Bawah) */}
+                  {publishedCareers.length > 0 && (
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10" />
+                  )}
+
+                  {publishedCareers.map((item) => {
+                    const isExpanded = !!expandedItems[item.id];
+                    const dateRange = `${formatDate(item.start_date, locale)} - ${
+                      item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
+                    }`;
+                    const duration = calculateDuration(item.start_date, item.end_date, locale);
+
+                    return (
+                      <motion.div
+                        key={item.id}
+                        variants={{
+                          hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
+                          visible: { 
+                            opacity: 1, 
+                            filter: "blur(0px)", 
+                            y: 0,
+                            transition: { duration: 0.4, ease: "easeOut" }
+                          }
+                        }}
+                        className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
+                      >
+                        {/* Bullet Dot */}
+                        <div className="absolute left-[-5px] top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+
+                        {/* Top Metadata & Header Info */}
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="flex items-start gap-4">
+                            {/* Logo */}
+                            <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
+                              {item.logo_url ? (
+                                <img
+                                  src={item.logo_url}
+                                  alt={item.company}
+                                  className="h-full w-full object-contain"
+                                />
+                              ) : (
+                                <Briefcase className="h-5 w-5 text-neutral-400" />
+                              )}
+                            </div>
+
+                            {/* Job & Company Info */}
+                            <div className="flex flex-col text-left">
+                              <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                                {locale === "id" ? item.role_id : item.role_en}
+                              </h3>
+                              <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
+                                {item.company}
+                                {item.location && (
+                                  <>
+                                    <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
+                                    {item.location}
+                                  </>
+                                )}
+                              </p>
+
+                              {/* Work Type & Model Badges */}
+                              <div className="flex items-center gap-1.5 mt-2">
+                                {(locale === "id" ? item.type_id : item.type_en) && (
+                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                    {locale === "id" ? item.type_id : item.type_en}
+                                  </span>
+                                )}
+                                {(locale === "id" ? item.model_id : item.model_en) && (
+                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                    {locale === "id" ? item.model_id : item.model_en}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Date Range & Duration Badge (Mobile only) */}
+                              <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
+                                <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                  {dateRange}
+                                </span>
+                                {duration && (
+                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                    {duration}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Interactive Toggle Button */}
+                              <div className="mt-2.5">
+                                <button
+                                  onClick={() => toggleItem(item.id)}
+                                  className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                >
+                                  <motion.span
+                                    animate={{ rotate: isExpanded ? 90 : 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="inline-flex items-center justify-center"
+                                  >
+                                    <ChevronRight className="h-4 w-4" />
+                                  </motion.span>
+                                  <span>
+                                    {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Date Range & Duration Badge (Desktop only) */}
+                           <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                             <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                               {dateRange}
+                             </span>
+                             {duration && (
+                               <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                 {duration}
+                               </span>
+                             )}
+                           </div>
+                        </div>
+
+                        {/* Detail Drawer Content (Slide-down & Staggered Skills) */}
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25, ease: "easeInOut" }}
+                              className="overflow-hidden pl-[72px] sm:pl-[88px]"
+                            >
+                              <div className="pt-0.5 flex flex-col">
+                                {/* Bullet Points list */}
+                                {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
+                                  <ul className="list-disc list-outside pl-5 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                    {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
+                                      <li key={i}>{point}</li>
+                                    ))}
+                                  </ul>
+                                )}
+
+                                {/* Skills Pills */}
+                                {item.career_skills && item.career_skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-2 pt-3 pl-1">
+                                    {item.career_skills.map((cs) => {
+                                      if (!cs.skill) return null;
+                                      return (
+                                        <div
+                                          key={cs.skill.id}
+                                          className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                                        >
+                                          {cs.skill.icon_url ? (
+                                            <img
+                                              src={cs.skill.icon_url}
+                                              alt={cs.skill.name}
+                                              className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
+                                            />
+                                          ) : (
+                                            <Calendar className="w-3 h-3 text-neutral-400" />
+                                          )}
+                                          <span>{cs.skill.name}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+
+                  {publishedCareers.length === 0 && (
+                    <p className="text-sm text-neutral-500 italic text-center py-12">
+                      No career history published yet.
+                    </p>
+                  )}
+                </motion.div>
+              )}
+
+              {/* Tab: Education */}
+              {activeTab === "education" && (
+                <motion.div
+                  key="education-tab"
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.08 } }
+                  }}
+                  className="relative flex flex-col"
+                >
+                  {/* Timeline Vertical Line (Melorot ke Bawah) */}
+                  {publishedEducations.length > 0 && (
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10" />
+                  )}
+
+                  {publishedEducations.map((item) => {
+                    const isExpanded = !!expandedItems[item.id];
+                    const dateRange = `${formatDate(item.start_date, locale)} - ${
+                      item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
+                    }`;
+                    const duration = calculateDuration(item.start_date, item.end_date, locale);
+
+                    return (
+                      <motion.div
+                        key={item.id}
+                        variants={{
+                          hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
+                          visible: { 
+                            opacity: 1, 
+                            filter: "blur(0px)", 
+                            y: 0,
+                            transition: { duration: 0.4, ease: "easeOut" }
+                          }
+                        }}
+                        className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
+                      >
+                        {/* Bullet Dot */}
+                        <div className="absolute left-[-5px] top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+
+                        {/* Top Metadata & Header Info */}
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="flex items-start gap-4">
+                            {/* Logo */}
+                            <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
+                              {item.logo_url ? (
+                                <img
+                                  src={item.logo_url}
+                                  alt={item.school}
+                                  className="h-full w-full object-contain"
+                                />
+                              ) : (
+                                <GraduationCap className="h-5 w-5 text-neutral-400" />
+                              )}
+                            </div>
+
+                            {/* Degree & School Info */}
+                            <div className="flex flex-col text-left">
+                              <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                                {locale === "id" ? item.level_major_id : item.level_major_en}
+                              </h3>
+                              <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
+                                {item.school}
+                                {item.location && (
+                                  <>
+                                    <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
+                                    {item.location}
+                                  </>
+                                )}
+                              </p>
+
+                              {/* GPA Badge */}
+                              {item.gpa !== null && (
+                                <div className="flex items-center gap-1.5 mt-2">
+                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                    {tMain(locale, "gpa")}: {item.gpa.toFixed(2)}/{item.max_gpa ? item.max_gpa.toFixed(2) : "4.00"}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Date Range & Duration Badge (Mobile only) */}
+                              <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
+                                <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                  {dateRange}
+                                </span>
+                                {duration && (
+                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                    {duration}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Interactive Toggle Button */}
+                              <div className="mt-2.5">
+                                <button
+                                  onClick={() => toggleItem(item.id)}
+                                  className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                >
+                                  <motion.span
+                                    animate={{ rotate: isExpanded ? 90 : 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="inline-flex items-center justify-center"
+                                  >
+                                    <ChevronRight className="h-4 w-4" />
+                                  </motion.span>
+                                  <span>
+                                    {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Date Range & Duration Badge (Desktop only) */}
+                           <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                             <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                               {dateRange}
+                             </span>
+                             {duration && (
+                               <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                 {duration}
+                               </span>
+                             )}
+                           </div>
+                        </div>
+
+                        {/* Detail Drawer Content */}
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25, ease: "easeInOut" }}
+                              className="overflow-hidden pl-[72px] sm:pl-[88px]"
+                            >
+                              <div className="pt-0.5 flex flex-col">
+                                {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
+                                  <ul className="list-disc list-outside pl-5 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                    {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
+                                      <li key={i}>{point}</li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+
+                  {publishedEducations.length === 0 && (
+                    <p className="text-sm text-neutral-500 italic text-center py-12">
+                      No educational history published yet.
+                    </p>
+                  )}
+                </motion.div>
+              )}
+
+              {/* Tab: Organizations */}
+              {activeTab === "organizations" && (
+                <motion.div
+                  key="organizations-tab"
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.08 } }
+                  }}
+                  className="relative flex flex-col"
+                >
+                  {/* Timeline Vertical Line (Melorot ke Bawah) */}
+                  {publishedOrganizations.length > 0 && (
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10" />
+                  )}
+
+                  {publishedOrganizations.map((item) => {
+                    const isExpanded = !!expandedItems[item.id];
+                    const dateRange = `${formatDate(item.start_date, locale)} - ${
+                      item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
+                    }`;
+                    const duration = calculateDuration(item.start_date, item.end_date, locale);
+
+                    return (
+                      <motion.div
+                        key={item.id}
+                        variants={{
+                          hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
+                          visible: { 
+                            opacity: 1, 
+                            filter: "blur(0px)", 
+                            y: 0,
+                            transition: { duration: 0.4, ease: "easeOut" }
+                          }
+                        }}
+                        className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
+                      >
+                        {/* Bullet Dot */}
+                        <div className="absolute left-[-5px] top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+
+                        {/* Top Metadata & Header Info */}
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="flex items-start gap-4">
+                            {/* Logo */}
+                            <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
+                              {item.logo_url ? (
+                                <img
+                                  src={item.logo_url}
+                                  alt={item.organization}
+                                  className="h-full w-full object-contain"
+                                />
+                              ) : (
+                                <Users className="h-5 w-5 text-neutral-400" />
+                              )}
+                            </div>
+
+                            {/* Role & Org Info */}
+                            <div className="flex flex-col text-left">
+                              <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                                {locale === "id" ? item.role_id : item.role_en}
+                              </h3>
+                              <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
+                                {item.organization}
+                                {item.location && (
+                                  <>
+                                    <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
+                                    {item.location}
+                                  </>
+                                )}
+                              </p>
+
+                              {/* Date Range & Duration Badge (Mobile only) */}
+                              <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
+                                <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                  {dateRange}
+                                </span>
+                                {duration && (
+                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                    {duration}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Interactive Toggle Button */}
+                              <div className="mt-2.5">
+                                <button
+                                  onClick={() => toggleItem(item.id)}
+                                  className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                >
+                                  <motion.span
+                                    animate={{ rotate: isExpanded ? 90 : 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="inline-flex items-center justify-center"
+                                  >
+                                    <ChevronRight className="h-4 w-4" />
+                                  </motion.span>
+                                  <span>
+                                    {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Date Range & Duration Badge (Desktop only) */}
+                           <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                             <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                               {dateRange}
+                             </span>
+                             {duration && (
+                               <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                 {duration}
+                               </span>
+                             )}
+                           </div>
+                        </div>
+
+                        {/* Detail Drawer Content */}
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25, ease: "easeInOut" }}
+                              className="overflow-hidden pl-[72px] sm:pl-[88px]"
+                            >
+                              <div className="pt-0.5 flex flex-col">
+                                {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
+                                  <ul className="list-disc list-outside pl-5 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                    {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
+                                      <li key={i}>{point}</li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+
+                  {publishedOrganizations.length === 0 && (
+                    <p className="text-sm text-neutral-500 italic text-center py-12">
+                      No organizational history published yet.
+                    </p>
+                  )}
+                </motion.div>
+              )}
+
+            </AnimatePresence>
+
+          </div>
+
+        </motion.div>
+
+      </div>
+    </section>
+  );
+}

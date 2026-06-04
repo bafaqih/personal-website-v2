@@ -49,6 +49,21 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     my_activity: "My Activity",
     all_skills: "All",
     view_all: "View All",
+
+    // Experiences
+    experiences_title: "Experiences",
+    experiences_desc: "My professional journey, work, education, and organizational history",
+    tab_career: "Work Experience",
+    tab_education: "Educational",
+    tab_organizations: "Organizational",
+    show_details: "Show details",
+    hide_details: "Hide details",
+    present: "Present",
+    gpa: "GPA",
+    year: "Year",
+    years: "Years",
+    month: "Month",
+    months: "Months",
   },
   id: {
     // Header
@@ -98,6 +113,21 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     my_activity: "Aktivitas Saya",
     all_skills: "Semua",
     view_all: "Lihat Semua",
+
+    // Experiences
+    experiences_title: "Pengalaman",
+    experiences_desc: "Perjalanan profesional, pekerjaan, pendidikan, dan riwayat organisasi saya",
+    tab_career: "Pengalaman Kerja",
+    tab_education: "Pendidikan",
+    tab_organizations: "Organisasi",
+    show_details: "Tampilkan detail",
+    hide_details: "Sembunyikan detail",
+    present: "Sekarang",
+    gpa: "IPK",
+    year: "Tahun",
+    years: "Tahun",
+    month: "Bulan",
+    months: "Bulan",
   },
 };
 
