@@ -132,7 +132,6 @@ export function MainAbout({
   const [hoveredActivity, setHoveredActivity] = useState<{ date: string; count: number } | null>(null);
 
   const isModalOpenRef = useRef(false);
-  isModalOpenRef.current = isSkillsModalOpen;
 
   const maxPreviewSkillsRef = useRef(maxPreviewSkills);
   maxPreviewSkillsRef.current = maxPreviewSkills;
@@ -222,6 +221,19 @@ export function MainAbout({
   displaySkillsRef.current = displaySkills;
 
   const calculateLimitGlobalRef = useRef<() => void>(undefined);
+
+  // Track modal open state and handle closing transition delay to prevent layout thrashing
+  useEffect(() => {
+    if (isSkillsModalOpen) {
+      isModalOpenRef.current = true;
+    } else {
+      const timer = setTimeout(() => {
+        isModalOpenRef.current = false;
+        calculateLimitGlobalRef.current?.();
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [isSkillsModalOpen]);
 
   // Reset overflow limit and recalculate when category changes
   useEffect(() => {
