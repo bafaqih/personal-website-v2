@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -9,6 +8,7 @@ import { Moon, Sun, Home, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/src/app/lib/utils";
 import { tError, type ErrorLocale } from "@/src/lib/error-translations";
+import { trackEvent } from "@/src/lib/track-event";
 import {
   Tooltip,
   TooltipContent,
@@ -124,7 +124,10 @@ export default function NotFoundErrorContent() {
                     e.currentTarget.blur();
                   }}
                 >
-                  <Link href={switchLangPath}>
+                  <Link 
+                    href={switchLangPath}
+                    onClick={() => trackEvent("language_switch", otherLocale)}
+                  >
                     <svg
                       className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
                       xmlns="http://www.w3.org/2000/svg"

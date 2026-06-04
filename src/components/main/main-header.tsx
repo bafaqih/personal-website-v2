@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { AnimatedHamburger } from "@/components/ui/animated-hamburger";
+import { trackEvent } from "@/src/lib/track-event";
 
 import logoBlack from "@/src/assets/images/fadilbaf-black.svg";
 import logoWhite from "@/src/assets/images/fadilbaf-white.svg";
@@ -83,7 +83,11 @@ export function MainHeader({ locale, hireMeEmail }: MainHeaderProps) {
                   e.currentTarget.blur();
                 }}
               >
-                <Link href={switchLangPath} prefetch={false}>
+                <Link 
+                  href={switchLangPath} 
+                  prefetch={false}
+                  onClick={() => trackEvent("language_switch", otherLocale)}
+                >
                   <svg
                     className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
                     xmlns="http://www.w3.org/2000/svg"

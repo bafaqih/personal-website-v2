@@ -94,12 +94,16 @@ export const AnalyticsService = {
     const supabase = createClient();
     const { data } = await supabase
       .from("analytics_events")
-      .select("event_key")
-      .eq("event_type", "language_switch");
+      .select("page_path")
+      .eq("event_type", "page_view");
 
     const map: Record<string, number> = { id: 0, en: 0 };
     data?.forEach((d) => {
-      if (d.event_key && d.event_key in map) map[d.event_key]++;
+      if (d.page_path) {
+        const parts = d.page_path.split("/").filter(Boolean);
+        const locale = parts[0]?.toLowerCase();
+        if (locale && locale in map) map[locale]++;
+      }
     });
     return [
       { name: "Indonesia", value: map.id },

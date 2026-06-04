@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/src/app/lib/utils";
 import { tLinks, type LinksLocale } from "@/src/lib/links-translations";
 import type { Contact } from "@/src/types/database";
+import { trackEvent } from "@/src/lib/track-event";
 import {
   Tooltip,
   TooltipContent,
@@ -171,7 +171,11 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
                   e.currentTarget.blur();
                 }}
               >
-                <Link href={`/${otherLocale}/links`} prefetch={false}>
+                <Link 
+                  href={`/${otherLocale}/links`} 
+                  prefetch={false}
+                  onClick={() => trackEvent("language_switch", otherLocale)}
+                >
                   <svg
                     className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
                     xmlns="http://www.w3.org/2000/svg"
