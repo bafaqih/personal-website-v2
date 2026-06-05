@@ -438,7 +438,7 @@ export function MainAbout({
                   whileTap={{ scale: 1.03 }}
                   className="cursor-pointer shrink-0"
                 >
-                  <div className="profile-photo-shimmer relative h-28 w-28 rounded-2xl overflow-hidden border-2 border-neutral-200 dark:border-white/15 bg-neutral-100 dark:bg-neutral-900">
+                  <div className="profile-photo-shimmer relative h-28 w-28 rounded-2xl overflow-hidden border border-neutral-200 dark:border-white/10 bg-neutral-100 dark:bg-neutral-900">
                     {isImageLoading && (
                       <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 animate-pulse z-10" />
                     )}
