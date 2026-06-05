@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   Briefcase,
   GraduationCap,
@@ -124,6 +124,48 @@ function calculateDuration(startDateStr: string, endDateStr: string | null, loca
   return `${totalMonths} ${moText}`;
 }
 
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {}
+};
+
+const itemVariants: Variants = {
+  hidden: {},
+  visible: {}
+};
+
+const lineVariants: Variants = {
+  hidden: { scaleY: 0 },
+  visible: (index: number) => ({
+    scaleY: 1,
+    transition: { duration: 0.45, ease: "linear", delay: index * 0.38 }
+  })
+};
+
+const dotVariants: Variants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: (index: number) => ({
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "tween",
+      ease: "easeOut",
+      duration: 0.25,
+      delay: index * 0.38 + 0.18
+    }
+  })
+};
+
+const contentVariants: Variants = {
+  hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
+  visible: (index: number) => ({
+    opacity: 1,
+    filter: "blur(0px)",
+    y: 0,
+    transition: { duration: 0.45, ease: "easeOut", delay: index * 0.38 + 0.22 }
+  })
+};
+
 export function MainExperience({
   careers,
   educations,
@@ -245,246 +287,278 @@ export function MainExperience({
                 <motion.div
                   key="career-tab"
                   initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.08 } }
-                  }}
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={containerVariants}
                   className="relative flex flex-col"
                 >
-                  {/* Timeline Vertical Line (Melorot ke Bawah) */}
-                  {publishedCareers.length > 0 && (
-                    <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10" />
-                  )}
-
-                  {publishedCareers.map((item) => {
+                  {publishedCareers.map((item, index) => {
                     const isExpanded = !!expandedItems[item.id];
                     const dateRange = `${formatDate(item.start_date, locale)} - ${item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
                       }`;
                     const duration = calculateDuration(item.start_date, item.end_date, locale);
+                    const isLast = index === publishedCareers.length - 1;
 
                     return (
                       <motion.div
                         key={item.id}
-                        variants={{
-                          hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
-                          visible: {
-                            opacity: 1,
-                            filter: "blur(0px)",
-                            y: 0,
-                            transition: { duration: 0.4, ease: "easeOut" }
-                          }
-                        }}
+                        variants={itemVariants}
                         className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
                       >
-                        {/* Bullet Dot */}
-                        <div className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+                        {/* Timeline Line Segment */}
+                        <motion.div
+                          custom={index}
+                          variants={lineVariants}
+                          style={{ originY: 0 }}
+                          className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10"
+                        />
 
-                        {/* Top Metadata & Header Info */}
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                          <div className="flex items-start gap-4">
-                            {/* Logo */}
-                            <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
-                              {item.logo_url ? (
-                                <img
-                                  src={item.logo_url}
-                                  alt={item.company}
-                                  className="h-full w-full object-contain"
-                                />
+                        {/* Bullet Dot */}
+                        <motion.div
+                          custom={index}
+                          variants={dotVariants}
+                          className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10 aspect-square shrink-0"
+                        />
+
+                        <motion.div
+                          custom={index}
+                          variants={contentVariants}
+                          className="w-full flex flex-col"
+                        >
+                          {/* Top Metadata & Header Info */}
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                            <div className="flex items-start gap-4">
+                              {/* Logo */}
+                              {item.url ? (
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group/logo-link h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0"
+                                >
+                                  {item.logo_url ? (
+                                    <img
+                                      src={item.logo_url}
+                                      alt={item.company}
+                                      className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover/logo-link:scale-105"
+                                    />
+                                  ) : (
+                                    <Briefcase className="h-5 w-5 text-neutral-400" />
+                                  )}
+                                </a>
                               ) : (
-                                <Briefcase className="h-5 w-5 text-neutral-400" />
+                                <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
+                                  {item.logo_url ? (
+                                    <img
+                                      src={item.logo_url}
+                                      alt={item.company}
+                                      className="h-full w-full object-contain"
+                                    />
+                                  ) : (
+                                    <Briefcase className="h-5 w-5 text-neutral-400" />
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Job & Company Info */}
+                              <div className="flex flex-col text-left">
+                                <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                                  {locale === "id" ? item.role_id : item.role_en}
+                                </h3>
+                                <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
+                                  {item.url ? (
+                                    <a
+                                      href={item.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                    >
+                                      {item.company}
+                                    </a>
+                                  ) : (
+                                    item.company
+                                  )}
+                                  {item.location && (
+                                    <>
+                                      <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
+                                      {item.location}
+                                    </>
+                                  )}
+                                </p>
+
+                                {/* Work Type & Model Badges */}
+                                <div className="flex items-center gap-1.5 mt-2">
+                                  {(locale === "id" ? item.type_id : item.type_en) && (
+                                    <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                      {locale === "id" ? item.type_id : item.type_en}
+                                    </span>
+                                  )}
+                                  {(locale === "id" ? item.model_id : item.model_en) && (
+                                    <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                      {locale === "id" ? item.model_id : item.model_en}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Date Range & Duration Badge (Mobile only) */}
+                                <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
+                                  <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                    {dateRange}
+                                  </span>
+                                  {duration && (
+                                    <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                      {duration}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Interactive Toggle Button */}
+                                <div className="mt-2.5">
+                                  <button
+                                    onClick={() => toggleItem(item.id)}
+                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                  >
+                                    <motion.span
+                                      animate={{ rotate: isExpanded ? 90 : 0 }}
+                                      transition={{ duration: 0.2 }}
+                                      className="inline-flex items-center justify-center"
+                                    >
+                                      <ChevronRight className="h-4 w-4" />
+                                    </motion.span>
+                                    <span>
+                                      {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                    </span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Date Range & Duration Badge (Desktop only) */}
+                            <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                              <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                {dateRange}
+                              </span>
+                              {duration && (
+                                <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                  {duration}
+                                </span>
                               )}
                             </div>
-
-                            {/* Job & Company Info */}
-                            <div className="flex flex-col text-left">
-                              <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
-                                {locale === "id" ? item.role_id : item.role_en}
-                              </h3>
-                              <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
-                                {item.company}
-                                {item.location && (
-                                  <>
-                                    <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
-                                    {item.location}
-                                  </>
-                                )}
-                              </p>
-
-                              {/* Work Type & Model Badges */}
-                              <div className="flex items-center gap-1.5 mt-2">
-                                {(locale === "id" ? item.type_id : item.type_en) && (
-                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                    {locale === "id" ? item.type_id : item.type_en}
-                                  </span>
-                                )}
-                                {(locale === "id" ? item.model_id : item.model_en) && (
-                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                    {locale === "id" ? item.model_id : item.model_en}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Date Range & Duration Badge (Mobile only) */}
-                              <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
-                                <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                                  {dateRange}
-                                </span>
-                                {duration && (
-                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                    {duration}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Interactive Toggle Button */}
-                              <div className="mt-2.5">
-                                <button
-                                  onClick={() => toggleItem(item.id)}
-                                  className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
-                                >
-                                  <motion.span
-                                    animate={{ rotate: isExpanded ? 90 : 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="inline-flex items-center justify-center"
-                                  >
-                                    <ChevronRight className="h-4 w-4" />
-                                  </motion.span>
-                                  <span>
-                                    {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
-                                  </span>
-                                </button>
-                              </div>
-                            </div>
                           </div>
 
-                          {/* Date Range & Duration Badge (Desktop only) */}
-                          <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
-                            <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                              {dateRange}
-                            </span>
-                            {duration && (
-                              <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                {duration}
-                              </span>
+                          {/* Detail Drawer Content */}
+                          <AnimatePresence initial={false}>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: "easeInOut" }}
+                                className="overflow-hidden pl-[72px] sm:pl-[88px]"
+                              >
+                                <div className="pt-0.5 flex flex-col gap-3">
+                                  {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
+                                    <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                      {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
+                                        <li key={i}>{point}</li>
+                                      ))}
+                                    </ul>
+                                  )}
+
+                                  {item.career_skills && item.career_skills.length > 0 && (
+                                    <>
+                                      {/* Desktop view skill pills */}
+                                      <div className="hidden sm:flex flex-wrap gap-2 pt-0.5">
+                                        {item.career_skills.slice(0, 5).map((cs) => {
+                                          if (!cs.skill) return null;
+                                          return (
+                                            <div
+                                              key={cs.skill.id}
+                                              className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                                            >
+                                              {cs.skill.icon_url ? (
+                                                <img
+                                                  src={cs.skill.icon_url}
+                                                  alt={cs.skill.name}
+                                                  className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
+                                                />
+                                              ) : (
+                                                <Code2 className="w-3 h-3 text-neutral-400" />
+                                              )}
+                                              <span>{cs.skill.name}</span>
+                                            </div>
+                                          );
+                                        })}
+                                        {item.career_skills.length > 5 && (
+                                          <button
+                                            onClick={() => {
+                                              setActiveModalItem({
+                                                logoUrl: item.logo_url,
+                                                name: item.company,
+                                                role: locale === "id" ? item.role_id : item.role_en,
+                                                skills: item.career_skills || []
+                                              });
+                                              setIsAnimating(true);
+                                              setIsModalOpen(true);
+                                            }}
+                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
+                                          >
+                                            <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
+                                            <span>+{item.career_skills.length - 5}</span>
+                                            <span>{tMain(locale, "view_all")}</span>
+                                          </button>
+                                        )}
+                                      </div>
+
+                                      {/* Mobile view skill pills */}
+                                      <div className="flex sm:hidden flex-wrap gap-2 pt-0.5">
+                                        {item.career_skills.slice(0, 3).map((cs) => {
+                                          if (!cs.skill) return null;
+                                          return (
+                                            <div
+                                              key={cs.skill.id}
+                                              className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                                            >
+                                              {cs.skill.icon_url ? (
+                                                <img
+                                                  src={cs.skill.icon_url}
+                                                  alt={cs.skill.name}
+                                                  className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
+                                                />
+                                              ) : (
+                                                <Code2 className="w-3 h-3 text-neutral-400" />
+                                              )}
+                                              <span>{cs.skill.name}</span>
+                                            </div>
+                                          );
+                                        })}
+                                        {item.career_skills.length > 3 && (
+                                          <button
+                                            onClick={() => {
+                                              setActiveModalItem({
+                                                logoUrl: item.logo_url,
+                                                name: item.company,
+                                                role: locale === "id" ? item.role_id : item.role_en,
+                                                skills: item.career_skills || []
+                                              });
+                                              setIsAnimating(true);
+                                              setIsModalOpen(true);
+                                            }}
+                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
+                                          >
+                                            <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
+                                            <span>+{item.career_skills.length - 3}</span>
+                                            <span>{tMain(locale, "view_all")}</span>
+                                          </button>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              </motion.div>
                             )}
-                          </div>
-                        </div>
-
-                        {/* Detail Drawer Content (Slide-down & Staggered Skills) */}
-                        <AnimatePresence initial={false}>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.25, ease: "easeInOut" }}
-                              className="overflow-hidden pl-[72px] sm:pl-[88px]"
-                            >
-                              <div className="flex flex-col">
-                                {/* Bullet Points list */}
-                                {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
-                                  <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
-                                    {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
-                                      <li key={i}>{point}</li>
-                                    ))}
-                                  </ul>
-                                )}
-                                {/* Skills Pills */}
-                                {item.career_skills && item.career_skills.length > 0 && (
-                                  <>
-                                    {/* Desktop view skill pills */}
-                                    <div className="hidden sm:flex flex-wrap gap-2 pt-3">
-                                      {item.career_skills.slice(0, 5).map((cs) => {
-                                        if (!cs.skill) return null;
-                                        return (
-                                          <div
-                                            key={cs.skill.id}
-                                            className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
-                                          >
-                                            {cs.skill.icon_url ? (
-                                              <img
-                                                src={cs.skill.icon_url}
-                                                alt={cs.skill.name}
-                                                className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
-                                              />
-                                            ) : (
-                                              <Code2 className="w-3 h-3 text-neutral-400" />
-                                            )}
-                                            <span>{cs.skill.name}</span>
-                                          </div>
-                                        );
-                                      })}
-                                      {item.career_skills.length > 5 && (
-                                        <button
-                                          onClick={() => {
-                                            setActiveModalItem({
-                                              logoUrl: item.logo_url,
-                                              name: item.company,
-                                              role: locale === "id" ? item.role_id : item.role_en,
-                                              skills: item.career_skills || []
-                                            });
-                                            setIsAnimating(true);
-                                            setIsModalOpen(true);
-                                          }}
-                                          className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
-                                        >
-                                          <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
-                                          <span>+{item.career_skills.length - 5}</span>
-                                          <span>{tMain(locale, "view_all")}</span>
-                                        </button>
-                                      )}
-                                    </div>
-
-                                    {/* Mobile view skill pills */}
-                                    <div className="flex sm:hidden flex-wrap gap-2 pt-3">
-                                      {item.career_skills.slice(0, 3).map((cs) => {
-                                        if (!cs.skill) return null;
-                                        return (
-                                          <div
-                                            key={cs.skill.id}
-                                            className="group flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-neutral-200 bg-transparent dark:border-white/10 text-xs font-normal text-neutral-600 dark:text-neutral-400 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
-                                          >
-                                            {cs.skill.icon_url ? (
-                                              <img
-                                                src={cs.skill.icon_url}
-                                                alt={cs.skill.name}
-                                                className="w-3 h-3 object-contain brightness-0 dark:invert transition-transform duration-200 group-hover:scale-110"
-                                              />
-                                            ) : (
-                                              <Code2 className="w-3 h-3 text-neutral-400" />
-                                            )}
-                                            <span>{cs.skill.name}</span>
-                                          </div>
-                                        );
-                                      })}
-                                      {item.career_skills.length > 3 && (
-                                        <button
-                                          onClick={() => {
-                                            setActiveModalItem({
-                                              logoUrl: item.logo_url,
-                                              name: item.company,
-                                              role: locale === "id" ? item.role_id : item.role_en,
-                                              skills: item.career_skills || []
-                                            });
-                                            setIsAnimating(true);
-                                            setIsModalOpen(true);
-                                          }}
-                                          className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
-                                        >
-                                          <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
-                                          <span>+{item.career_skills.length - 3}</span>
-                                          <span>{tMain(locale, "view_all")}</span>
-                                        </button>
-                                      )}
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </AnimatePresence>
+                        </motion.div>
                       </motion.div>
                     );
                   })}
@@ -502,150 +576,183 @@ export function MainExperience({
                 <motion.div
                   key="education-tab"
                   initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.08 } }
-                  }}
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={containerVariants}
                   className="relative flex flex-col"
                 >
-                  {/* Timeline Vertical Line (Melorot ke Bawah) */}
-                  {publishedEducations.length > 0 && (
-                    <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10" />
-                  )}
-
-                  {publishedEducations.map((item) => {
+                  {publishedEducations.map((item, index) => {
                     const isExpanded = !!expandedItems[item.id];
                     const dateRange = `${formatDate(item.start_date, locale)} - ${item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
                       }`;
                     const duration = calculateDuration(item.start_date, item.end_date, locale);
+                    const isLast = index === publishedEducations.length - 1;
 
                     return (
                       <motion.div
                         key={item.id}
-                        variants={{
-                          hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
-                          visible: {
-                            opacity: 1,
-                            filter: "blur(0px)",
-                            y: 0,
-                            transition: { duration: 0.4, ease: "easeOut" }
-                          }
-                        }}
+                        variants={itemVariants}
                         className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
                       >
+                        {/* Timeline Line Segment */}
+                        <motion.div
+                          custom={index}
+                          variants={lineVariants}
+                          style={{ originY: 0 }}
+                          className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10"
+                        />
+
                         {/* Bullet Dot */}
-                        <div className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+                        <motion.div
+                          custom={index}
+                          variants={dotVariants}
+                          className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10 aspect-square shrink-0"
+                        />
 
-                        {/* Top Metadata & Header Info */}
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                          <div className="flex items-start gap-4">
-                            {/* Logo */}
-                            <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
-                              {item.logo_url ? (
-                                <img
-                                  src={item.logo_url}
-                                  alt={item.school}
-                                  className="h-full w-full object-contain"
-                                />
+                        <motion.div
+                          custom={index}
+                          variants={contentVariants}
+                          className="w-full flex flex-col"
+                        >
+                          {/* Top Metadata & Header Info */}
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                            <div className="flex items-start gap-4">
+                              {/* Logo */}
+                              {item.url ? (
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group/logo-link h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0"
+                                >
+                                  {item.logo_url ? (
+                                    <img
+                                      src={item.logo_url}
+                                      alt={item.school}
+                                      className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover/logo-link:scale-105"
+                                    />
+                                  ) : (
+                                    <GraduationCap className="h-5 w-5 text-neutral-400" />
+                                  )}
+                                </a>
                               ) : (
-                                <GraduationCap className="h-5 w-5 text-neutral-400" />
-                              )}
-                            </div>
-
-                            {/* Degree & School Info */}
-                            <div className="flex flex-col text-left">
-                              <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
-                                {locale === "id" ? item.level_major_id : item.level_major_en}
-                              </h3>
-                              <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
-                                {item.school}
-                                {item.location && (
-                                  <>
-                                    <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
-                                    {item.location}
-                                  </>
-                                )}
-                              </p>
-
-                              {/* GPA Badge */}
-                              {item.gpa !== null && (
-                                <div className="flex items-center gap-1.5 mt-2">
-                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                    {tMain(locale, "gpa")}: {item.gpa.toFixed(2)}/{item.max_gpa ? item.max_gpa.toFixed(2) : "4.00"}
-                                  </span>
+                                <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
+                                  {item.logo_url ? (
+                                    <img
+                                      src={item.logo_url}
+                                      alt={item.school}
+                                      className="h-full w-full object-contain"
+                                    />
+                                  ) : (
+                                    <GraduationCap className="h-5 w-5 text-neutral-400" />
+                                  )}
                                 </div>
                               )}
 
-                              {/* Date Range & Duration Badge (Mobile only) */}
-                              <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
-                                <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                                  {dateRange}
-                                </span>
-                                {duration && (
-                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                    {duration}
-                                  </span>
-                                )}
-                              </div>
+                              {/* Degree & School Info */}
+                              <div className="flex flex-col text-left">
+                                <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                                  {locale === "id" ? item.level_major_id : item.level_major_en}
+                                </h3>
+                                <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
+                                  {item.url ? (
+                                    <a
+                                      href={item.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                    >
+                                      {item.school}
+                                    </a>
+                                  ) : (
+                                    item.school
+                                  )}
+                                  {item.location && (
+                                    <>
+                                      <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
+                                      {item.location}
+                                    </>
+                                  )}
+                                </p>
 
-                              {/* Interactive Toggle Button */}
-                              <div className="mt-2.5">
-                                <button
-                                  onClick={() => toggleItem(item.id)}
-                                  className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
-                                >
-                                  <motion.span
-                                    animate={{ rotate: isExpanded ? 90 : 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="inline-flex items-center justify-center"
-                                  >
-                                    <ChevronRight className="h-4 w-4" />
-                                  </motion.span>
-                                  <span>
-                                    {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                {/* GPA Badge */}
+                                {item.gpa !== null && (
+                                  <div className="flex items-center gap-1.5 mt-2">
+                                    <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                      {tMain(locale, "gpa")}: {item.gpa.toFixed(2)}/{item.max_gpa ? item.max_gpa.toFixed(2) : "4.00"}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Date Range & Duration Badge (Mobile only) */}
+                                <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
+                                  <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                    {dateRange}
                                   </span>
-                                </button>
+                                  {duration && (
+                                    <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                      {duration}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Interactive Toggle Button */}
+                                <div className="mt-2.5">
+                                  <button
+                                    onClick={() => toggleItem(item.id)}
+                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                  >
+                                    <motion.span
+                                      animate={{ rotate: isExpanded ? 90 : 0 }}
+                                      transition={{ duration: 0.2 }}
+                                      className="inline-flex items-center justify-center"
+                                    >
+                                      <ChevronRight className="h-4 w-4" />
+                                    </motion.span>
+                                    <span>
+                                      {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                    </span>
+                                  </button>
+                                </div>
                               </div>
+                            </div>
+
+                            {/* Date Range & Duration Badge (Desktop only) */}
+                            <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                              <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                {dateRange}
+                              </span>
+                              {duration && (
+                                <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                  {duration}
+                                </span>
+                              )}
                             </div>
                           </div>
 
-                          {/* Date Range & Duration Badge (Desktop only) */}
-                          <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
-                            <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                              {dateRange}
-                            </span>
-                            {duration && (
-                              <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                {duration}
-                              </span>
+                          {/* Detail Drawer Content */}
+                          <AnimatePresence initial={false}>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: "easeInOut" }}
+                                className="overflow-hidden pl-[72px] sm:pl-[88px]"
+                              >
+                                <div className="pt-0.5 flex flex-col">
+                                  {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
+                                    <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                      {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
+                                        <li key={i}>{point}</li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              </motion.div>
                             )}
-                          </div>
-                        </div>
-
-                        {/* Detail Drawer Content */}
-                        <AnimatePresence initial={false}>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.25, ease: "easeInOut" }}
-                              className="overflow-hidden pl-[72px] sm:pl-[88px]"
-                            >
-                              <div className="pt-0.5 flex flex-col">
-                                {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
-                                  <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
-                                    {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
-                                      <li key={i}>{point}</li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </AnimatePresence>
+                        </motion.div>
                       </motion.div>
                     );
                   })}
@@ -663,141 +770,174 @@ export function MainExperience({
                 <motion.div
                   key="organizations-tab"
                   initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={{
-                    hidden: {},
-                    visible: { transition: { staggerChildren: 0.08 } }
-                  }}
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={containerVariants}
                   className="relative flex flex-col"
                 >
-                  {/* Timeline Vertical Line (Melorot ke Bawah) */}
-                  {publishedOrganizations.length > 0 && (
-                    <div className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10" />
-                  )}
-
-                  {publishedOrganizations.map((item) => {
+                  {publishedOrganizations.map((item, index) => {
                     const isExpanded = !!expandedItems[item.id];
                     const dateRange = `${formatDate(item.start_date, locale)} - ${item.end_date ? formatDate(item.end_date, locale) : tMain(locale, "present")
                       }`;
                     const duration = calculateDuration(item.start_date, item.end_date, locale);
+                    const isLast = index === publishedOrganizations.length - 1;
 
                     return (
                       <motion.div
                         key={item.id}
-                        variants={{
-                          hidden: { opacity: 0, filter: "blur(6px)", y: 15 },
-                          visible: {
-                            opacity: 1,
-                            filter: "blur(0px)",
-                            y: 0,
-                            transition: { duration: 0.4, ease: "easeOut" }
-                          }
-                        }}
+                        variants={itemVariants}
                         className="relative pl-4 sm:pl-6 pb-8 last:pb-0"
                       >
-                        {/* Bullet Dot */}
-                        <div className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10" />
+                        {/* Timeline Line Segment */}
+                        <motion.div
+                          custom={index}
+                          variants={lineVariants}
+                          style={{ originY: 0 }}
+                          className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200 dark:bg-white/10"
+                        />
 
-                        {/* Top Metadata & Header Info */}
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                          <div className="flex items-start gap-4">
-                            {/* Logo */}
-                            <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
-                              {item.logo_url ? (
-                                <img
-                                  src={item.logo_url}
-                                  alt={item.organization}
-                                  className="h-full w-full object-contain"
-                                />
+                        {/* Bullet Dot */}
+                        <motion.div
+                          custom={index}
+                          variants={dotVariants}
+                          className="absolute left-[-5px] top-[23px] sm:top-[31px] w-2.5 h-2.5 rounded-full bg-black dark:bg-white border-2 border-white dark:border-neutral-900 z-10 aspect-square shrink-0"
+                        />
+
+                        <motion.div
+                          custom={index}
+                          variants={contentVariants}
+                          className="w-full flex flex-col"
+                        >
+                          {/* Top Metadata & Header Info */}
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                            <div className="flex items-start gap-4">
+                              {/* Logo */}
+                              {item.url ? (
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group/logo-link h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0"
+                                >
+                                  {item.logo_url ? (
+                                    <img
+                                      src={item.logo_url}
+                                      alt={item.organization}
+                                      className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover/logo-link:scale-105"
+                                    />
+                                  ) : (
+                                    <Users className="h-5 w-5 text-neutral-400" />
+                                  )}
+                                </a>
                               ) : (
-                                <Users className="h-5 w-5 text-neutral-400" />
+                                <div className="h-14 w-14 sm:h-18 sm:w-18 p-1.5 sm:p-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center overflow-hidden shrink-0">
+                                  {item.logo_url ? (
+                                    <img
+                                      src={item.logo_url}
+                                      alt={item.organization}
+                                      className="h-full w-full object-contain"
+                                    />
+                                  ) : (
+                                    <Users className="h-5 w-5 text-neutral-400" />
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Role & Org Info */}
+                              <div className="flex flex-col text-left">
+                                <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                                  {locale === "id" ? item.role_id : item.role_en}
+                                </h3>
+                                <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
+                                  {item.url ? (
+                                    <a
+                                      href={item.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                    >
+                                      {item.organization}
+                                    </a>
+                                  ) : (
+                                    item.organization
+                                  )}
+                                  {item.location && (
+                                    <>
+                                      <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
+                                      {item.location}
+                                    </>
+                                  )}
+                                </p>
+
+                                {/* Date Range & Duration Badge (Mobile only) */}
+                                <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
+                                  <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                    {dateRange}
+                                  </span>
+                                  {duration && (
+                                    <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                      {duration}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Interactive Toggle Button */}
+                                <div className="mt-2.5">
+                                  <button
+                                    onClick={() => toggleItem(item.id)}
+                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                  >
+                                    <motion.span
+                                      animate={{ rotate: isExpanded ? 90 : 0 }}
+                                      transition={{ duration: 0.2 }}
+                                      className="inline-flex items-center justify-center"
+                                    >
+                                      <ChevronRight className="h-4 w-4" />
+                                    </motion.span>
+                                    <span>
+                                      {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
+                                    </span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Date Range & Duration Badge (Desktop only) */}
+                            <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
+                              <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
+                                {dateRange}
+                              </span>
+                              {duration && (
+                                <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
+                                  {duration}
+                                </span>
                               )}
                             </div>
-
-                            {/* Role & Org Info */}
-                            <div className="flex flex-col text-left">
-                              <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
-                                {locale === "id" ? item.role_id : item.role_en}
-                              </h3>
-                              <p className="text-[13px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-normal">
-                                {item.organization}
-                                {item.location && (
-                                  <>
-                                    <span className="text-[10px] mx-1.5 text-neutral-400 dark:text-neutral-500 select-none relative -top-px">•</span>
-                                    {item.location}
-                                  </>
-                                )}
-                              </p>
-
-                              {/* Date Range & Duration Badge (Mobile only) */}
-                              <div className="flex flex-row items-center gap-2 mt-2 sm:hidden">
-                                <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                                  {dateRange}
-                                </span>
-                                {duration && (
-                                  <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                    {duration}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Interactive Toggle Button */}
-                              <div className="mt-2.5">
-                                <button
-                                  onClick={() => toggleItem(item.id)}
-                                  className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
-                                >
-                                  <motion.span
-                                    animate={{ rotate: isExpanded ? 90 : 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="inline-flex items-center justify-center"
-                                  >
-                                    <ChevronRight className="h-4 w-4" />
-                                  </motion.span>
-                                  <span>
-                                    {isExpanded ? tMain(locale, "hide_details") : tMain(locale, "show_details")}
-                                  </span>
-                                </button>
-                              </div>
-                            </div>
                           </div>
 
-                          {/* Date Range & Duration Badge (Desktop only) */}
-                          <div className="hidden sm:flex flex-row items-center gap-2 mt-0">
-                            <span className="text-[13px] font-medium text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-                              {dateRange}
-                            </span>
-                            {duration && (
-                              <span className="inline-flex items-center rounded-md bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 px-2 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
-                                {duration}
-                              </span>
+                          {/* Detail Drawer Content */}
+                          <AnimatePresence initial={false}>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: "easeInOut" }}
+                                className="overflow-hidden pl-[72px] sm:pl-[88px]"
+                              >
+                                <div className="pt-0.5 flex flex-col">
+                                  {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
+                                    <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
+                                      {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
+                                        <li key={i}>{point}</li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              </motion.div>
                             )}
-                          </div>
-                        </div>
-
-                        {/* Detail Drawer Content */}
-                        <AnimatePresence initial={false}>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.25, ease: "easeInOut" }}
-                              className="overflow-hidden pl-[72px] sm:pl-[88px]"
-                            >
-                              <div className="pt-0.5 flex flex-col">
-                                {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).length > 0 && (
-                                  <ul className="list-disc list-outside pl-4 text-[13px] font-light text-neutral-700 dark:text-neutral-300 space-y-0.5 leading-relaxed marker:text-[10px]">
-                                    {((locale === "id" ? item.detail_points_id : item.detail_points_en) || []).map((point, i) => (
-                                      <li key={i}>{point}</li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </AnimatePresence>
+                        </motion.div>
                       </motion.div>
                     );
                   })}
