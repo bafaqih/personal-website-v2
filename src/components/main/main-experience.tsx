@@ -844,7 +844,7 @@ export function MainExperience({
                 </p>
               </DialogHeader>
 
-              <div className="w-full min-w-0 rounded-2xl border border-neutral-200 bg-neutral-50/50 dark:border-white/10 dark:bg-neutral-950/20 pl-4 py-4 pr-1 sm:pl-5 sm:py-5 sm:pr-1.5 overflow-hidden">
+              <div className="w-full min-w-0 rounded-2xl border border-neutral-200 bg-neutral-50/50 dark:border-white/10 dark:bg-neutral-950/20 overflow-hidden">
                 <motion.div
                   key={activeModalItem.name}
                   initial="hidden"
@@ -857,7 +857,7 @@ export function MainExperience({
                       }
                     }
                   }}
-                  className={`flex flex-wrap items-center gap-2 max-h-[40vh] scrollbar-custom pr-3 sm:pr-3.5 ${isAnimating ? "overflow-hidden" : "overflow-y-auto"}`}
+                  className={`flex flex-wrap items-center gap-2 max-h-[40vh] scrollbar-custom p-4 sm:p-5 ${isAnimating ? "overflow-hidden" : "overflow-y-auto"}`}
                 >
                   {activeModalItem.skills.map((cs) => {
                     if (!cs.skill) return null;
