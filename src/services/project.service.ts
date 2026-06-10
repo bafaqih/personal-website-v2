@@ -10,7 +10,7 @@ export const ProjectService = {
     const supabase = createClient();
     const { data, error } = await supabase
       .from("projects")
-      .select("*, type:project_types(*), category:project_categories(*)")
+      .select("*, type:project_types(*), category:project_categories(*), project_images(*), project_skills(skill_id, skill:skills(*))")
       .order("created_at", { ascending: false });
     if (error) throw error;
     return data as Project[];

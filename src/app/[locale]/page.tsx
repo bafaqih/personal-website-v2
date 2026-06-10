@@ -4,10 +4,12 @@ import { StatisticsService } from "@/src/services/statistics.service";
 import { CareerService } from "@/src/services/career.service";
 import { EducationService } from "@/src/services/education.service";
 import { OrganizationService } from "@/src/services/organization.service";
+import { ProjectService } from "@/src/services/project.service";
 import { MainHeader } from "@/src/components/main/main-header";
 import { MainHero } from "@/src/components/main/main-hero";
 import { MainAbout } from "@/src/components/main/main-about";
 import { MainExperience } from "@/src/components/main/main-experience";
+import { MainProjects } from "@/src/components/main/main-projects";
 import { MainFooter } from "@/src/components/main/main-footer";
 import type { MainLocale } from "@/src/lib/main-translations";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -28,7 +30,8 @@ export default async function Home({
     skillCategories,
     careers,
     educations,
-    organizations
+    organizations,
+    projects
   ] = await Promise.all([
     LinksService.getAll(),
     StatisticsService.getAll(),
@@ -37,6 +40,7 @@ export default async function Home({
     CareerService.getAll(),
     EducationService.getAll(),
     OrganizationService.getAll(),
+    ProjectService.getAll(),
   ]);
 
   return (
@@ -67,6 +71,11 @@ export default async function Home({
           careers={careers}
           educations={educations}
           organizations={organizations}
+          locale={locale}
+        />
+
+        <MainProjects
+          projects={projects}
           locale={locale}
         />
       </main>

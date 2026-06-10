@@ -66,6 +66,12 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     months: "Months",
     all_skills_title: "All Skills",
     skills_at: "Skills at",
+    projects_title: "Projects",
+    projects_desc: "Showcase of my work and side projects",
+    view_all_projects: "View all projects",
+    live_demo: "Live Demo",
+    source_code: "Source Code",
+    view_detail: "View Detail",
   },
   id: {
     // Header
@@ -132,6 +138,12 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     months: "Bulan",
     all_skills_title: "Semua Keahlian",
     skills_at: "Keahlian di",
+    projects_title: "Proyek",
+    projects_desc: "Kumpulan karya terbaru dan proyek sampingan saya",
+    view_all_projects: "Lihat semua proyek",
+    live_demo: "Live Demo",
+    source_code: "Source Code",
+    view_detail: "Lihat Detail",
   },
 };
 
