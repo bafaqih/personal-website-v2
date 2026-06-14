@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FolderGit2, Code2, Globe, ArrowRight } from "lucide-react";
+import { FolderGit2, Code2, ExternalLink, ArrowRight } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Project, Skill } from "@/src/types/database";
 
@@ -10,22 +11,18 @@ interface MainProjectsProps {
   locale: MainLocale;
 }
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-};
-
 const cardVariants = {
-  hidden: { opacity: 0, y: 25 },
-  visible: {
+  hidden: { opacity: 0, filter: "blur(6px)", y: 6 },
+  visible: (custom: { index: number; cols: number }) => ({
     opacity: 1,
+    filter: "blur(0px)",
     y: 0,
-    transition: { duration: 0.45, ease: "easeOut" as const },
-  },
+    transition: {
+      duration: 0.4,
+      ease: "easeOut" as const,
+      delay: (custom.index % custom.cols) * 0.15,
+    },
+  }),
 };
 
 export function MainProjects({ projects, locale }: MainProjectsProps) {
@@ -34,6 +31,20 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
 
   // Render max 6 on desktop, max 3 on mobile (handled by CSS to avoid hydration mismatch)
   const displayedProjects = publishedProjects.slice(0, 6);
+
+  const [cols, setCols] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 768) setCols(1);
+      else if (width < 1024) setCols(2);
+      else setCols(3);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-12 md:pt-6 md:pb-24 bg-transparent">
@@ -76,13 +87,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
         </div>
 
         {/* Projects Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {displayedProjects.map((item, index) => {
             // Determine dynamic visibility for desktop (max 6) vs mobile (max 3)
             const visibilityClass = index >= 3 ? "hidden md:flex" : "flex";
@@ -93,9 +98,9 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
 
             // Extract technologies
             const skills = (item.project_skills?.map((ps) => ps.skill).filter((s): s is Skill => !!s) || []);
-            const displayedSkills = skills.slice(0, 4);
-            const hasMoreSkills = skills.length > 4;
-            const remainingSkillsCount = skills.length - 4;
+            const displayedSkills = skills.slice(0, 3);
+            const hasMoreSkills = skills.length > 3;
+            const remainingSkillsCount = skills.length - 3;
 
             // Localization
             const title = locale === "id" ? item.title_id : item.title_en;
@@ -104,11 +109,18 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
             return (
               <motion.div
                 key={item.id}
+                custom={{ index, cols }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
                 variants={cardVariants}
-                className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-all duration-300`}
+                className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden`}
               >
-                {/* 1. Project Image Container */}
-                <div className="relative aspect-video w-full bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
+                {/* 1. Project Image Container (Clickable) */}
+                <button
+                  type="button"
+                  className="relative aspect-video w-full bg-neutral-100 dark:bg-neutral-900 overflow-hidden cursor-pointer text-left block focus:outline-none"
+                >
                   {mainImageUrl ? (
                     <img
                       src={mainImageUrl}
@@ -121,7 +133,14 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                       <FolderGit2 className="h-10 w-10 stroke-[1.5]" />
                     </div>
                   )}
-                </div>
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-neutral-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1.5px]">
+                    <span className="inline-flex items-center gap-1.5 text-white font-medium text-sm tracking-wide transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      {tMain(locale, "view_project")}
+                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </span>
+                  </div>
+                </button>
 
                 {/* Card Content */}
                 <div className="flex flex-1 flex-col p-5 text-left">
@@ -174,7 +193,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-xs font-semibold text-neutral-700 transition-colors duration-200 hover:bg-neutral-50 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-900 cursor-pointer"
                       >
-                        <Globe className="h-3.5 w-3.5" />
+                        <ExternalLink className="h-3.5 w-3.5" />
                         <span>{tMain(locale, "live_demo")}</span>
                       </a>
                     ) : item.github_url ? (
@@ -192,11 +211,11 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                       <div className="h-9" />
                     )}
 
-                    {/* Right Button: View Detail (future modal implementation) */}
+                    {/* Right Button: View Project */}
                     <button
                       className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-900 text-white px-3 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
                     >
-                      <span>{tMain(locale, "view_detail")}</span>
+                      <span>{tMain(locale, "view_project")}</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -204,7 +223,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Mobile View All Button */}
         <motion.div

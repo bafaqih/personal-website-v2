@@ -72,6 +72,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     live_demo: "Live Demo",
     source_code: "Source Code",
     view_detail: "View Detail",
+    view_project: "View Project",
   },
   id: {
     // Header
@@ -141,9 +142,10 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     projects_title: "Proyek",
     projects_desc: "Kumpulan karya terbaru dan proyek sampingan saya",
     view_all_projects: "Lihat semua proyek",
-    live_demo: "Live Demo",
-    source_code: "Source Code",
+    live_demo: "Demo Live",
+    source_code: "Kode Sumber",
     view_detail: "Lihat Detail",
+    view_project: "Lihat Proyek",
   },
 };
 
