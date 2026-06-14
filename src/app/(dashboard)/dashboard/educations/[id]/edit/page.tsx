@@ -103,6 +103,7 @@ export default function EducationEditPage() {
 
       await EducationService.update(id, payload);
       await queryClient.invalidateQueries({ queryKey: ["educations"] });
+      await queryClient.invalidateQueries({ queryKey: ["education", id] });
       toast.success(t("educations.saved_success"));
       router.push("/dashboard/educations");
     } catch (e: unknown) {

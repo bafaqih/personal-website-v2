@@ -123,6 +123,7 @@ export default function CareerEditPage() {
 
       await CareerService.update(id, careerData, skill_ids || []);
       await queryClient.invalidateQueries({ queryKey: ["careers"] });
+      await queryClient.invalidateQueries({ queryKey: ["career", id] });
       toast.success(t("careers.saved_success"));
       router.push("/dashboard/careers");
     } catch (e: unknown) {

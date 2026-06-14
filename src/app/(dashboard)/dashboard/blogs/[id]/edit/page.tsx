@@ -153,6 +153,8 @@ export default function BlogEditPage() {
 
       toast.success(t("blogs.saved_success"));
       await queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      await queryClient.invalidateQueries({ queryKey: ["blog", id] });
+      await queryClient.invalidateQueries({ queryKey: ["blog-tags", id] });
       router.push("/dashboard/blogs/list");
     } catch (e: unknown) {
       toast.error(t("blogs.saved_failed"), {

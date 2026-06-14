@@ -97,6 +97,7 @@ export default function OrganizationEditPage() {
       
       await OrganizationService.update(id, payload);
       await queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      await queryClient.invalidateQueries({ queryKey: ["organization", id] });
       toast.success(t("organizations.saved_success")); 
       router.push("/dashboard/organizations");
     } catch (e: unknown) { 

@@ -118,6 +118,7 @@ export default function AchievementEditPage() {
 
       toast.success(t("achievements.saved_success"));
       await queryClient.invalidateQueries({ queryKey: ["achievements"] });
+      await queryClient.invalidateQueries({ queryKey: ["achievement", id] });
       router.push("/dashboard/achievements/list");
     } catch (e: unknown) {
       toast.error(t("achievements.saved_failed"), {

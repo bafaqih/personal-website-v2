@@ -304,6 +304,7 @@ export default function ProjectEditPage() {
       await ProjectService.update(id, coreData, imagesPayload, data.skill_ids, parsedResponsibilities, parsedFeatures);
 
       await queryClient.invalidateQueries({ queryKey: ["projects"] });
+      await queryClient.invalidateQueries({ queryKey: ["project", id] });
       toast.success(t("projects.saved_success"));
       router.push("/dashboard/projects/list");
     } catch (e: unknown) {

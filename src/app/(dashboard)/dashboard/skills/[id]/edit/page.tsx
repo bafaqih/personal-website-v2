@@ -76,6 +76,7 @@ export default function SkillEditPage() {
       }
       await SkillService.update(id, { ...data, icon_url });
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
+      await queryClient.invalidateQueries({ queryKey: ["skill", id] });
       toast.success(t("skills.saved_success"));
       router.push("/dashboard/skills/list");
     } catch (error: unknown) {
