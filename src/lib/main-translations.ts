@@ -73,6 +73,16 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     source_code: "Source Code",
     view_detail: "View Detail",
     view_project: "View Project",
+    view_achievement: "View Achievement",
+    achievements_title: "Achievements",
+    achievements_desc: "My achievement, certificate, licenses, honor and award",
+    view_all_achievements: "View all achievements",
+    issued_on: "ISSUED ON",
+    credential_url: "Credential URL",
+    credential_id: "Credential ID",
+    achievement_type: "Type",
+    achievement_category: "Category",
+    achievement_issue_date: "Issue Date",
   },
   id: {
     // Header
@@ -146,6 +156,16 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     source_code: "Kode Sumber",
     view_detail: "Lihat Detail",
     view_project: "Lihat Proyek",
+    view_achievement: "Lihat Pencapaian",
+    achievements_title: "Pencapaian",
+    achievements_desc: "Kumpulan pencapaian, sertifikat, lisensi, penghargaan, dan apresiasi saya",
+    view_all_achievements: "Lihat semua pencapaian",
+    issued_on: "DITERBITKAN PADA",
+    credential_url: "URL Kredensial",
+    credential_id: "ID Kredensial",
+    achievement_type: "Tipe",
+    achievement_category: "Kategori",
+    achievement_issue_date: "Tanggal Terbit",
   },
 };
 

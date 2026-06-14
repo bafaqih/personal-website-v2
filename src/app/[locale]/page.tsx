@@ -5,11 +5,13 @@ import { CareerService } from "@/src/services/career.service";
 import { EducationService } from "@/src/services/education.service";
 import { OrganizationService } from "@/src/services/organization.service";
 import { ProjectService } from "@/src/services/project.service";
+import { AchievementService } from "@/src/services/achievement.service";
 import { MainHeader } from "@/src/components/main/main-header";
 import { MainHero } from "@/src/components/main/main-hero";
 import { MainAbout } from "@/src/components/main/main-about";
 import { MainExperience } from "@/src/components/main/main-experience";
 import { MainProjects } from "@/src/components/main/main-projects";
+import { MainAchievements } from "@/src/components/main/main-achievements";
 import { MainFooter } from "@/src/components/main/main-footer";
 import type { MainLocale } from "@/src/lib/main-translations";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -31,7 +33,8 @@ export default async function Home({
     careers,
     educations,
     organizations,
-    projects
+    projects,
+    achievements
   ] = await Promise.all([
     LinksService.getAll(),
     StatisticsService.getAll(),
@@ -41,6 +44,7 @@ export default async function Home({
     EducationService.getAll(),
     OrganizationService.getAll(),
     ProjectService.getAll(),
+    AchievementService.getAll(),
   ]);
 
   return (
@@ -76,6 +80,11 @@ export default async function Home({
 
         <MainProjects
           projects={projects}
+          locale={locale}
+        />
+
+        <MainAchievements
+          achievements={achievements}
           locale={locale}
         />
       </main>

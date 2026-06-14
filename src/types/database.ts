@@ -226,6 +226,7 @@ export interface Achievement {
   issue_date: string | null;
   image_url: string | null;
   credential_url: string | null;
+  credential_id: string | null;
   type_id: string | null;
   category_id: string | null;
   is_published: boolean;
