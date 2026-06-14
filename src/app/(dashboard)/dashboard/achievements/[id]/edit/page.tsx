@@ -36,6 +36,7 @@ const schema = z.object({
   publisher: z.string().min(1, "Publisher is required"),
   issue_date: z.string().min(1, "Issue date is required"),
   credential_url: z.string().optional().or(z.literal("")),
+  credential_id: z.string().optional().or(z.literal("")),
   type_id: z.string().min(1, "Type is required"),
   category_id: z.string().min(1, "Category is required"),
   is_published: z.boolean()
@@ -92,6 +93,7 @@ export default function AchievementEditPage() {
         publisher: achievement.publisher || "",
         issue_date: achievement.issue_date || "",
         credential_url: achievement.credential_url || "",
+        credential_id: achievement.credential_id || "",
         type_id: achievement.type_id || "",
         category_id: achievement.category_id || "",
         is_published: achievement.is_published
@@ -110,7 +112,8 @@ export default function AchievementEditPage() {
       await AchievementService.update(id, {
         ...data,
         image_url,
-        credential_url: data.credential_url || null
+        credential_url: data.credential_url || null,
+        credential_id: data.credential_id || null
       });
 
       toast.success(t("achievements.saved_success"));
@@ -238,16 +241,29 @@ export default function AchievementEditPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>{t("achievements.credential_url")}</Label>
-                {loading ? (
-                  <Skeleton className="h-10 w-full" />
-                ) : (
-                  <Input
-                    {...register("credential_url")}
-                    placeholder="https://verify.example.com/certificate/123"
-                  />
-                )}
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>{t("achievements.credential_url")}</Label>
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input
+                      {...register("credential_url")}
+                      placeholder="https://verify.example.com/certificate/123"
+                    />
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("achievements.credential_id")}</Label>
+                  {loading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Input
+                      {...register("credential_id")}
+                      placeholder="e.g., 196/EKS/HCLGA/ATI/VIII/2025"
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">

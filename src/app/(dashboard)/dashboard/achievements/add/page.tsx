@@ -35,6 +35,7 @@ const schema = z.object({
   publisher: z.string().min(1, "Publisher is required"),
   issue_date: z.string().min(1, "Issue date is required"),
   credential_url: z.string().optional().or(z.literal("")),
+  credential_id: z.string().optional().or(z.literal("")),
   type_id: z.string().min(1, "Type is required"),
   category_id: z.string().min(1, "Category is required"),
   is_published: z.boolean()
@@ -75,6 +76,7 @@ export default function AchievementAddPage() {
       publisher: "",
       issue_date: "",
       credential_url: "",
+      credential_id: "",
     }
   });
 
@@ -89,7 +91,8 @@ export default function AchievementAddPage() {
       await AchievementService.create({ 
         ...data, 
         image_url,
-        credential_url: data.credential_url || null
+        credential_url: data.credential_url || null,
+        credential_id: data.credential_id || null
       });
       
       toast.success(t("achievements.saved_success"));
@@ -193,12 +196,21 @@ export default function AchievementAddPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>{t("achievements.credential_url")}</Label>
-                <Input 
-                  {...register("credential_url")} 
-                  placeholder="https://verify.example.com/certificate/123" 
-                />
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>{t("achievements.credential_url")}</Label>
+                  <Input 
+                    {...register("credential_url")} 
+                    placeholder="https://verify.example.com/certificate/123" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("achievements.credential_id")}</Label>
+                  <Input 
+                    {...register("credential_id")} 
+                    placeholder="e.g., 196/EKS/HCLGA/ATI/VIII/2025" 
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
