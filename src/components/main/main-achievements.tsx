@@ -147,7 +147,7 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
                 {/* 2. Content Details */}
                 <div className="flex flex-col p-5 flex-1">
                   {/* Credential ID (Uses non-breaking space fallback to keep layout heights consistent) */}
-                  <span className="text-[11px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1 block truncate">
+                  <span className="text-[11px] font-regular text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1 block truncate">
                     {item.credential_id || "\u00a0"}
                   </span>
 
