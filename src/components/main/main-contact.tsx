@@ -363,7 +363,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
             }}
             onMouseEnter={() => setIsShimmering(true)}
             onTouchStart={() => setIsShimmering(true)}
-            className="group relative p-[1.5px] sm:p-[2px] rounded-[16px] border-none bg-gradient-to-br from-neutral-300 via-neutral-100 to-neutral-800 dark:bg-[radial-gradient(circle_300px_at_80%_-10%,#ffffff,#181b1b)] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] dark:shadow-none block w-full mt-2"
+            className="group relative p-[1.5px] sm:p-[2px] rounded-[16px] border-none bg-linear-to-br from-neutral-300 via-neutral-100 to-neutral-800 dark:bg-[radial-gradient(circle_300px_at_80%_-10%,#ffffff,#181b1b)] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] dark:shadow-none block w-full mt-2"
           >
             {/* Glow behind button (Top-Right) */}
             <div className="absolute top-0 right-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] group-active:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
