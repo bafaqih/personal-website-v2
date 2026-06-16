@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Mail, MapPin, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -73,9 +73,27 @@ const footerVariants = {
 
 export function MainFooter({ about, contact, locale }: MainFooterProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const bioText = locale === "id" ? about?.bio_id : about?.bio_en;
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const targetId = href.split("#")[1];
+    if (!targetId) return;
+
+    if (pathname === `/${locale}` || pathname === "/") {
+      e.preventDefault();
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      e.preventDefault();
+      sessionStorage.setItem("scroll-target", targetId);
+      router.push(`/${locale}`);
+    }
+  };
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,12 +119,12 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
   ].filter((link) => link.url);
 
   const navLinks = [
-    { href: `/${locale}`, label: tMain(locale, "nav_home") },
-    { href: `/${locale}/about`, label: tMain(locale, "nav_about") },
-    { href: `/${locale}/projects`, label: tMain(locale, "nav_projects") },
-    { href: `/${locale}/achievements`, label: tMain(locale, "nav_achievements") },
-    { href: `/${locale}/blogs`, label: tMain(locale, "nav_blogs") },
-    { href: `/${locale}/contact`, label: tMain(locale, "nav_contact") },
+    { href: `/${locale}#hero`, label: tMain(locale, "nav_home") },
+    { href: `/${locale}#about`, label: tMain(locale, "nav_about") },
+    { href: `/${locale}#projects`, label: tMain(locale, "nav_projects") },
+    { href: `/${locale}#achievements`, label: tMain(locale, "nav_achievements") },
+    { href: `/${locale}#blogs`, label: tMain(locale, "nav_blogs") },
+    { href: `/${locale}#contact`, label: tMain(locale, "nav_contact") },
   ];
 
   return (
@@ -188,6 +206,7 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
                 <li key={link.href} className="w-full">
                   <Link 
                     href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className="group flex items-center justify-between w-full text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-all px-3 py-2 border border-transparent rounded-lg hover:border-neutral-200 dark:hover:border-white/10"
                   >
                     <span>{link.label}</span>
@@ -237,7 +256,7 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
               {tMain(locale, "newsletter_desc")}
             </p>
             <form className="mt-2 w-full" onSubmit={handleSubscribe}>
-              <div className="flex h-11 items-center justify-between border border-neutral-200 dark:border-white/10 rounded-lg p-1 bg-transparent w-full focus-within:ring-2 focus-within:ring-neutral-900/20 dark:focus-within:ring-white/20 transition-all">
+              <div className="flex h-11 items-center justify-between border border-neutral-200 dark:border-white/10 rounded-lg p-1 bg-transparent w-full focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 transition-all">
                 <div className="flex h-full items-center gap-2.5 pl-2.5 flex-1 min-w-0">
                   <Mail className="h-4 w-4 text-neutral-400 shrink-0" />
                   <input 

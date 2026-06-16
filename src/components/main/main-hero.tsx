@@ -88,6 +88,24 @@ export function MainHero({ profile, roles, about, contact, locale }: MainHeroPro
     return () => clearInterval(interval);
   }, [roles.length]);
 
+  // Handle smooth scroll from other pages via sessionStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const target = sessionStorage.getItem("scroll-target");
+      if (target) {
+        sessionStorage.removeItem("scroll-target");
+        // Wait for page to stabilize and render
+        const timer = setTimeout(() => {
+          const element = document.getElementById(target);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 300);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
+
   const currentRole =
     roles.length > 0
       ? locale === "id"
@@ -104,6 +122,7 @@ export function MainHero({ profile, roles, about, contact, locale }: MainHeroPro
 
   return (
     <motion.section
+      id="hero"
       className="relative min-h-screen flex flex-col items-center justify-center text-center px-3.5 sm:px-12 md:px-24 lg:px-36 pt-24 pb-12 overflow-hidden"
       variants={containerVariants}
       initial="hidden"
