@@ -14,6 +14,7 @@ import { MainExperience } from "@/src/components/main/main-experience";
 import { MainProjects } from "@/src/components/main/main-projects";
 import { MainAchievements } from "@/src/components/main/main-achievements";
 import { MainBlogs } from "@/src/components/main/main-blogs";
+import { MainContact } from "@/src/components/main/main-contact";
 import { MainFooter } from "@/src/components/main/main-footer";
 import type { MainLocale } from "@/src/lib/main-translations";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -94,6 +95,11 @@ export default async function Home({
 
         <MainBlogs
           blogs={blogs}
+          locale={locale}
+        />
+
+        <MainContact
+          contact={contact}
           locale={locale}
         />
       </main>

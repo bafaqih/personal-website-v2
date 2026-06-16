@@ -4,6 +4,7 @@ import "../globals.css";
 import { cn } from "@/src/app/lib/utils";
 import { ThemeProvider } from "@/components/dashboard/theme-provider";
 import { PageTracker } from "@/components/analytics/page-tracker";
+import { LinksToaster } from "@/src/components/links/links-toaster";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
         >
           <PageTracker />
           {children}
+          <LinksToaster />
         </ThemeProvider>
       </body>
     </html>

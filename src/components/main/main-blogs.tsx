@@ -85,7 +85,7 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
   if (displayedBlogs.length === 0) return null;
 
   return (
-    <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-12 md:pt-6 md:pb-24 bg-transparent">
+    <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-6 md:pt-6 md:pb-8 bg-transparent">
       <div className="w-full flex flex-col gap-6 sm:gap-8">
         {/* Section Header */}
         <div className="flex flex-row items-center justify-between gap-4">
@@ -198,7 +198,7 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
                   {/* Read More Button */}
                   <a
                     href={`/${locale}/blogs/${blog.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900 px-4 py-2.5 text-xs font-semibold transition-colors duration-200 cursor-pointer"
+                    className="h-10 inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900 px-4 text-xs font-semibold transition-colors duration-200 cursor-pointer"
                   >
                     <span>{tMain(locale, "read_more")}</span>
                     <ArrowRight className="h-3.5 w-3.5" />

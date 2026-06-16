@@ -177,7 +177,7 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
                   <button
                     type="button"
                     onClick={() => setSelectedAchievement(item)}
-                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-900 text-white px-3 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer shrink-0"
+                    className="w-full h-10 inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-900 text-white px-3 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer shrink-0"
                   >
                     <span>{tMain(locale, "view_achievement")}</span>
                     <ArrowRight className="h-3.5 w-3.5" />

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { LinksToaster } from "@/src/components/links/links-toaster";
 
 export async function generateMetadata({
   params,
@@ -30,7 +29,6 @@ export default function LinksLayout({
   return (
     <>
       {children}
-      <LinksToaster />
     </>
   );
 }
