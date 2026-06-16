@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Globe, ArrowRight, Award, ExternalLink, X } from "lucide-react";
+import { ArrowRight, Award, ExternalLink, X } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Achievement } from "@/src/types/database";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
@@ -74,7 +74,7 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
             className="flex flex-col gap-1.5 text-left"
           >
             <div className="flex items-center gap-2.5">
-              <Globe className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
+              <Award className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
               <h2 className="text-[24px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">
                 {tMain(locale, "achievements_title")}
               </h2>
