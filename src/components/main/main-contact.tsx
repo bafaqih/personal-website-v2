@@ -299,25 +299,35 @@ export function MainContact({ contact, locale }: MainContactProps) {
 
           {/* Social Links Row */}
           {socialLinks.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="flex flex-row items-center gap-4 pt-2 text-left"
-            >
-              <span className="text-[13px] font-normal text-neutral-500 dark:text-neutral-400 shrink-0">
+            <div className="flex flex-row items-center gap-4 pt-2 text-left">
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-[13px] font-normal text-neutral-500 dark:text-neutral-400 shrink-0"
+              >
                 {tMain(locale, "find_me_socmed")}
-              </span>
+              </motion.span>
               <TooltipProvider>
                 <div className="flex items-center gap-3">
-                  {socialLinks.map(({ url, icon: Icon, label }) => (
+                  {socialLinks.map(({ url, icon: Icon, label }, index) => (
                     <Tooltip key={label}>
                       <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
-                        <a
+                        <motion.a
                           href={url!}
                           target="_blank"
                           rel="noopener noreferrer"
+                          initial={{ opacity: 0, y: 16 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 1.05 }}
+                          transition={{
+                            duration: 0.35,
+                            ease: "easeOut" as const,
+                            delay: index * 0.06,
+                          }}
                           className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 hover:border-neutral-300 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:border-neutral-700"
                           aria-label={label}
                           onClick={(e) => {
@@ -325,7 +335,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
                           }}
                         >
                           <Icon className="h-5 w-5" />
-                        </a>
+                        </motion.a>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
                         <p>{label}</p>
@@ -334,7 +344,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
                   ))}
                 </div>
               </TooltipProvider>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
