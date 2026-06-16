@@ -363,7 +363,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
             }}
             onMouseEnter={() => setIsShimmering(true)}
             onTouchStart={() => setIsShimmering(true)}
-            className="group relative p-[2px] rounded-[16px] border-none bg-[radial-gradient(circle_300px_at_80%_-10%,#d4d4d4,#181b1b)] dark:bg-[radial-gradient(circle_300px_at_80%_-10%,#ffffff,#181b1b)] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] dark:shadow-none block w-full mt-2"
+            className="group relative p-[1.5px] sm:p-[2px] rounded-[16px] border-none bg-gradient-to-br from-neutral-300 via-neutral-100 to-neutral-800 dark:bg-[radial-gradient(circle_300px_at_80%_-10%,#ffffff,#181b1b)] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] dark:shadow-none block w-full mt-2"
           >
             {/* Glow behind button (Top-Right) */}
             <div className="absolute top-0 right-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] group-active:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
@@ -372,7 +372,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
             <div className="absolute bottom-0 left-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] group-active:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
 
             {/* Inner content */}
-            <div className="relative flex flex-col gap-5 rounded-[14px] bg-[radial-gradient(circle_300px_at_80%_-50%,#a3a3a3,#0f1111)] dark:bg-[radial-gradient(circle_300px_at_80%_-50%,#777777,#0f1111)] p-8 md:p-10 transition-colors duration-300 z-10 overflow-hidden w-full">
+            <div className="relative flex flex-col gap-5 rounded-[14px] bg-[radial-gradient(circle_300px_at_80%_-50%,#a3a3a3,#0f1111)] dark:bg-[radial-gradient(circle_300px_at_80%_-50%,#777777,#0f1111)] p-6 sm:p-8 md:p-10 transition-colors duration-300 z-10 overflow-hidden w-full">
               {/* Shimmer sweep layer */}
               {isShimmering && (
                 <div
@@ -385,7 +385,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
               <div className="absolute inset-0 rounded-[14px] bg-[radial-gradient(circle_220px_at_0%_100%,#ffffff33,#ffffff0d,transparent)] z-[-1]" />
 
               {/* Left Side: Title, Subtitle, Button */}
-              <div className="flex flex-col gap-5 text-left max-w-[65%] sm:max-w-[75%]">
+              <div className="flex flex-col gap-5 text-left max-w-[85%] sm:max-w-[75%]">
                 <div>
                   <h3 className="text-xl md:text-2xl font-normal text-white">
                     {locale === "id" ? (
@@ -411,11 +411,11 @@ export function MainContact({ contact, locale }: MainContactProps) {
               </div>
 
               {/* Right Side: Logo (Absolute bottom-right, aligned with padding) */}
-              <div className="absolute bottom-8 right-8 md:bottom-10 md:right-10 shrink-0 pointer-events-none select-none z-10">
+              <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 shrink-0 pointer-events-none select-none z-10">
                 <img
                   src={bafdevLogo.src}
                   alt="Bafdev Logo"
-                  className="h-8 sm:h-12 md:h-14 w-auto"
+                  className="h-7 sm:h-9 md:h-11 w-auto"
                 />
               </div>
             </div>
