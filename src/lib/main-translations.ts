@@ -112,6 +112,9 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     message_failed: "Failed to send message",
     message_failed_desc: "Something went wrong. Please try again later.",
     validation_error: "Please fill in all required fields",
+    build_with_bafdev_title: "Build with Bafdev",
+    build_with_bafdev_desc: "Develop Your Ideas. Digitize Your Identity.",
+    go_to_bafdev: "Go to Bafdev",
   },
   id: {
     // Header
@@ -224,6 +227,9 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     message_failed: "Gagal mengirim pesan",
     message_failed_desc: "Terjadi kesalahan. Silakan coba lagi nanti.",
     validation_error: "Harap isi semua kolom yang wajib diisi",
+    build_with_bafdev_title: "Bangun bersama Bafdev",
+    build_with_bafdev_desc: "Kembangkan Ide Anda. Digitalkan Identitas Anda.",
+    go_to_bafdev: "Kunjungi Bafdev",
   },
 };
 

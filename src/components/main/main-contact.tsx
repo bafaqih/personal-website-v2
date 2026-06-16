@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Mail, Send } from "lucide-react";
+import { Loader2, Mail, Send, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/tooltip";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Contact } from "@/src/types/database";
+import bafdevLogo from "@/src/assets/images/bafdev-logo.svg";
 
 // Inline SVG brand icons — copied exactly from main-hero.tsx
 function LinkedInIcon({ className }: { className?: string }) {
@@ -87,6 +89,7 @@ const cardVariants = {
 };
 
 export function MainContact({ contact, locale }: MainContactProps) {
+  const [isShimmering, setIsShimmering] = useState(false);
   const {
     register,
     handleSubmit,
@@ -168,7 +171,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
   ].filter((link) => link.url);
 
   return (
-    <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-12 md:pt-6 md:pb-24 bg-transparent">
+    <section className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-6 md:pt-6 md:pb-8 bg-transparent">
       <div className="w-full flex flex-col gap-6 sm:gap-8">
         {/* Section Header — matched exactly with projects, achievements, and blogs */}
         <div className="flex flex-row items-center justify-between gap-4">
@@ -346,6 +349,77 @@ export function MainContact({ contact, locale }: MainContactProps) {
               </TooltipProvider>
             </div>
           )}
+
+          {/* Build with Bafdev Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -3 }}
+            whileTap={{ y: -3 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{
+              duration: 0.4,
+              ease: "easeOut",
+            }}
+            onMouseEnter={() => setIsShimmering(true)}
+            onTouchStart={() => setIsShimmering(true)}
+            className="group relative p-[2px] rounded-[16px] border-none bg-[radial-gradient(circle_300px_at_80%_-10%,#d4d4d4,#181b1b)] dark:bg-[radial-gradient(circle_300px_at_80%_-10%,#ffffff,#181b1b)] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] dark:shadow-none block w-full mt-2"
+          >
+            {/* Glow behind button (Top-Right) */}
+            <div className="absolute top-0 right-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] group-active:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
+
+            {/* Glow behind button (Bottom-Left) */}
+            <div className="absolute bottom-0 left-0 w-[65%] h-[60%] rounded-[120px] shadow-[0_0_20px_#ffffff18] group-hover:shadow-[0_0_40px_#ffffff30] group-active:shadow-[0_0_40px_#ffffff30] transition-all duration-300 ease-out -z-10" />
+
+            {/* Inner content */}
+            <div className="relative flex flex-col gap-5 rounded-[14px] bg-[radial-gradient(circle_300px_at_80%_-50%,#a3a3a3,#0f1111)] dark:bg-[radial-gradient(circle_300px_at_80%_-50%,#777777,#0f1111)] p-8 md:p-10 transition-colors duration-300 z-10 overflow-hidden w-full">
+              {/* Shimmer sweep layer */}
+              {isShimmering && (
+                <div
+                  className="main-card-shimmer pointer-events-none"
+                  onAnimationEnd={() => setIsShimmering(false)}
+                />
+              )}
+
+              {/* Inner glow layer */}
+              <div className="absolute inset-0 rounded-[14px] bg-[radial-gradient(circle_220px_at_0%_100%,#ffffff33,#ffffff0d,transparent)] z-[-1]" />
+
+              {/* Left Side: Title, Subtitle, Button */}
+              <div className="flex flex-col gap-5 text-left max-w-[65%] sm:max-w-[75%]">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-normal text-white">
+                    {locale === "id" ? (
+                      <>Bangun bersama <span className="font-bold">Bafdev</span></>
+                    ) : (
+                      <>Build with <span className="font-bold">Bafdev</span></>
+                    )}
+                  </h3>
+                  <p className="text-xs md:text-sm text-neutral-400 mt-2 leading-relaxed">
+                    {tMain(locale, "build_with_bafdev_desc")}
+                  </p>
+                </div>
+
+                <a
+                  href="https://bafdev.id/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/btn inline-flex items-center gap-2 w-fit rounded-lg bg-white px-5 h-10 text-xs md:text-sm font-semibold text-neutral-900 transition-colors duration-200 hover:bg-neutral-100 cursor-pointer"
+                >
+                  <span>{tMain(locale, "go_to_bafdev")}</span>
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                </a>
+              </div>
+
+              {/* Right Side: Logo (Absolute bottom-right, aligned with padding) */}
+              <div className="absolute bottom-8 right-8 md:bottom-10 md:right-10 shrink-0 pointer-events-none select-none z-10">
+                <img
+                  src={bafdevLogo.src}
+                  alt="Bafdev Logo"
+                  className="h-8 sm:h-12 md:h-14 w-auto"
+                />
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
