@@ -83,6 +83,11 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     achievement_type: "Type",
     achievement_category: "Category",
     achievement_issue_date: "Issue Date",
+    blogs_title: "Blogs",
+    blogs_desc: "Thoughts and learnings from my journey in tech",
+    view_all_blogs: "View all blogs",
+    read_more: "Read more",
+    min_read: "min",
   },
   id: {
     // Header
@@ -166,6 +171,11 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     achievement_type: "Tipe",
     achievement_category: "Kategori",
     achievement_issue_date: "Tanggal Terbit",
+    blogs_title: "Blog",
+    blogs_desc: "Pemikiran dan pembelajaran dari perjalanan teknologi saya",
+    view_all_blogs: "Lihat semua blog",
+    read_more: "Baca selengkapnya",
+    min_read: "menit",
   },
 };
 
