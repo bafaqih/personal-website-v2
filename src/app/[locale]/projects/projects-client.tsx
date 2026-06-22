@@ -429,13 +429,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
                     <div className="flex flex-1 flex-col p-5 text-left">
                       {/* Project Title */}
                       <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight truncate">
-                        <a
-                          href={`/${locale}/projects/${item.slug}`}
-                          onClick={() => trackEvent("project_click", item.slug)}
-                          className="hover:underline"
-                        >
-                          {title}
-                        </a>
+                        {title}
                       </h3>
 
                       {/* Project Bio/Description (max 2 lines) */}
