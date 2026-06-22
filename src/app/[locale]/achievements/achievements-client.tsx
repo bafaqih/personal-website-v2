@@ -364,7 +364,7 @@ export function AchievementsClient({ achievements, types, categories, locale }: 
       </motion.div>
 
       {/* 3. Grid Card Achievements */}
-      <div className="relative min-h-[300px] w-full">
+      <div className={cn("relative w-full", paginatedAchievements.length === 0 && "min-h-[300px]")}>
         <AnimatePresence mode="wait">
           {paginatedAchievements.length === 0 ? (
             <motion.div

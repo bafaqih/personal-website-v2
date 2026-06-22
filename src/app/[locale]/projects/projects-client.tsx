@@ -351,7 +351,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
       </motion.div>
 
       {/* 3. Grid Card Projects */}
-      <div className="relative min-h-[300px] w-full">
+      <div className={cn("relative w-full", paginatedProjects.length === 0 && "min-h-[300px]")}>
         <AnimatePresence mode="wait">
           {paginatedProjects.length === 0 ? (
             <motion.div
