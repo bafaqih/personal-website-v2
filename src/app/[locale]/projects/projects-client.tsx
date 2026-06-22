@@ -178,7 +178,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
   }, [filteredProjects.length, page, pageSize, locale]);
 
   return (
-    <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 md:pt-6 pb-6 md:pb-8 bg-transparent flex flex-col gap-8 md:gap-8">
+    <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-6 md:pt-8 pb-3 md:pb-4 bg-transparent flex flex-col gap-8 md:gap-8">
       {/* 1. Header (Icon, Title, Description) */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
@@ -251,7 +251,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
 
           {/* Filter Dropdown panel */}
           {isFilterOpen && computedFilters.length > 0 && (
-            <div className="absolute right-0 top-full mt-2 z-50 w-80 rounded-lg border border-neutral-200 bg-white p-4 shadow-lg dark:border-white/10 dark:bg-neutral-950 transition-all duration-200">
+            <div className="absolute right-0 top-full mt-2 z-50 min-w-[240px] w-max max-w-[calc(100vw-2rem)] sm:max-w-[340px] rounded-lg border border-neutral-200 bg-white p-4 shadow-lg dark:border-white/10 dark:bg-neutral-950 transition-all duration-200">
               <div className="space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-2 border-b border-neutral-100 dark:border-white/10">

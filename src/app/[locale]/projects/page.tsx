@@ -46,7 +46,7 @@ export default async function ProjectsPage({
     <div className="flex min-h-screen flex-col bg-white dark:bg-neutral-950 font-sans selection:bg-neutral-200 dark:selection:bg-neutral-800 transition-colors duration-300">
       <MainHeader locale={locale} hireMeEmail={contact?.email ?? null} />
 
-      <main className="flex-1 w-full pt-14">
+      <main className="w-full pt-14">
         <ProjectsClient
           projects={publishedProjects}
           types={types}
