@@ -127,6 +127,9 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     project_type: "Project Type",
     project_category: "Project Category",
     no_projects_found: "No projects found",
+    search_achievements: "Search achievements...",
+    showing_info_achievements: "Showing {start} to {end} of {total} achievements",
+    no_achievements_found: "No achievements found",
   },
   id: {
     // Header
@@ -254,6 +257,9 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     project_type: "Tipe Proyek",
     project_category: "Kategori Proyek",
     no_projects_found: "Proyek tidak ditemukan",
+    search_achievements: "Cari pencapaian...",
+    showing_info_achievements: "Menampilkan {start} sampai {end} dari {total} pencapaian",
+    no_achievements_found: "Pencapaian tidak ditemukan",
   },
 };
 
