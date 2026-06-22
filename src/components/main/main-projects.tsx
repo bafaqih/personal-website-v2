@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { FolderGit2, Code2, ExternalLink, ArrowRight } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Project, Skill } from "@/src/types/database";
@@ -117,8 +118,8 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                 className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-colors duration-200 hover:border-neutral-300 dark:hover:border-neutral-700`}
               >
                 {/* 1. Project Image Container (Clickable) */}
-                <button
-                  type="button"
+                <Link
+                  href={`/${locale}/projects/${item.slug}`}
                   className="relative aspect-video w-full bg-neutral-100 dark:bg-neutral-900 overflow-hidden cursor-pointer text-left block focus:outline-none"
                 >
                   {mainImageUrl ? (
@@ -140,7 +141,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                     </span>
                   </div>
-                </button>
+                </Link>
 
                 {/* Card Content */}
                 <div className="flex flex-1 flex-col p-5 text-left">
@@ -212,12 +213,13 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                     )}
  
                     {/* Right Button: View Project */}
-                    <button
+                    <Link
+                      href={`/${locale}/projects/${item.slug}`}
                       className="h-10 inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-900 text-white px-3 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
                     >
                       <span>{tMain(locale, "view_project")}</span>
                       <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
