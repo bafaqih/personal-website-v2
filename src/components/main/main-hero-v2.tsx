@@ -138,12 +138,12 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
   return (
     <motion.section
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-12 md:px-24 lg:px-36 pt-24 pb-12 overflow-hidden"
+      className="relative min-h-0 flex flex-col items-center justify-start px-4 sm:px-12 md:px-24 lg:px-36 pt-24 pb-12 overflow-hidden"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-stretch lg:h-[calc(100vh-180px)] lg:max-h-[740px] relative z-10">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-4 items-stretch h-auto relative z-10">
         
         {/* Left Column: Badge, Greeting & Name, Social Icons */}
         <div className="flex flex-col justify-between h-auto lg:h-full py-0 lg:py-2 gap-6 lg:gap-0 text-left order-1 lg:col-span-5 z-10 relative">
@@ -221,15 +221,27 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
               </div>
             </TooltipProvider>
           )}
+
+          {/* Mobile CTA Button (hidden on desktop) */}
+          <motion.div variants={fadeUpVariants} className="w-fit lg:hidden mt-0 z-20">
+            <Link
+              href="#about"
+              onClick={handleScrollToAbout}
+              className="group flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 transition-colors dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 text-xs md:text-sm cursor-pointer w-fit"
+            >
+              <span>{tMain(locale, "more_about_me")}</span>
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.5} />
+            </Link>
+          </motion.div>
         </div>
 
         {/* Middle Column: Photo with Grayscale Filter & Fade-out overlay (z-20, absolute on desktop to overlap) */}
-        <div className="flex justify-center items-end relative min-h-[350px] lg:min-h-[620px] w-full order-2 lg:col-span-2 z-20 pointer-events-none">
+        <div className="flex justify-center items-end relative min-h-0 lg:min-h-[620px] w-full order-2 lg:col-span-2 z-20 pointer-events-none">
           <motion.div
             variants={fadeUpVariants}
             whileHover={{ scale: 1.01, transition: { duration: 0.5, ease: "easeOut" } }}
             whileTap={{ scale: 1.01, transition: { duration: 0.3, ease: "easeOut" } }}
-            className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[560px] lg:max-w-none aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 origin-bottom pointer-events-auto"
+            className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[560px] lg:max-w-none lg:aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 origin-bottom pointer-events-auto"
           >
             <Image
               src={fadilColorImage}
@@ -244,8 +256,8 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
           </motion.div>
         </div>
 
-        {/* Right Column: Bio Description, Action Button */}
-        <div className="flex flex-col justify-between h-auto lg:h-full py-0 lg:py-2 gap-6 lg:gap-0 text-left lg:text-right lg:items-end order-3 lg:col-span-5 z-10 relative">
+        {/* Right Column: Bio Description, Action Button (hidden on mobile, shown on desktop) */}
+        <div className="hidden lg:flex flex-col justify-between h-auto lg:h-full py-0 lg:py-2 gap-6 lg:gap-0 text-left lg:text-right lg:items-end order-3 lg:col-span-5 z-10 relative">
           {/* Top: Spacer for alignment */}
           <div className="hidden lg:block h-10" />
 

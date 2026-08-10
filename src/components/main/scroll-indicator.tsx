@@ -16,7 +16,7 @@ export function ScrollIndicator() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[34px] flex justify-center cursor-pointer pointer-events-auto"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:translate-y-[34px] translate-y-[12px] flex justify-center cursor-pointer pointer-events-auto"
         onClick={handleScrollToAbout}
       >
         <div className="w-6 h-10 border-2 border-neutral-300 dark:border-neutral-700 rounded-full flex justify-center p-1">

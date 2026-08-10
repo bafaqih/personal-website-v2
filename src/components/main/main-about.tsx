@@ -401,7 +401,7 @@ export function MainAbout({
     : activeSkills.filter((s) => s.category_id === selectedModalCategory);
 
   return (
-    <section id="about" className="scroll-mt-14 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-12 pb-6 md:pt-24 md:pb-8">
+    <section id="about" className="scroll-mt-20 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-12 pb-6 md:pt-24 md:pb-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         
         {/* ========================================================= */}

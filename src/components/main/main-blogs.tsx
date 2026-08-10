@@ -85,7 +85,7 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
   if (displayedBlogs.length === 0) return null;
 
   return (
-    <section id="blogs" className="scroll-mt-14 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-6 md:pt-6 md:pb-8 bg-transparent">
+    <section id="blogs" className="scroll-mt-20 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-6 md:pt-6 md:pb-8 bg-transparent">
       <div className="w-full flex flex-col gap-6 sm:gap-8">
         {/* Section Header */}
         <div className="flex flex-row items-center justify-between gap-4">
