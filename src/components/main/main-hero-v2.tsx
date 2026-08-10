@@ -67,12 +67,17 @@ const containerVariants = {
 };
 
 const fadeUpVariants = {
-  hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
+  hidden: { opacity: 0, y: 30, filter: "blur(8px)", scale: 1 },
   visible: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.7, ease: "easeOut" as const },
+    scale: 1,
+    transition: { 
+      duration: 0.7, 
+      ease: "easeOut" as const,
+      scale: { duration: 0.5, ease: "easeOut" }
+    },
   },
 };
 
@@ -222,7 +227,9 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
         <div className="flex justify-center items-end relative min-h-[350px] lg:min-h-[620px] w-full order-2 lg:col-span-2 z-20 pointer-events-none">
           <motion.div
             variants={fadeUpVariants}
-            className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[560px] lg:max-w-none aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2"
+            whileHover={{ scale: 1.01, transition: { duration: 0.5, ease: "easeOut" } }}
+            whileTap={{ scale: 1.01, transition: { duration: 0.3, ease: "easeOut" } }}
+            className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[560px] lg:max-w-none aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 origin-bottom pointer-events-auto"
           >
             <Image
               src={fadilColorImage}
@@ -230,7 +237,7 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
               priority
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
-              className="object-contain max-h-[380px] sm:max-h-[430px] lg:max-h-[690px] w-auto grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 pointer-events-auto select-none"
+              className="object-contain max-h-[380px] sm:max-h-[430px] lg:max-h-[690px] w-auto grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 active:grayscale-0 pointer-events-auto select-none"
             />
             {/* High-fidelity 13-stop easing gradient to match page background with ultra-smooth transition at both ends */}
             <div className="absolute bottom-[-2px] left-0 right-0 h-28 lg:h-36 pointer-events-none z-10 bg-[linear-gradient(to_top,#fff_0%,rgba(255,255,255,0.99)_3%,rgba(255,255,255,0.97)_8%,rgba(255,255,255,0.92)_15%,rgba(255,255,255,0.82)_25%,rgba(255,255,255,0.65)_38%,rgba(255,255,255,0.45)_52%,rgba(255,255,255,0.27)_66%,rgba(255,255,255,0.15)_78%,rgba(255,255,255,0.07)_87%,rgba(255,255,255,0.02)_94%,rgba(255,255,255,0.005)_97%,transparent_100%)] dark:bg-[linear-gradient(to_top,#0a0a0a_0%,rgba(10,10,10,0.99)_3%,rgba(10,10,10,0.97)_8%,rgba(10,10,10,0.92)_15%,rgba(10,10,10,0.82)_25%,rgba(10,10,10,0.65)_38%,rgba(10,10,10,0.45)_52%,rgba(10,10,10,0.27)_66%,rgba(10,10,10,0.15)_78%,rgba(10,10,10,0.07)_87%,rgba(10,10,10,0.02)_94%,rgba(10,10,10,0.005)_97%,transparent_100%)]" />
@@ -270,34 +277,6 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
 
       </div>
 
-      {/* Scroll indicator (mouse icon at the bottom center) */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-3 left-1/2 -translate-x-1/2 flex justify-center z-20 cursor-pointer"
-        onClick={() => {
-          const element = document.getElementById("about");
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-          }
-        }}
-      >
-        <div className="w-6 h-10 border-2 border-neutral-300 dark:border-neutral-700 rounded-full flex justify-center p-1">
-          <motion.div
-            animate={{
-              y: [0, 12, 0],
-              opacity: [1, 0, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="w-1.5 h-1.5 bg-neutral-400 dark:bg-neutral-500 rounded-full"
-          />
-        </div>
-      </motion.div>
     </motion.section>
   );
 }

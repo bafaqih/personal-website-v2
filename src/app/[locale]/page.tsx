@@ -9,6 +9,7 @@ import { AchievementService } from "@/src/services/achievement.service";
 import { BlogService } from "@/src/services/blog.service";
 import { MainHeader } from "@/src/components/main/main-header";
 import { MainHeroV2 } from "@/src/components/main/main-hero-v2";
+import { ScrollIndicator } from "@/src/components/main/scroll-indicator";
 import { MainAbout } from "@/src/components/main/main-about";
 import { MainExperience } from "@/src/components/main/main-experience";
 import { MainProjects } from "@/src/components/main/main-projects";
@@ -64,6 +65,8 @@ export default async function Home({
           contact={contact}
           locale={locale}
         />
+        
+        <ScrollIndicator />
         
         <MainAbout
           profile={profile}
