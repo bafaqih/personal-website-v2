@@ -15,6 +15,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     lets_work: "Let's Work Together",
     lets_talk: "Let's Talk",
     view_projects: "View Projects",
+    more_about_me: "More About Me",
 
     // Footer
     navigate: "NAVIGATE",
@@ -150,6 +151,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     lets_work: "Mari Bekerja Sama",
     lets_talk: "Mari Bicara",
     view_projects: "Lihat Proyek",
+    more_about_me: "Tentang Saya",
 
     // Footer
     navigate: "NAVIGASI",
@@ -157,7 +159,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     newsletter: "BULETIN",
     newsletter_desc: "Berlangganan untuk mendapatkan pemberitahuan tentang proyek, pencapaian, dan artikel terbaru saya.",
     enter_email: "Masukkan email Anda",
-    subscribe: "Berlangganan",
+    subscribe: "Subscribe",
     subscribing: "Memproses...",
     newsletter_success: "Terima kasih telah berlangganan buletin saya!",
     newsletter_error: "Silakan masukkan alamat email yang valid.",
