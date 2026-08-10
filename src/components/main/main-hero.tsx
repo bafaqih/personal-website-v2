@@ -131,7 +131,7 @@ export function MainHero({ profile, roles, about, contact, locale }: MainHeroPro
       <div className="-mt-12 md:-mt-16 w-full flex flex-col items-center justify-center">
         {/* Badge */}
         <motion.div variants={fadeUpVariants} className="mb-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/50 px-4 py-2 text-sm text-neutral-600 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-400 backdrop-blur-sm">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white/50 px-4 py-2 text-sm text-neutral-600 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-400 backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
