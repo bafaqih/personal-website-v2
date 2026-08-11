@@ -43,7 +43,7 @@ export default async function AchievementsPage({
   const publishedAchievements = achievements.filter((a) => a.is_published);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-neutral-950 font-sans selection:bg-neutral-200 dark:selection:bg-neutral-800 transition-colors duration-300">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-neutral-950 font-sans transition-colors duration-300">
       <MainHeader locale={locale} hireMeEmail={contact?.email ?? null} />
 
       <main className="w-full pt-14">

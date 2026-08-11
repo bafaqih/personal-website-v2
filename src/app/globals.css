@@ -128,6 +128,18 @@
   html {
     @apply font-sans;
   }
+
+  /* Global text highlight styling */
+  ::selection {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .dark ::selection,
+  .dark::selection {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
 }
 
 /* Sonner Toast Customization */
