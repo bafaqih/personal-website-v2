@@ -38,6 +38,28 @@ export const ProjectService = {
     return data as Project;
   },
 
+  async getBySlug(slug: string): Promise<Project> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("projects")
+      .select(`
+        *,
+        type:project_types(*),
+        category:project_categories(*),
+        project_images(*),
+        project_skills(skill_id, skill:skills(*)),
+        project_responsibilities(*),
+        project_features(*)
+      `)
+      .eq("slug", slug)
+      .order("sort_order", { foreignTable: "project_images", ascending: true })
+      .order("sort_order", { foreignTable: "project_responsibilities", ascending: true })
+      .order("sort_order", { foreignTable: "project_features", ascending: true })
+      .single();
+    if (error) throw error;
+    return data as Project;
+  },
+
   async create(
     payload: Partial<Project>,
     images?: { url: string; sort_order: number }[],
