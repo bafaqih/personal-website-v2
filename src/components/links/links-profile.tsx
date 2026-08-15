@@ -165,7 +165,7 @@ export function LinksProfile({
               src={profile.photo_url}
               alt={profile.full_name || "Profile"}
               fill
-              className="object-cover"
+              className="object-cover grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 active:grayscale-0 select-none"
               sizes="112px"
               priority
               onLoad={() => setIsImageLoading(false)}
