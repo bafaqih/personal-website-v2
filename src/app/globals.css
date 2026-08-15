@@ -324,9 +324,18 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 /* Thin Scrollbar Utility */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.8) transparent;
+}
+
+.dark .scrollbar-thin {
+  scrollbar-color: rgba(255, 255, 255, 0.85) transparent;
+}
+
 .scrollbar-thin::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
+  height: 8px;
+  width: 8px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
@@ -334,12 +343,28 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid transparent;
+  background-clip: padding-box;
   border-radius: 9999px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.556 0 0);
+  background: #000000;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 /* Ensure GitHub calendar inherits font family (Inter) */
@@ -354,18 +379,18 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .scrollbar-custom,
 .react-activity-calendar__scroll-container {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.8) transparent;
 }
 
 .dark .scrollbar-custom,
 .dark .react-activity-calendar__scroll-container {
-  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.85) transparent;
 }
 
 .scrollbar-custom::-webkit-scrollbar,
 .react-activity-calendar__scroll-container::-webkit-scrollbar {
-  height: 5px !important;
-  width: 5px !important;
+  height: 8px !important;
+  width: 8px !important;
 }
 
 .scrollbar-custom::-webkit-scrollbar-track,
@@ -375,23 +400,31 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .scrollbar-custom::-webkit-scrollbar-thumb,
 .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.25) !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
   border-radius: 9999px !important;
 }
 
 .dark .scrollbar-custom::-webkit-scrollbar-thumb,
 .dark .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb:hover,
 .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.45) !important;
+  background: #000000 !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
 }
 
 .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover,
 .dark .react-activity-calendar__scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.6) !important;
+  background: #ffffff !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
 }
 
 /* View Transitions API - Custom circular clip-path theme transition */
@@ -407,4 +440,49 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 ::view-transition-new(root) {
   z-index: 9999;
+}
+
+/* Global Browser Scrollbar Styles */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.8) transparent;
+}
+
+html.dark {
+  scrollbar-color: rgba(255, 255, 255, 0.85) transparent;
+}
+
+/* Webkit browser scrollbars (Chrome, Safari, Edge, Chrome-based) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }

@@ -266,7 +266,7 @@ export function DashboardSidebar({
         )}
       >
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-4 py-4 max-lg:py-6">
+        <nav className="flex-1 overflow-y-auto scrollbar-thin px-4 py-4 max-lg:py-6">
           <ul className="space-y-2 max-lg:space-y-2.5">
             {DASHBOARD_NAV.map((item) => {
               const isOpen = openMenu === item.title;
