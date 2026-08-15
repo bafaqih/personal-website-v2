@@ -84,7 +84,7 @@ const fadeUpVariants = {
 export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV3Props) {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const badgeText = locale === "id" ? about?.badge_id : about?.badge_en;
-  const bioText = locale === "id" ? about?.bio_id : about?.badge_id ? about?.bio_en : null;
+  const bioText = locale === "id" ? about?.bio_id : about?.bio_en;
   
   // Cycle through roles every 3 seconds
   useEffect(() => {
@@ -121,6 +121,14 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
     }
   };
 
+  const handleScrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const element = document.getElementById("contact");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const currentRole =
     roles.length > 0
       ? locale === "id"
@@ -138,15 +146,16 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
   return (
     <motion.section
       id="hero"
-      className="relative min-h-0 flex flex-col items-center justify-start px-4 sm:px-12 md:px-24 lg:px-36 pt-24 pb-12 overflow-hidden"
+      className="relative min-h-0 flex flex-col items-center justify-start px-3.5 sm:px-12 md:px-24 lg:px-36 pt-16 md:pt-24 pb-12 overflow-hidden bg-transparent"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-4 items-stretch h-auto relative z-10">
+      <div className="w-full max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-12 items-center h-auto relative z-10">
         
-        {/* Left Column: Badge, Greeting & Name, Social Icons */}
-        <div className="flex flex-col justify-between h-auto lg:h-full py-0 lg:py-2 gap-6 lg:gap-0 text-left order-1 lg:col-span-5 z-10 relative">
+        {/* Left Column: Badge, Greeting & Name, Bio, CTAs, Social Icons */}
+        <div className="flex flex-col justify-center items-start text-left order-1 lg:col-span-7 z-10 relative gap-6 py-4">
+          
           {/* Top: Badge */}
           <motion.div variants={fadeUpVariants} className="w-fit">
             <span className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 bg-white/50 px-4 py-2 text-sm text-neutral-600 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-400 backdrop-blur-sm">
@@ -158,17 +167,17 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
             </span>
           </motion.div>
 
-          {/* Middle: Greeting, Name, Role */}
-          <div className="flex-1 flex flex-col justify-center lg:my-0">
-            <motion.p variants={fadeUpVariants} className="text-neutral-500 dark:text-neutral-400 font-medium mb-1">
+          {/* Name & Role Section */}
+          <div className="flex flex-col gap-2 w-full mt-2">
+            <motion.p variants={fadeUpVariants} className="text-neutral-500 dark:text-neutral-400 font-medium text-sm md:text-base">
               {tMain(locale, "hello")}
             </motion.p>
-            <motion.h1 variants={fadeUpVariants} className="text-5xl md:text-6xl lg:text-[68px] font-bold tracking-tight text-neutral-900 dark:text-white leading-[1.05]">
+            <motion.h1 variants={fadeUpVariants} className="text-5xl md:text-6xl lg:text-[76px] font-bold tracking-tight text-neutral-900 dark:text-white leading-[1.05] max-w-2xl">
               {profile?.full_name || "Fadil Bafagih"}
             </motion.h1>
             
             {/* Role with cycling animation */}
-            <motion.div variants={fadeUpVariants} className="h-8 md:h-9 overflow-hidden flex items-center justify-start mt-2">
+            <motion.div variants={fadeUpVariants} className="h-8 md:h-9 overflow-hidden flex items-center justify-start">
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={currentRoleIndex}
@@ -184,10 +193,42 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
             </motion.div>
           </div>
 
-          {/* Bottom: Social links */}
+          {/* Bio text */}
+          <motion.p
+            variants={fadeUpVariants}
+            className="hidden md:block text-neutral-500 dark:text-neutral-400 text-sm md:text-[15px] leading-relaxed max-w-[520px] -mt-2"
+          >
+            {bioText || (locale === "id" 
+              ? "Mengubah ide menjadi solusi digital kreatif yang menginspirasi dan menarik, dengan fokus pada kegunaan, inovasi, dan desain yang berpusat pada manusia."
+              : "Transforming ideas into creative digital solutions that inspire and engage, with a focus on usability, innovation, and human-centered design.")
+            }
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div variants={fadeUpVariants} className="flex flex-row flex-wrap items-center gap-3 w-full mt-2 z-20">
+            <Link
+              href="#contact"
+              onClick={handleScrollToContact}
+              className="group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 font-medium transition-colors text-xs md:text-sm cursor-pointer w-fit"
+            >
+              <Mail className="h-4 w-4" />
+              <span>{tMain(locale, "lets_work")}</span>
+            </Link>
+
+            <Link
+              href="#about"
+              onClick={handleScrollToAbout}
+              className="group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 transition-colors dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 text-xs md:text-sm cursor-pointer w-fit"
+            >
+              <span>{tMain(locale, "more_about_me")}</span>
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.5} />
+            </Link>
+          </motion.div>
+
+          {/* Social links */}
           {socialLinks.length > 0 && (
             <TooltipProvider>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mt-4">
                 {socialLinks.map(({ url, icon: Icon, label }, index) => (
                   <Tooltip key={label}>
                     <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
@@ -204,7 +245,7 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
                           ease: "easeOut" as const,
                           delay: 0.6 + index * 0.06,
                         }}
-                        className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800"
                         aria-label={label}
                         onClick={(e) => {
                           e.currentTarget.blur();
@@ -222,26 +263,15 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
             </TooltipProvider>
           )}
 
-          {/* Mobile CTA Button (hidden on desktop) */}
-          <motion.div variants={fadeUpVariants} className="w-fit lg:hidden mt-0 z-20">
-            <Link
-              href="#about"
-              onClick={handleScrollToAbout}
-              className="group flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 transition-colors dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 text-xs md:text-sm cursor-pointer w-fit"
-            >
-              <span>{tMain(locale, "more_about_me")}</span>
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.5} />
-            </Link>
-          </motion.div>
         </div>
 
-        {/* Middle Column: Photo with Grayscale Filter & Fade-out overlay (z-20, absolute on desktop to overlap) */}
-        <div className="flex justify-center items-end relative min-h-0 lg:min-h-[620px] w-full order-2 lg:col-span-2 z-20 pointer-events-none">
+        {/* Right Column: Photo with Grayscale Filter & Fade-out overlay */}
+        <div className="flex justify-center items-end relative min-h-0 lg:min-h-[580px] w-full order-2 lg:col-span-5 z-20 pointer-events-none mt-2 lg:mt-0">
           <motion.div
             variants={fadeUpVariants}
             whileHover={{ scale: 1.01, transition: { duration: 0.5, ease: "easeOut" } }}
             whileTap={{ scale: 1.01, transition: { duration: 0.3, ease: "easeOut" } }}
-            className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[560px] lg:max-w-none lg:aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 origin-bottom pointer-events-auto"
+            className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[520px] lg:max-w-none lg:aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 origin-bottom pointer-events-auto"
           >
             <Image
               src={fadilColorImage}
@@ -249,41 +279,10 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
               priority
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
-              className="object-contain max-h-[380px] sm:max-h-[430px] lg:max-h-[690px] w-auto grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 active:grayscale-0 pointer-events-auto select-none"
+              className="object-contain max-h-[380px] sm:max-h-[430px] lg:max-h-[620px] w-auto grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 active:grayscale-0 pointer-events-auto select-none"
             />
             {/* High-fidelity 13-stop easing gradient to match page background with ultra-smooth transition at both ends */}
             <div className="absolute bottom-[-2px] left-0 right-0 h-28 lg:h-36 pointer-events-none z-10 bg-[linear-gradient(to_top,#fff_0%,rgba(255,255,255,0.99)_3%,rgba(255,255,255,0.97)_8%,rgba(255,255,255,0.92)_15%,rgba(255,255,255,0.82)_25%,rgba(255,255,255,0.65)_38%,rgba(255,255,255,0.45)_52%,rgba(255,255,255,0.27)_66%,rgba(255,255,255,0.15)_78%,rgba(255,255,255,0.07)_87%,rgba(255,255,255,0.02)_94%,rgba(255,255,255,0.005)_97%,transparent_100%)] dark:bg-[linear-gradient(to_top,#0a0a0a_0%,rgba(10,10,10,0.99)_3%,rgba(10,10,10,0.97)_8%,rgba(10,10,10,0.92)_15%,rgba(10,10,10,0.82)_25%,rgba(10,10,10,0.65)_38%,rgba(10,10,10,0.45)_52%,rgba(10,10,10,0.27)_66%,rgba(10,10,10,0.15)_78%,rgba(10,10,10,0.07)_87%,rgba(10,10,10,0.02)_94%,rgba(10,10,10,0.005)_97%,transparent_100%)]" />
-          </motion.div>
-        </div>
-
-        {/* Right Column: Bio Description, Action Button (hidden on mobile, shown on desktop) */}
-        <div className="hidden lg:flex flex-col justify-between h-auto lg:h-full py-0 lg:py-2 gap-6 lg:gap-0 text-left lg:text-right lg:items-end order-3 lg:col-span-5 z-10 relative">
-          {/* Top: Spacer for alignment */}
-          <div className="hidden lg:block h-10" />
-
-          {/* Middle: Bio text */}
-          <div className="flex-1 flex flex-col justify-center lg:items-end lg:my-0">
-            <motion.p
-              variants={fadeUpVariants}
-              className="text-neutral-500 dark:text-neutral-400 text-sm md:text-[15px] leading-relaxed lg:max-w-[360px]"
-            >
-              {bioText || (locale === "id" 
-                ? "Mengubah ide menjadi solusi digital kreatif yang menginspirasi dan menarik, dengan focus pada kegunaan, inovasi, dan desain yang berpusat pada manusia."
-                : "Transforming ideas into creative digital solutions that inspire and engage, with a focus on usability, innovation, and human-centered design.")
-              }
-            </motion.p>
-          </div>
-
-          {/* Bottom: "More About Me" button */}
-          <motion.div variants={fadeUpVariants} className="w-full lg:w-fit">
-            <Link
-              href="#about"
-              onClick={handleScrollToAbout}
-              className="group flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 transition-colors dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 text-xs md:text-sm cursor-pointer"
-            >
-              <span>{tMain(locale, "more_about_me")}</span>
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.5} />
-            </Link>
           </motion.div>
         </div>
 

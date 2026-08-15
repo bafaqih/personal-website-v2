@@ -402,7 +402,7 @@ export function MainAbout({
 
   return (
     <section id="about" className="scroll-mt-20 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-12 pb-6 md:pt-24 md:pb-8">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <div className="w-full max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         
         {/* ========================================================= */}
         {/* LEFT COLUMN: Profile, Stats, Quotes, CV, Github Activity */}

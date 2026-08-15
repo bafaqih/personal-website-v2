@@ -193,7 +193,7 @@ export function AchievementsClient({ achievements, types, categories, locale }: 
   }, [filteredAchievements.length, page, pageSize, locale]);
 
   return (
-    <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-6 md:pt-8 pb-3 md:pb-4 bg-transparent flex flex-col gap-8 md:gap-8">
+    <div className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-12 md:px-24 lg:px-36 pt-6 md:pt-8 pb-3 md:pb-4 bg-transparent flex flex-col gap-8 md:gap-8">
       {/* 1. Header (Icon, Title, Description) */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}

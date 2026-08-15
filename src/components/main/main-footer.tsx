@@ -130,6 +130,7 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
   return (
     <footer className="w-full border-t border-neutral-200/60 dark:border-white/10 bg-white dark:bg-neutral-950 mt-4 md:mt-6 overflow-hidden">
       <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-6 pb-6 sm:pt-8 sm:pb-8">
+        <div className="w-full max-w-[1440px] mx-auto">
         <div className="flex flex-col md:grid md:grid-cols-2 lg:flex lg:flex-row lg:justify-between gap-10 lg:gap-0">
           
           {/* Col 1: Brand & Desc */}
@@ -281,30 +282,33 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
 
         </div>
       </div>
+      </div>
 
       {/* Bottom row - full width divider */}
       <div className="w-full border-t border-neutral-200/60 dark:border-white/10" />
       <motion.div
-        className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-4"
+        className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 py-6 sm:py-8"
         variants={footerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
       >
-        <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center sm:text-left">
-          © {new Date().getFullYear()} Fadil Bafagih. {tMain(locale, "all_rights")}
-        </p>
-        <span className="text-xs text-neutral-400 dark:text-neutral-500">
-          {tMain(locale, "build_with")}{" "}
-          <a
-            href="https://bafdev.id/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block align-baseline relative font-bold text-neutral-900 dark:text-white transition-colors after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100"
-          >
-            Bafdev
-          </a>
-        </span>
+        <div className="w-full max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-4">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center sm:text-left">
+            © {new Date().getFullYear()} Fadil Bafagih. {tMain(locale, "all_rights")}
+          </p>
+          <span className="text-xs text-neutral-400 dark:text-neutral-500">
+            {tMain(locale, "build_with")}{" "}
+            <a
+              href="https://bafdev.id/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block align-baseline relative font-bold text-neutral-900 dark:text-white transition-colors after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100"
+            >
+              Bafdev
+            </a>
+          </span>
+        </div>
       </motion.div>
     </footer>
   );

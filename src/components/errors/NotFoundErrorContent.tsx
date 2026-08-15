@@ -93,90 +93,92 @@ export default function NotFoundErrorContent() {
           initial={{ y: -60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="sticky top-0 z-30 flex h-14 w-full items-center justify-between px-3.5 sm:px-12 md:px-24 lg:px-36 bg-white/70 backdrop-blur-xl border-b border-neutral-200/60 dark:bg-neutral-950/70 dark:border-white/10"
+          className="sticky top-0 z-30 flex h-14 w-full items-center bg-white/70 backdrop-blur-xl border-b border-neutral-200/60 dark:bg-neutral-950/70 dark:border-white/10 px-3.5 sm:px-12 md:px-24 lg:px-36"
         >
-          {/* Logo */}
-          <Link href={`/`} className="relative flex items-center h-7 cursor-pointer outline-none">
-            <img
-              src={logoBlack.src}
-              alt="Fadil Bafagih"
-              className="dark:hidden h-7 w-auto"
-            />
-            <img
-              src={logoWhite.src}
-              alt="Fadil Bafagih"
-              className="hidden dark:block h-7 w-auto"
-            />
-          </Link>
+          <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-full">
+            {/* Logo */}
+            <Link href={`/`} className="relative flex items-center h-7 cursor-pointer outline-none">
+              <img
+                src={logoBlack.src}
+                alt="Fadil Bafagih"
+                className="dark:hidden h-7 w-auto"
+              />
+              <img
+                src={logoWhite.src}
+                alt="Fadil Bafagih"
+                className="hidden dark:block h-7 w-auto"
+              />
+            </Link>
 
-          {/* Right Controls */}
-          <div className="flex items-center gap-2">
-            {/* Language Switch */}
-            <Tooltip>
-              <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  asChild
-                  className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 relative cursor-pointer flex items-center justify-center"
-                  aria-label={tError(locale, "switch_lang")}
-                  onClick={(e) => {
-                    e.currentTarget.blur();
-                  }}
-                >
-                  <Link 
-                    href={switchLangPath}
-                    onClick={() => trackEvent("language_switch", otherLocale)}
-                  >
-                    <svg
-                      className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                      <path d="M2 12h20" />
-                    </svg>
-                    {/* Badge */}
-                    <span className="absolute -bottom-1.5 -right-1.5 z-0 flex h-4 min-w-[16px] items-center justify-center rounded-[4px] bg-neutral-900 px-0.5 text-[8px] font-bold text-white border border-neutral-200 dark:bg-white dark:text-neutral-900 dark:border-neutral-800 leading-none select-none uppercase">
-                      {otherLocale}
-                    </span>
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>{tError(locale, "switch_lang")}</p>
-              </TooltipContent>
-            </Tooltip>
-
-            {/* Theme Toggle */}
-            {mounted && (
+            {/* Right Controls */}
+            <div className="flex items-center gap-2">
+              {/* Language Switch */}
               <Tooltip>
                 <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
                   <Button
                     variant="ghost"
                     size="icon"
+                    asChild
+                    className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 relative cursor-pointer flex items-center justify-center"
+                    aria-label={tError(locale, "switch_lang")}
                     onClick={(e) => {
-                      setTheme(resolvedTheme === "dark" ? "light" : "dark");
                       e.currentTarget.blur();
                     }}
-                    className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center"
-                    aria-label={tError(locale, resolvedTheme === "dark" ? "theme_light" : "theme_dark")}
                   >
-                    <Moon className="h-4 w-4 text-neutral-600 dark:text-neutral-400 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Sun className="absolute h-4 w-4 text-neutral-600 dark:text-neutral-400 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <Link 
+                      href={switchLangPath}
+                      onClick={() => trackEvent("language_switch", otherLocale)}
+                    >
+                      <svg
+                        className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                        <path d="M2 12h20" />
+                      </svg>
+                      {/* Badge */}
+                      <span className="absolute -bottom-1.5 -right-1.5 z-0 flex h-4 min-w-[16px] items-center justify-center rounded-[4px] bg-neutral-900 px-0.5 text-[8px] font-bold text-white border border-neutral-200 dark:bg-white dark:text-neutral-900 dark:border-neutral-800 leading-none select-none uppercase">
+                        {otherLocale}
+                      </span>
+                    </Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  <p>{tError(locale, resolvedTheme === "dark" ? "theme_light" : "theme_dark")}</p>
+                  <p>{tError(locale, "switch_lang")}</p>
                 </TooltipContent>
               </Tooltip>
-            )}
+
+              {/* Theme Toggle */}
+              {mounted && (
+                <Tooltip>
+                  <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        setTheme(resolvedTheme === "dark" ? "light" : "dark");
+                        e.currentTarget.blur();
+                      }}
+                      className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center"
+                      aria-label={tError(locale, resolvedTheme === "dark" ? "theme_light" : "theme_dark")}
+                    >
+                      <Moon className="h-4 w-4 text-neutral-600 dark:text-neutral-400 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                      <Sun className="absolute h-4 w-4 text-neutral-600 dark:text-neutral-400 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>{tError(locale, resolvedTheme === "dark" ? "theme_light" : "theme_dark")}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </motion.header>
       </TooltipProvider>

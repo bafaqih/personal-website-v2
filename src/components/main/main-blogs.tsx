@@ -86,7 +86,7 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
 
   return (
     <section id="blogs" className="scroll-mt-20 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-6 md:pt-6 md:pb-8 bg-transparent">
-      <div className="w-full flex flex-col gap-6 sm:gap-8">
+      <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6 sm:gap-8">
         {/* Section Header */}
         <div className="flex flex-row items-center justify-between gap-4">
           <motion.div
