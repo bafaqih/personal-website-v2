@@ -320,7 +320,7 @@ export default function ProfilePage() {
                     </div>
                   ) : (
                     <>
-                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                      <h2 className="text-2xl font-medium text-neutral-900 dark:text-white tracking-tight">
                         {profile?.full_name}
                       </h2>
                       <p className="text-base text-neutral-500 dark:text-neutral-400">

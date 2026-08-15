@@ -56,7 +56,7 @@ export function PageHeader({
       {/* Title & Actions */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+          <h1 className="flex items-center gap-3 text-2xl font-medium tracking-tight text-neutral-900 dark:text-white">
             {Icon && <Icon className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />}
             {title}
           </h1>
