@@ -101,7 +101,8 @@ export function ProjectDetailClient({ project, contact, locale }: ProjectDetailC
   const lessonPoints = locale === "id" ? project.lesson_points_id : project.lesson_points_en;
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-12 md:px-24 lg:px-36 py-8 bg-transparent flex flex-col">
+    <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 py-8 bg-transparent">
+      <div className="w-full max-w-[1440px] mx-auto flex flex-col">
       {/* 1. Back button */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -521,6 +522,8 @@ export function ProjectDetailClient({ project, contact, locale }: ProjectDetailC
             </div>
           )}
         </motion.div>
+      </div>
+
       </div>
 
       {/* 5. Share Modal */}
