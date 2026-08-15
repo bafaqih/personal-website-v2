@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/tooltip";
 import { AnimatedHamburger } from "@/components/ui/animated-hamburger";
 import { trackEvent } from "@/src/lib/track-event";
+import { toggleThemeWithTransition } from "@/src/app/lib/theme-transition";
 
 import logoBlack from "@/src/assets/images/fadilbaf-black.svg";
 import logoWhite from "@/src/assets/images/fadilbaf-white.svg";
@@ -122,7 +123,7 @@ export function MainHeader({ locale, hireMeEmail }: MainHeaderProps) {
                     variant="ghost"
                     size="icon"
                     onClick={(e) => {
-                      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+                      toggleThemeWithTransition(resolvedTheme, setTheme, e);
                       e.currentTarget.blur();
                     }}
                     className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center"

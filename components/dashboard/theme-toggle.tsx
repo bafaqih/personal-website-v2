@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLanguage } from "@/context/language-context";
 
+import { toggleThemeWithTransition } from "@/src/app/lib/theme-transition";
+
 /**
  * Theme toggle button — switches between light and dark mode.
  * Uses Sun/Moon icons from Lucide with a smooth rotation animation.
@@ -17,7 +19,7 @@ export function ThemeToggle() {
   const [open, setOpen] = useState(false);
 
   const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    toggleThemeWithTransition(resolvedTheme, setTheme, e);
     setOpen(false); // Hide tooltip on click
     e.currentTarget.blur();
   };

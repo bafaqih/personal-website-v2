@@ -9,6 +9,7 @@ import { cn } from "@/src/app/lib/utils";
 import { tLinks, type LinksLocale } from "@/src/lib/links-translations";
 import type { Contact } from "@/src/types/database";
 import { trackEvent } from "@/src/lib/track-event";
+import { toggleThemeWithTransition } from "@/src/app/lib/theme-transition";
 import {
   Tooltip,
   TooltipContent,
@@ -210,7 +211,7 @@ export function LinksHeader({ locale, contact }: LinksHeaderProps) {
                   variant="ghost"
                   size="icon"
                   onClick={(e) => {
-                    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+                    toggleThemeWithTransition(resolvedTheme, setTheme, e);
                     e.currentTarget.blur();
                   }}
                   className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center"

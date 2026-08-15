@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/src/app/lib/utils";
 import { tError, type ErrorLocale } from "@/src/lib/error-translations";
 import { trackEvent } from "@/src/lib/track-event";
+import { toggleThemeWithTransition } from "@/src/app/lib/theme-transition";
 import {
   Tooltip,
   TooltipContent,
@@ -163,7 +164,7 @@ export default function NotFoundErrorContent() {
                       variant="ghost"
                       size="icon"
                       onClick={(e) => {
-                        setTheme(resolvedTheme === "dark" ? "light" : "dark");
+                        toggleThemeWithTransition(resolvedTheme, setTheme, e);
                         e.currentTarget.blur();
                       }}
                       className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center"
