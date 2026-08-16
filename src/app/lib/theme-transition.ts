@@ -18,9 +18,19 @@ export function toggleThemeWithTransition(
     return;
   }
 
-  // 2. Extract mouse coordinates to set the origin of the circle transition
-  const x = e.clientX;
-  const y = e.clientY;
+  // 2. Extract coordinates. If they are outside the button bounds (like on mobile touch),
+  // fallback to the center of the clicked button.
+  let x = e.clientX;
+  let y = e.clientY;
+
+  if (e.currentTarget) {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const isInside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    if (!isInside) {
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    }
+  }
 
   // 3. Start the transition and synchronously update the theme state
   const transition = document.startViewTransition(() => {
