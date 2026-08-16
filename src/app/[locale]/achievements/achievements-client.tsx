@@ -6,6 +6,7 @@ import {
   Award,
   ExternalLink,
   ArrowRight,
+  ArrowLeft,
   Search,
   Filter,
   RotateCcw,
@@ -13,6 +14,7 @@ import {
   ChevronRight,
   X
 } from "lucide-react";
+import Link from "next/link";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Achievement, AchievementType, AchievementCategory } from "@/src/types/database";
 import { Input } from "@/components/ui/input";
@@ -194,15 +196,35 @@ export function AchievementsClient({ achievements, types, categories, locale }: 
 
   return (
     <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-6 md:pt-8 pb-3 md:pb-4 bg-transparent">
-      <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-8 md:gap-8">
-      {/* 1. Header (Icon, Title, Description) */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="flex flex-col gap-1.5 text-left"
-      >
+      <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6">
+        {/* Back Button to Home */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Link
+            href={`/${locale}`}
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                sessionStorage.setItem("scroll_to_achievements", "true");
+              }
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>{tMain(locale, "back")}</span>
+          </Link>
+        </motion.div>
+
+        {/* 1. Header (Icon, Title, Description) */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="flex flex-col gap-1.5 text-left"
+        >
         <div className="flex items-center gap-2.5">
           <Award className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
           <h1 className="text-[24px] leading-none font-medium tracking-tight text-neutral-900 dark:text-white">

@@ -55,6 +55,21 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const scrollFlag = sessionStorage.getItem("scroll_to_achievements");
+      if (scrollFlag === "true") {
+        sessionStorage.removeItem("scroll_to_achievements");
+        setTimeout(() => {
+          const element = document.getElementById("achievements");
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    }
+  }, []);
+
   // Filter published achievements
   const publishedAchievements = achievements.filter((a) => a.is_published);
 

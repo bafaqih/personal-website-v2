@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, ArrowRight, Heart, Eye } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
@@ -81,6 +82,21 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
 
   // Display maximum of 3 cards on both desktop and mobile
   const displayedBlogs = publishedBlogs.slice(0, 3);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const scrollFlag = sessionStorage.getItem("scroll_to_blogs");
+      if (scrollFlag === "true") {
+        sessionStorage.removeItem("scroll_to_blogs");
+        setTimeout(() => {
+          const element = document.getElementById("blogs");
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    }
+  }, []);
 
   if (displayedBlogs.length === 0) return null;
 

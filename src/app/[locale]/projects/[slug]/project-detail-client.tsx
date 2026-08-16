@@ -100,6 +100,19 @@ export function ProjectDetailClient({ project, contact, locale }: ProjectDetailC
   const lessonIntro = locale === "id" ? project.lesson_intro_id : project.lesson_intro_en;
   const lessonPoints = locale === "id" ? project.lesson_points_id : project.lesson_points_en;
 
+  const [backUrl, setBackUrl] = useState(`/${locale}`);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const prevPage = sessionStorage.getItem("prev_project_page");
+      if (prevPage === "all") {
+        setBackUrl(`/${locale}/projects`);
+      } else {
+        setBackUrl(`/${locale}`);
+      }
+    }
+  }, [locale]);
+
   return (
     <div className="w-full px-3.5 sm:px-12 md:px-24 lg:px-36 py-8 bg-transparent">
       <div className="w-full max-w-[1440px] mx-auto flex flex-col">
@@ -110,7 +123,15 @@ export function ProjectDetailClient({ project, contact, locale }: ProjectDetailC
         transition={{ duration: 0.4 }}
       >
         <Link 
-          href={`/${locale}/projects`}
+          href={backUrl}
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              const prevPage = sessionStorage.getItem("prev_project_page");
+              if (prevPage === "home" || !prevPage) {
+                sessionStorage.setItem("scroll_to_projects", "true");
+              }
+            }
+          }}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />

@@ -47,6 +47,21 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const scrollFlag = sessionStorage.getItem("scroll_to_projects");
+      if (scrollFlag === "true") {
+        sessionStorage.removeItem("scroll_to_projects");
+        setTimeout(() => {
+          const element = document.getElementById("projects");
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    }
+  }, []);
+
   return (
     <section id="projects" className="scroll-mt-20 w-full px-3.5 sm:px-12 md:px-24 lg:px-36 pt-4 pb-6 md:pt-6 md:pb-8 bg-transparent">
       <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6 sm:gap-8">
@@ -130,6 +145,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                 {/* 1. Project Image Container (Clickable) */}
                 <Link
                   href={`/${locale}/projects/${item.slug}`}
+                  onClick={() => sessionStorage.setItem("prev_project_page", "home")}
                   className="group/img relative aspect-video w-full bg-neutral-100 dark:bg-neutral-900 overflow-hidden cursor-pointer text-left block focus:outline-none"
                 >
                   {mainImageUrl ? (
@@ -225,6 +241,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                     {/* Right Button: View Project */}
                     <Link
                       href={`/${locale}/projects/${item.slug}`}
+                      onClick={() => sessionStorage.setItem("prev_project_page", "home")}
                       className="h-10 inline-flex items-center justify-center gap-1.5 rounded-lg bg-neutral-900 text-white px-3 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
                     >
                       <span>{tMain(locale, "view_project")}</span>
