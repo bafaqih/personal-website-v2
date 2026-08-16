@@ -275,7 +275,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   transition: opacity 0.3s;
 }
 
-.profile-photo-shimmer:hover::after {
+@media (hover: hover) and (pointer: fine) {
+  .profile-photo-shimmer:hover::after {
+    opacity: 1;
+    animation: shimmer-sweep 0.7s ease-in-out;
+  }
+}
+
+.profile-photo-shimmer:active::after {
   opacity: 1;
   animation: shimmer-sweep 0.7s ease-in-out;
 }
