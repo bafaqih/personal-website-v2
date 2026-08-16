@@ -130,13 +130,13 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                 {/* 1. Project Image Container (Clickable) */}
                 <Link
                   href={`/${locale}/projects/${item.slug}`}
-                  className="relative aspect-video w-full bg-neutral-100 dark:bg-neutral-900 overflow-hidden cursor-pointer text-left block focus:outline-none"
+                  className="group/img relative aspect-video w-full bg-neutral-100 dark:bg-neutral-900 overflow-hidden cursor-pointer text-left block focus:outline-none"
                 >
                   {mainImageUrl ? (
                     <img
                       src={mainImageUrl}
                       alt={title || "Project preview"}
-                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/img:scale-105"
                       loading="lazy"
                     />
                   ) : (
@@ -145,10 +145,10 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                     </div>
                   )}
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-neutral-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1.5px]">
-                    <span className="inline-flex items-center gap-1.5 text-white font-medium text-sm tracking-wide transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                  <div className="absolute inset-0 bg-neutral-950/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1.5px]">
+                    <span className="inline-flex items-center gap-1.5 text-white font-medium text-sm tracking-wide transform translate-y-2 group-hover/img:translate-y-0 transition-all duration-300">
                       {tMain(locale, "view_project")}
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/img:translate-x-0.5" />
                     </span>
                   </div>
                 </Link>
