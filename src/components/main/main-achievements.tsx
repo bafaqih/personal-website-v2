@@ -71,7 +71,7 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="flex flex-col gap-1.5 text-left"
+            className="flex flex-col gap-1.5 text-left w-full"
           >
             <div className="flex items-center gap-2.5">
               <Award className="h-[22px] w-[22px] text-neutral-900 dark:text-white" />
@@ -82,6 +82,16 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
             <p className="text-[15px] font-regular text-neutral-500 dark:text-neutral-400">
               {tMain(locale, "achievements_desc")}
             </p>
+            {/* Mobile View All Button */}
+            <div className="flex md:hidden mt-2">
+              <a
+                href={`/${locale}/achievements`}
+                className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
+              >
+                <span>{tMain(locale, "view_all_achievements")}</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
+              </a>
+            </div>
           </motion.div>
 
           <motion.div
@@ -93,7 +103,7 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
           >
             <a
               href={`/${locale}/achievements`}
-              className="group/btn inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-xs font-semibold text-neutral-700 transition-colors duration-200 hover:bg-neutral-50 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
             >
               <span>{tMain(locale, "view_all_achievements")}</span>
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
@@ -187,23 +197,6 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
             );
           })}
         </div>
-
-        {/* Mobile View All Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
-          className="flex md:hidden justify-end mt-2"
-        >
-          <a
-            href={`/${locale}/achievements`}
-            className="group/btn inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-4 py-2.5 text-xs font-semibold text-neutral-700 transition-colors duration-200 hover:bg-neutral-50 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800"
-          >
-            <span>{tMain(locale, "view_all_achievements")}</span>
-            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
-          </a>
-        </motion.div>
       </div>
 
       {/* Achievement Detail Modal using shadcn Dialog */}
