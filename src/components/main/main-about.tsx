@@ -446,10 +446,12 @@ export function MainAbout({
                       src={profile.photo_url}
                       alt={profile.full_name || "Profile"}
                       fill
-                      className="object-cover grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 active:grayscale-0 select-none"
+                      className="object-cover select-none profile-image-grayscale"
                       sizes="112px"
                       priority
                       onLoad={() => setIsImageLoading(false)}
+                      onContextMenu={(e) => e.preventDefault()}
+                      draggable={false}
                     />
                   </div>
                 </motion.div>

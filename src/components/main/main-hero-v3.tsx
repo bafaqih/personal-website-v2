@@ -279,7 +279,7 @@ export function MainHeroV3({ profile, roles, about, contact, locale }: MainHeroV
               priority
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
-              className="object-contain max-h-[380px] sm:max-h-[430px] lg:max-h-[620px] w-auto grayscale contrast-110 brightness-95 filter transition-all duration-700 hover:grayscale-0 active:grayscale-0 pointer-events-auto select-none"
+              className="object-contain max-h-[380px] sm:max-h-[430px] lg:max-h-[620px] w-auto pointer-events-auto select-none profile-image-grayscale"
             />
             {/* High-fidelity 13-stop easing gradient to match page background with ultra-smooth transition at both ends */}
             <div className="absolute bottom-[-2px] left-0 right-0 h-28 lg:h-36 pointer-events-none z-10 bg-[linear-gradient(to_top,#fff_0%,rgba(255,255,255,0.99)_3%,rgba(255,255,255,0.97)_8%,rgba(255,255,255,0.92)_15%,rgba(255,255,255,0.82)_25%,rgba(255,255,255,0.65)_38%,rgba(255,255,255,0.45)_52%,rgba(255,255,255,0.27)_66%,rgba(255,255,255,0.15)_78%,rgba(255,255,255,0.07)_87%,rgba(255,255,255,0.02)_94%,rgba(255,255,255,0.005)_97%,transparent_100%)] dark:bg-[linear-gradient(to_top,#0a0a0a_0%,rgba(10,10,10,0.99)_3%,rgba(10,10,10,0.97)_8%,rgba(10,10,10,0.92)_15%,rgba(10,10,10,0.82)_25%,rgba(10,10,10,0.65)_38%,rgba(10,10,10,0.45)_52%,rgba(10,10,10,0.27)_66%,rgba(10,10,10,0.15)_78%,rgba(10,10,10,0.07)_87%,rgba(10,10,10,0.02)_94%,rgba(10,10,10,0.005)_97%,transparent_100%)]" />
