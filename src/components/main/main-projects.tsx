@@ -87,7 +87,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
             <div className="flex md:hidden mt-2">
               <a
                 href={`/${locale}/projects`}
-                className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
+                className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 cursor-pointer"
               >
                 <span>{tMain(locale, "view_all_projects")}</span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
@@ -104,7 +104,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
           >
             <a
               href={`/${locale}/projects`}
-              className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 cursor-pointer"
+              className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 cursor-pointer"
             >
               <span>{tMain(locale, "view_all_projects")}</span>
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
@@ -140,7 +140,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 variants={cardVariants}
-                className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 active:scale-[0.99] active:border-neutral-300 dark:active:border-neutral-700`}
+                className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-colors duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 active:border-neutral-300 dark:active:border-neutral-700`}
               >
                 {/* 1. Project Image Container (Clickable) */}
                 <Link

@@ -264,7 +264,7 @@ export function MainExperience({
                   }}
                   className={`flex items-center gap-2 text-sm font-semibold transition-colors whitespace-nowrap px-4 py-2 rounded-lg ${activeTab === tab.id
                       ? "bg-black text-white dark:bg-white dark:text-black"
-                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:text-neutral-900 active:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10 dark:active:text-white dark:active:bg-white/10"
                     }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -371,7 +371,7 @@ export function MainExperience({
                                       href={item.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 active:underline active:text-neutral-800 dark:active:text-neutral-200 transition-colors"
                                     >
                                       {item.company}
                                     </a>
@@ -416,7 +416,7 @@ export function MainExperience({
                                 <div className="mt-2.5">
                                   <button
                                     onClick={() => toggleItem(item.id)}
-                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white transition-colors cursor-pointer outline-none select-none"
                                   >
                                     <motion.span
                                       animate={{ rotate: isExpanded ? 90 : 0 }}
@@ -501,7 +501,7 @@ export function MainExperience({
                                               setIsAnimating(true);
                                               setIsModalOpen(true);
                                             }}
-                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
+                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 active:bg-neutral-50 dark:hover:bg-white/5 dark:active:bg-white/5 transition-colors cursor-pointer select-none"
                                           >
                                             <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
                                             <span>+{item.career_skills.length - 5}</span>
@@ -544,7 +544,7 @@ export function MainExperience({
                                               setIsAnimating(true);
                                               setIsModalOpen(true);
                                             }}
-                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer select-none"
+                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md border border-neutral-200 dark:border-white/10 bg-transparent text-xs font-normal text-neutral-500 hover:bg-neutral-50 active:bg-neutral-50 dark:hover:bg-white/5 dark:active:bg-white/5 transition-colors cursor-pointer select-none"
                                           >
                                             <Eye className="w-3 h-3 text-neutral-500 dark:text-neutral-400" />
                                             <span>+{item.career_skills.length - 3}</span>
@@ -660,7 +660,7 @@ export function MainExperience({
                                       href={item.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 active:underline active:text-neutral-800 dark:active:text-neutral-200 transition-colors"
                                     >
                                       {item.school}
                                     </a>
@@ -700,7 +700,7 @@ export function MainExperience({
                                 <div className="mt-2.5">
                                   <button
                                     onClick={() => toggleItem(item.id)}
-                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white transition-colors cursor-pointer outline-none select-none"
                                   >
                                     <motion.span
                                       animate={{ rotate: isExpanded ? 90 : 0 }}
@@ -854,7 +854,7 @@ export function MainExperience({
                                       href={item.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                      className="hover:underline hover:text-neutral-800 dark:hover:text-neutral-200 active:underline active:text-neutral-800 dark:active:text-neutral-200 transition-colors"
                                     >
                                       {item.organization}
                                     </a>
@@ -885,7 +885,7 @@ export function MainExperience({
                                 <div className="mt-2.5">
                                   <button
                                     onClick={() => toggleItem(item.id)}
-                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors cursor-pointer outline-none select-none"
+                                    className="inline-flex items-center gap-1 -ml-1 text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white transition-colors cursor-pointer outline-none select-none"
                                   >
                                     <motion.span
                                       animate={{ rotate: isExpanded ? 90 : 0 }}

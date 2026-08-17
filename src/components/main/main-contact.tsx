@@ -296,7 +296,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer rounded-lg inline-flex items-center justify-center transition-all duration-200 active:scale-[0.98]"
+                className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 gap-2 font-semibold cursor-pointer rounded-lg inline-flex items-center justify-center transition-colors duration-200"
               >
                 {isSubmitting ? (
                   <>

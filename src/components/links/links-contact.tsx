@@ -158,6 +158,15 @@ export function LinksContact({ locale }: LinksContactProps) {
     e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  };
+
   return (
     <motion.section
       className="px-3.5 pt-6 pb-6"
@@ -169,11 +178,13 @@ export function LinksContact({ locale }: LinksContactProps) {
       <motion.div 
         variants={cardVariants}
         onMouseMove={handleMouseMove}
+        onTouchStart={handleTouchMove}
+        onTouchMove={handleTouchMove}
         className="link-card-custom group relative overflow-hidden rounded-xl border border-neutral-200/60 bg-white/80 backdrop-blur-sm p-5 dark:border-white/10 dark:bg-neutral-900/80"
       >
         {/* Spotlight cursor overlay */}
         <div
-          className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          className="absolute inset-0 pointer-events-none rounded-xl opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
           style={{
             background: `radial-gradient(250px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), var(--spotlight-color), transparent 80%)`,
           }}
@@ -276,7 +287,7 @@ export function LinksContact({ locale }: LinksContactProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer"
+              className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 gap-2 font-semibold cursor-pointer"
             >
               {isSubmitting ? (
                 <>

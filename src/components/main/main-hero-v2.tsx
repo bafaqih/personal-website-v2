@@ -238,7 +238,7 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
             <Link
               href="#about"
               onClick={handleScrollToAbout}
-              className="group flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 transition-all duration-200 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 text-xs md:text-sm cursor-pointer w-fit active:scale-[0.97]"
+              className="group flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 active:bg-neutral-50 transition-colors dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:active:bg-neutral-800 text-xs md:text-sm cursor-pointer w-fit"
             >
               <span>{tMain(locale, "more_about_me")}</span>
               <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.5} />
@@ -290,7 +290,7 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
             <Link
               href="#about"
               onClick={handleScrollToAbout}
-              className="group flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 transition-all duration-200 dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 text-xs md:text-sm cursor-pointer active:scale-[0.97]"
+              className="group flex items-center justify-center gap-2 w-full lg:w-auto px-6 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-700 font-medium hover:bg-neutral-50 active:bg-neutral-50 transition-colors dark:border-white/10 dark:bg-neutral-900/50 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:active:bg-neutral-800 text-xs md:text-sm cursor-pointer"
             >
               <span>{tMain(locale, "more_about_me")}</span>
               <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.5} />

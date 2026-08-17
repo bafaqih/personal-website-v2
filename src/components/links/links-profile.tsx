@@ -240,13 +240,13 @@ export function LinksProfile({
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{
                       duration: 0.35,
                       ease: "easeOut" as const,
                       delay: 0.6 + index * 0.06,
                     }}
-                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 active:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:active:bg-neutral-800"
                     aria-label={label}
                     onClick={(e) => {
                       e.currentTarget.blur();

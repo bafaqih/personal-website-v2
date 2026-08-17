@@ -104,7 +104,7 @@ export function LinksShareModal({
               </h3>
               <button
                 onClick={onClose}
-                className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors dark:hover:text-white dark:hover:bg-white/10 cursor-pointer"
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 active:text-neutral-900 active:bg-neutral-100 transition-colors dark:hover:text-white dark:hover:bg-white/10 dark:active:text-white dark:active:bg-white/10 cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -119,7 +119,7 @@ export function LinksShareModal({
                     href={url!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-12 flex-1 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-600 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 dark:border-white/10 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                    className="flex h-12 flex-1 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-600 transition-all duration-200 hover:bg-neutral-100 hover:scale-105 active:bg-neutral-100 active:scale-105 dark:border-white/10 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:active:bg-neutral-700"
                     aria-label={label}
                   >
                     <Icon className="h-5 w-5" />
@@ -131,7 +131,7 @@ export function LinksShareModal({
             {/* Copy URL */}
             <button
               onClick={handleCopyUrl}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm font-medium text-neutral-700 transition-all hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm font-medium text-neutral-700 transition-all hover:bg-neutral-100 active:bg-neutral-100 dark:border-white/10 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 cursor-pointer"
             >
               <Globe className="h-4 w-4" />
               {tLinks(locale, "copy_url")}

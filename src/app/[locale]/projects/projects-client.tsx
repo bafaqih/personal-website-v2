@@ -419,7 +419,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
                     initial="hidden"
                     animate="visible"
                     variants={cardVariants}
-                    className="group relative flex flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 active:scale-[0.99] active:border-neutral-300 dark:active:border-neutral-700"
+                    className="group relative flex flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-colors duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 active:border-neutral-300 dark:active:border-neutral-700"
                   >
                     {/* Project Image Container */}
                     <a

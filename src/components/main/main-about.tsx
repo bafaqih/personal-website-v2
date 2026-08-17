@@ -619,7 +619,7 @@ export function MainAbout({
               <div className="flex items-center gap-3 select-none">
                  <button
                    onClick={() => setActivityYear((prev) => prev - 1)}
-                   className="h-8 w-8 rounded-lg border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 flex items-center justify-center text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white cursor-pointer transition-colors"
+                   className="h-8 w-8 rounded-lg border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 flex items-center justify-center text-neutral-600 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white cursor-pointer transition-colors"
                  >
                    <ChevronLeft className="h-4 w-4" />
                  </button>
@@ -627,7 +627,7 @@ export function MainAbout({
                  <button
                    onClick={() => setActivityYear((prev) => prev + 1)}
                    disabled={activityYear >= new Date().getFullYear()}
-                   className="h-8 w-8 rounded-lg border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 flex items-center justify-center text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                   className="h-8 w-8 rounded-lg border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 flex items-center justify-center text-neutral-600 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                  >
                    <ChevronRight className="h-4 w-4" />
                  </button>
@@ -759,7 +759,7 @@ export function MainAbout({
                   className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
                     selectedCategory === "all"
                       ? "bg-black text-white dark:bg-white dark:text-black"
-                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:text-neutral-900 active:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10 dark:active:text-white dark:active:bg-white/10"
                   }`}
                 >
                   {tMain(locale, "all_skills")}
@@ -771,7 +771,7 @@ export function MainAbout({
                     className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
                       selectedCategory === cat.id
                         ? "bg-black text-white dark:bg-white dark:text-black"
-                        : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
+                        : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:text-neutral-900 active:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10 dark:active:text-white dark:active:bg-white/10"
                     }`}
                   >
                     {locale === "id" ? cat.name_id : cat.name_en}
@@ -814,7 +814,7 @@ export function MainAbout({
                         }
                       }
                     }}
-                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white active:bg-neutral-50/50 active:border-neutral-300 dark:active:bg-white/3 dark:active:border-white/20 active:text-black dark:active:text-white"
                   >
                     {skill.icon_url ? (
                       <img 
@@ -846,7 +846,7 @@ export function MainAbout({
                       }
                     }}
                     onClick={() => setIsSkillsModalOpen(true)}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-white/10 bg-transparent text-sm font-normal text-neutral-500 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-white/10 bg-transparent text-sm font-normal text-neutral-500 hover:bg-neutral-50 active:bg-neutral-50 dark:hover:bg-white/5 dark:active:bg-white/5 transition-colors cursor-pointer"
                   >
                     <Eye className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
                     <span>+{displaySkills.length - maxPreviewSkills}</span>
@@ -883,7 +883,7 @@ export function MainAbout({
                 className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
                   selectedModalCategory === "all"
                     ? "bg-black text-white dark:bg-white dark:text-black"
-                    : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
+                    : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:text-neutral-900 active:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10 dark:active:text-white dark:active:bg-white/10"
                 }`}
               >
                 {tMain(locale, "all_skills")}
@@ -895,7 +895,7 @@ export function MainAbout({
                   className={`text-sm font-semibold transition-colors whitespace-nowrap px-3.5 py-1.5 rounded-lg ${
                     selectedModalCategory === cat.id
                       ? "bg-black text-white dark:bg-white dark:text-black"
-                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:text-neutral-900 active:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/10 dark:active:text-white dark:active:bg-white/10"
                   }`}
                 >
                   {locale === "id" ? cat.name_id : cat.name_en}
@@ -936,7 +936,7 @@ export function MainAbout({
                       }
                     }
                   }}
-                  className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
+                  className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-neutral-200 bg-transparent dark:border-white/10 text-sm font-normal text-neutral-700 dark:text-neutral-300 transition-colors duration-200 hover:bg-neutral-50/50 hover:border-neutral-300 dark:hover:bg-white/3 dark:hover:border-white/20 hover:text-black dark:hover:text-white active:bg-neutral-50/50 active:border-neutral-300 dark:active:bg-white/3 dark:active:border-white/20 active:text-black dark:active:text-white"
                 >
                   {skill.icon_url ? (
                     <img 
