@@ -79,7 +79,6 @@ export function MainHeader({ locale, hireMeEmail }: MainHeaderProps) {
                   variant="ghost"
                   size="icon"
                   asChild
-                  onPointerDown={(e) => e.preventDefault()}
                   className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 relative cursor-pointer flex items-center justify-center"
                   aria-label={tMain(locale, "switch_lang")}
                   onClick={(e) => {
@@ -123,7 +122,6 @@ export function MainHeader({ locale, hireMeEmail }: MainHeaderProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onPointerDown={(e) => e.preventDefault()}
                     onClick={(e) => {
                       toggleThemeWithTransition(resolvedTheme, setTheme, e);
                       e.currentTarget.blur();

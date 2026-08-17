@@ -22,12 +22,11 @@ export function LanguageToggle() {
 
   return (
     <Tooltip open={open} onOpenChange={setOpen}>
-      <TooltipTrigger asChild>
+      <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleLanguage}
-          onPointerDown={(e) => e.preventDefault()}
           className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 relative active:bg-neutral-100 dark:active:bg-white/10"
           aria-label="Toggle language"
         >

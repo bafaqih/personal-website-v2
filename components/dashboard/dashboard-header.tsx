@@ -60,13 +60,12 @@ function ProfileDropdown({
       onOpenChange={setTooltipOpen}
     >
       <DropdownMenu onOpenChange={setDropdownOpen}>
-        <TooltipTrigger asChild>
+        <TooltipTrigger asChild onFocus={(e) => e.preventDefault()}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
               disabled={actualShowSkeleton}
-              onPointerDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 if (!actualShowSkeleton) {
                   setTooltipOpen(false);
