@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { BookOpen, ArrowRight, Heart, Eye } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Blog } from "@/src/types/database";
@@ -123,13 +124,13 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
             </p>
             {/* Mobile View All Button */}
             <div className="flex md:hidden mt-2">
-              <a
+              <Link
                 href={`/${locale}/blogs`}
                 className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 cursor-pointer"
               >
                 <span>{tMain(locale, "view_all_blogs")}</span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
-              </a>
+              </Link>
             </div>
           </motion.div>
 
@@ -140,13 +141,13 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
             transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
             className="hidden md:block shrink-0"
           >
-            <a
+            <Link
               href={`/${locale}/blogs`}
               className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 cursor-pointer"
             >
               <span>{tMain(locale, "view_all_blogs")}</span>
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
-            </a>
+            </Link>
           </motion.div>
         </div>
 
@@ -222,13 +223,13 @@ export function MainBlogs({ blogs, locale }: MainBlogsProps) {
                   </div>
 
                   {/* Read More Button */}
-                  <a
+                  <Link
                     href={`/${locale}/blogs/${blog.slug}`}
                     className="h-10 inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900 px-4 text-xs font-semibold transition-colors duration-200 cursor-pointer"
                   >
                     <span>{tMain(locale, "read_more")}</span>
                     <ArrowRight className="h-3.5 w-3.5" />
-                  </a>
+                  </Link>
                 </div>
               </motion.div>
             );

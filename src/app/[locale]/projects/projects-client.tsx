@@ -422,7 +422,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
                     className="group relative flex flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-colors duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 active:border-neutral-300 dark:active:border-neutral-700"
                   >
                     {/* Project Image Container */}
-                    <a
+                    <Link
                       href={`/${locale}/projects/${item.slug}`}
                       onClick={() => {
                         if (typeof window !== "undefined") {
@@ -451,7 +451,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
                           <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/img:translate-x-0.5" />
                         </span>
                       </div>
-                    </a>
+                    </Link>
 
                     {/* Card Content */}
                     <div className="flex flex-1 flex-col p-5 text-left">
@@ -525,7 +525,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
                         )}
 
                         {/* Right Button: View Project */}
-                        <a
+                        <Link
                           href={`/${locale}/projects/${item.slug}`}
                           onClick={() => {
                             if (typeof window !== "undefined") {
@@ -537,7 +537,7 @@ export function ProjectsClient({ projects, types, categories, locale }: Projects
                         >
                           <span>{tMain(locale, "view_project")}</span>
                           <ArrowRight className="h-3.5 w-3.5" />
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </motion.div>

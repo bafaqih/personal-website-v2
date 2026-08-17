@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { ArrowRight, Award, ExternalLink, X } from "lucide-react";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import type { Achievement } from "@/src/types/database";
@@ -99,13 +100,13 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
             </p>
             {/* Mobile View All Button */}
             <div className="flex md:hidden mt-2">
-              <a
+              <Link
                 href={`/${locale}/achievements`}
                 className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 cursor-pointer"
               >
                 <span>{tMain(locale, "view_all_achievements")}</span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
-              </a>
+              </Link>
             </div>
           </motion.div>
 
@@ -116,13 +117,13 @@ export function MainAchievements({ achievements, locale }: MainAchievementsProps
             transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
             className="hidden md:block shrink-0"
           >
-            <a
+            <Link
               href={`/${locale}/achievements`}
               className="group/btn inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold transition-colors duration-200 hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 cursor-pointer"
             >
               <span>{tMain(locale, "view_all_achievements")}</span>
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
-            </a>
+            </Link>
           </motion.div>
         </div>
 

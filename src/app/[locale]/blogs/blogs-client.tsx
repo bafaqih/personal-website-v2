@@ -510,14 +510,14 @@ export function BlogsClient({ blogs, types, categories, locale }: BlogsClientPro
                         </div>
                       </div>
 
-                      <a
+                      <Link
                         href={`/${locale}/blogs/${blog.slug}`}
                         onClick={() => trackEvent("blog_click", title)}
                         className="h-10 inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900 px-4 text-xs font-semibold transition-colors duration-200 cursor-pointer"
                       >
                         <span>{tMain(locale, "read_more")}</span>
                         <ArrowRight className="h-3.5 w-3.5" />
-                      </a>
+                      </Link>
                     </div>
                   </motion.div>
                 );
