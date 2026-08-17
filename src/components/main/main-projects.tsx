@@ -140,7 +140,7 @@ export function MainProjects({ projects, locale }: MainProjectsProps) {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 variants={cardVariants}
-                className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-colors duration-200 hover:border-neutral-300 dark:hover:border-neutral-700`}
+                className={`${visibilityClass} group relative flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 active:scale-[0.99] active:border-neutral-300 dark:active:border-neutral-700`}
               >
                 {/* 1. Project Image Container (Clickable) */}
                 <Link

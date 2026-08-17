@@ -114,6 +114,17 @@ export function MainContact({ contact, locale }: MainContactProps) {
     e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touch = e.touches[0];
+    if (touch) {
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+      e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+    }
+  };
+
   const onSubmit = async (data: ContactFormData) => {
     try {
       const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
@@ -203,11 +214,13 @@ export function MainContact({ contact, locale }: MainContactProps) {
             viewport={{ once: true, margin: "-100px" }}
             variants={cardVariants}
             onMouseMove={handleMouseMove}
+            onTouchStart={handleTouchMove}
+            onTouchMove={handleTouchMove}
             className="link-card-custom group relative flex flex-col rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-900/50 backdrop-blur-sm overflow-hidden p-5 text-left"
           >
             {/* Spotlight cursor overlay */}
             <div
-              className="absolute inset-0 pointer-events-none rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              className="absolute inset-0 pointer-events-none rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
               style={{
                 background: `radial-gradient(250px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), var(--spotlight-color), transparent 80%)`,
               }}
@@ -283,7 +296,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer rounded-lg inline-flex items-center justify-center transition-colors duration-200"
+                className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer rounded-lg inline-flex items-center justify-center transition-all duration-200 active:scale-[0.98]"
               >
                 {isSubmitting ? (
                   <>
@@ -325,7 +338,7 @@ export function MainContact({ contact, locale }: MainContactProps) {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           transition={{
                             duration: 0.35,
                             ease: "easeOut" as const,

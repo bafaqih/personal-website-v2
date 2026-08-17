@@ -16,6 +16,15 @@ export function PageTracker() {
   const lastTracked = useRef<string | null>(null);
 
   useEffect(() => {
+    // Enable CSS :active states globally on touch/iOS devices
+    const handleTouchStart = () => {};
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+    };
+  }, []);
+
+  useEffect(() => {
     // Avoid double-tracking on the same pathname (React strict mode)
     if (pathname && pathname !== lastTracked.current) {
       lastTracked.current = pathname;
