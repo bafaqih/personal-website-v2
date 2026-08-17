@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, ArrowRight } from "lucide-react";
+import { useTheme } from "next-themes";
 import { tMain, type MainLocale } from "@/src/lib/main-translations";
 import {
   Tooltip,
@@ -13,7 +14,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { Profile, Contact, About, Role } from "@/src/types/database";
-import fadilColorImage from "@/src/assets/images/fadil-color.png";
+import fadilbafBlackImage from "@/src/assets/images/fadilbaf-black.png";
+import fadilbafWhiteImage from "@/src/assets/images/fadilbaf-white.png";
 
 /** Inline SVG brand icons — consistent B&W style */
 function LinkedInIcon({ className }: { className?: string }) {
@@ -83,8 +85,17 @@ const fadeUpVariants = {
 
 export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV2Props) {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+
   const badgeText = locale === "id" ? about?.badge_id : about?.badge_en;
   const bioText = locale === "id" ? about?.bio_id : about?.badge_id ? about?.bio_en : null;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const heroImage = mounted && resolvedTheme === "dark" ? fadilbafBlackImage : fadilbafWhiteImage;
   
   // Cycle through roles every 3 seconds
   useEffect(() => {
@@ -244,7 +255,7 @@ export function MainHeroV2({ profile, roles, about, contact, locale }: MainHeroV
             className="relative w-full max-w-[320px] sm:max-w-[360px] lg:w-[560px] lg:max-w-none lg:aspect-4/5 flex items-end justify-center overflow-visible lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 origin-bottom pointer-events-auto"
           >
             <Image
-              src={fadilColorImage}
+              src={heroImage}
               alt={profile?.full_name || "Fadil Bafagih"}
               priority
               draggable={false}
