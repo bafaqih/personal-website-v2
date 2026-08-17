@@ -12,7 +12,7 @@ export function AnimatedHamburger({ active, className, ...props }: AnimatedHambu
       variant="ghost"
       size="icon"
       className={cn(
-        "h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0",
+        "h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white active:bg-neutral-800 active:text-white transition-all dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:hover:text-neutral-900 dark:active:bg-neutral-100 dark:active:text-neutral-900 rounded-[10px] flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0",
         className
       )}
       {...props}

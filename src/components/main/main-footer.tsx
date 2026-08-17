@@ -178,7 +178,7 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
                             ease: "easeOut" as const,
                             delay: 0.2 + index * 0.06,
                           }}
-                          className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                          className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 active:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:active:bg-neutral-800"
                           aria-label={label}
                           onClick={(e) => {
                             e.currentTarget.blur();
@@ -208,10 +208,10 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
                   <Link 
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="group flex items-center justify-between w-full text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-all px-3 py-2 border border-transparent rounded-lg hover:border-neutral-200 dark:hover:border-white/10"
+                    className="group flex items-center justify-between w-full text-sm text-neutral-600 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white transition-all px-3 py-2 border border-transparent rounded-lg hover:border-neutral-200 active:border-neutral-200 dark:hover:border-white/10 dark:active:border-white/10"
                   >
                     <span>{link.label}</span>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-neutral-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <ArrowUpRight className="h-3.5 w-3.5 text-neutral-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-active:translate-x-0.5 group-active:-translate-y-0.5" />
                   </Link>
                 </li>
               ))}
@@ -239,7 +239,7 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
               {contact?.email && (
                 <a
                   href={`mailto:${contact.email}`}
-                  className="mt-2 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 w-fit whitespace-nowrap"
+                  className="mt-2 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 w-fit whitespace-nowrap"
                 >
                   {tMain(locale, "lets_work")}
                   <Mail className="h-4 w-4" />
@@ -272,7 +272,7 @@ export function MainFooter({ about, contact, locale }: MainFooterProps) {
                 <button 
                   type="submit"
                   disabled={loading}
-                  className="h-full rounded-md bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 whitespace-nowrap cursor-pointer disabled:opacity-50 flex items-center justify-center"
+                  className="h-full rounded-md bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 whitespace-nowrap cursor-pointer disabled:opacity-50 flex items-center justify-center"
                 >
                   {loading ? tMain(locale, "subscribing") : tMain(locale, "subscribe")}
                 </button>

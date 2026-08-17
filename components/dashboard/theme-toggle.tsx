@@ -31,6 +31,7 @@ export function ThemeToggle() {
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
+          onPointerDown={(e) => e.preventDefault()}
           className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 active:bg-neutral-100 dark:active:bg-white/10"
           aria-label="Toggle theme"
         >

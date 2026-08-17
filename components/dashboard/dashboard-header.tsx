@@ -66,6 +66,7 @@ function ProfileDropdown({
               variant="ghost"
               size="icon"
               disabled={actualShowSkeleton}
+              onPointerDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 if (!actualShowSkeleton) {
                   setTooltipOpen(false);
@@ -206,7 +207,7 @@ export function DashboardHeader({
               variant="ghost"
               size="icon"
               onClick={onToggleMobileSidebar}
-              className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 hover:text-white transition-colors duration-200 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 dark:hover:text-neutral-900 rounded-lg flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+              className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 active:text-white hover:text-white transition-colors duration-200 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 dark:active:text-neutral-900 dark:hover:text-neutral-900 rounded-lg flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
             >
               <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
                 <span className="w-full h-[2px] bg-current rounded-full" />
@@ -227,7 +228,7 @@ export function DashboardHeader({
                     onToggleSidebar?.();
                     e.currentTarget.blur();
                   }}
-                  className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 hover:text-white transition-colors duration-200 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 dark:hover:text-neutral-900 rounded-lg flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+                  className="h-9 w-9 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 active:text-white hover:text-white transition-colors duration-200 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 dark:active:text-neutral-900 dark:hover:text-neutral-900 rounded-lg flex items-center justify-center cursor-pointer border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:ring-0"
                 >
                   <div className="relative w-[18px] h-[14px] flex flex-col justify-between items-center">
                     <span className="w-full h-[2px] bg-current rounded-full" />
