@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/dashboard/theme-provider";
 import { PageTracker } from "@/components/analytics/page-tracker";
 import { LinksToaster } from "@/src/components/links/links-toaster";
 import { Analytics } from "@vercel/analytics/next";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader showSpinner={false} shadow={false} showForHashAnchor={false} />
           <PageTracker />
           {children}
           <LinksToaster />

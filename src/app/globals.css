@@ -509,3 +509,14 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 .profile-image-grayscale:active {
   filter: grayscale(0%) contrast(110%) brightness(95%);
 }
+
+/* Custom NProgress styling for NextTopLoader matching light/dark theme colors */
+#nprogress .bar {
+  background: var(--foreground) !important;
+  height: 2px !important;
+  border-radius: 0 9999px 9999px 0 !important;
+}
+
+#nprogress .peg {
+  display: none !important;
+}
