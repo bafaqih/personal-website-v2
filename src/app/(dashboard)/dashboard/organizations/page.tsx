@@ -94,7 +94,7 @@ export default function OrganizationsPage() {
         ]}
         actions={
           <Link href="/dashboard/organizations/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Button className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer">
               <Plus className="h-4 w-4" /> {t("organizations.add_organization")}
             </Button>
           </Link>

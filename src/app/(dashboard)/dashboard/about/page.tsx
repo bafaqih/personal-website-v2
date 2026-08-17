@@ -245,7 +245,7 @@ export default function AboutPage() {
           activeTab === "roles" ? (
             <Button
               onClick={openAddRoleModal}
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer"
+              className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer"
             >
               <Plus className="h-4 w-4" /> {t("roles.add_role")}
             </Button>
@@ -261,7 +261,7 @@ export default function AboutPage() {
             "pb-3 px-4 text-sm font-medium border-b-2 transition-all cursor-pointer outline-none focus:outline-none",
             activeTab === "general"
               ? "border-neutral-900 text-neutral-900 dark:border-white dark:text-white"
-              : "border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+              : "border-transparent text-neutral-500 hover:text-neutral-900 active:text-neutral-900 dark:hover:text-white dark:active:text-white"
           )}
         >
           {t("about.title")}
@@ -272,7 +272,7 @@ export default function AboutPage() {
             "pb-3 px-4 text-sm font-medium border-b-2 transition-all cursor-pointer outline-none focus:outline-none",
             activeTab === "roles"
               ? "border-neutral-900 text-neutral-900 dark:border-white dark:text-white"
-              : "border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+              : "border-transparent text-neutral-500 hover:text-neutral-900 active:text-neutral-900 dark:hover:text-white dark:active:text-white"
           )}
         >
           {t("roles.title")}
@@ -421,7 +421,7 @@ export default function AboutPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting || (!isDirty && !cvFile)}
-                    className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5 cursor-pointer"
+                    className="bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 gap-1.5 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>
@@ -548,7 +548,7 @@ export default function AboutPage() {
                     roleFormData.is_active === editingRole.is_active
                   : !roleFormData.role_id.trim() || !roleFormData.role_en.trim())
               }
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRoleSubmitting ? (
                 <>

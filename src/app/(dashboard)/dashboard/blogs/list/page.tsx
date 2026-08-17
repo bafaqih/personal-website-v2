@@ -64,7 +64,7 @@ export default function BlogsListPage() {
       key: "type_id",
       header: t("blogs.form_type"),
       render: (b) => (
-        <Badge variant="secondary" className="bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/20 text-neutral-900 dark:text-neutral-100 border-none">
+        <Badge variant="secondary" className="bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/20 dark:active:bg-white/20 text-neutral-900 dark:text-neutral-100 border-none">
           {b.type?.[language === "en" ? "name_en" : "name_id"] || "-"}
         </Badge>
       )
@@ -73,7 +73,7 @@ export default function BlogsListPage() {
       key: "category_id",
       header: t("blogs.form_category"),
       render: (b) => (
-        <Badge variant="secondary" className="bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/20 text-neutral-900 dark:text-neutral-100 border-none">
+        <Badge variant="secondary" className="bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/20 dark:active:bg-white/20 text-neutral-900 dark:text-neutral-100 border-none">
           {b.category?.[language === "en" ? "name_en" : "name_id"] || "-"}
         </Badge>
       )
@@ -118,7 +118,7 @@ export default function BlogsListPage() {
         ]}
         actions={
           <Link href="/dashboard/blogs/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Button className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer">
               <Plus className="h-4 w-4" /> {t("blogs.add_blog")}
             </Button>
           </Link>

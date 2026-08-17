@@ -253,7 +253,7 @@ export default function ProfilePage() {
                   <button
                     onClick={() => setIsViewerOpen(true)}
                     disabled={isUploading || isDeletingImage || loading}
-                    className="relative h-32 w-32 p-1 bg-neutral-50 dark:bg-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition cursor-pointer"
+                    className="relative h-32 w-32 p-1 bg-neutral-50 dark:bg-neutral-800 shadow-md rounded-2xl overflow-hidden group focus:outline-none transition-all active:scale-95 cursor-pointer"
                   >
                     <div className="w-full h-full relative rounded-xl overflow-hidden isolate">
                       {/* Always render Avatar so the image loads, but make it invisible when showSkeleton is true */}
@@ -267,7 +267,7 @@ export default function ProfilePage() {
                               setImageStatus(status);
                             }}
                           />
-                          <AvatarFallback className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full transition-all duration-300 group-hover:scale-105">
+                          <AvatarFallback className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 rounded-xl flex items-center justify-center h-full w-full transition-all duration-300 group-hover:scale-105">
                             <UserIcon className="h-10 w-10 text-white dark:text-neutral-900" />
                           </AvatarFallback>
                         </Avatar>
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                       {!showSkeleton && (
                         <div className={cn(
                           "absolute inset-0 bg-black/65 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-xl",
-                          isUploading || isDeletingImage ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                          isUploading || isDeletingImage ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-active:opacity-100"
                         )}>
                           {isUploading ? (
                             <>
@@ -348,7 +348,7 @@ export default function ProfilePage() {
                     variant="outline"
                     size="sm"
                     onClick={handleEditClick}
-                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                    className="gap-2 bg-transparent dark:bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-100 active:bg-neutral-100 dark:hover:bg-neutral-800 dark:active:bg-neutral-800 cursor-pointer"
                   >
                     <Pencil className="h-4 w-4" />
                     {t("profile.edit_profile")}
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => setShowOldPassword(!showOldPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 active:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:active:text-neutral-200 cursor-pointer"
                     >
                       {showOldPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -450,7 +450,7 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 active:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:active:text-neutral-200 cursor-pointer"
                     >
                       {showNewPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -478,7 +478,7 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 active:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:active:text-neutral-200 cursor-pointer"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -493,7 +493,7 @@ export default function ProfilePage() {
                 <Button
                   type="submit"
                   disabled={isChangingPassword || !isPasswordFormValid}
-                  className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-2 text-sm font-semibold tracking-wide transition-all cursor-pointer"
+                  className="w-full h-11 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 gap-2 text-sm font-semibold tracking-wide transition-all cursor-pointer"
                 >
                   {isChangingPassword ? (
                     <>
@@ -603,7 +603,7 @@ export default function ProfilePage() {
             <Button
               onClick={handleSaveProfile}
               disabled={isSaving || !isProfileFormValid}
-              className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-100 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? (
                 <>

@@ -201,7 +201,7 @@ export function ImageViewerModal({
             "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
             "border border-neutral-300 dark:border-neutral-600 shadow-lg",
             "text-neutral-950 dark:text-neutral-50",
-            "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
+            "hover:bg-white/90 active:bg-white/90 dark:hover:bg-neutral-800/90 dark:active:bg-neutral-800/90 active:scale-95",
             "transition-all duration-200 cursor-pointer outline-none group"
           )}
           title={t("common.image_viewer.close")}
@@ -225,7 +225,7 @@ export function ImageViewerModal({
               "transition-all duration-200 outline-none group",
               currentIndex === 0
                 ? "opacity-30 cursor-not-allowed pointer-events-none"
-                : "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95 cursor-pointer"
+                : "hover:bg-white/90 active:bg-white/90 dark:hover:bg-neutral-800/90 dark:active:bg-neutral-800/90 active:scale-95 cursor-pointer"
             )}
             title={t("common.image_viewer.prev")}
           >
@@ -249,7 +249,7 @@ export function ImageViewerModal({
               "transition-all duration-200 outline-none group",
               currentIndex === images.length - 1
                 ? "opacity-30 cursor-not-allowed pointer-events-none"
-                : "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95 cursor-pointer"
+                : "hover:bg-white/90 active:bg-white/90 dark:hover:bg-neutral-800/90 dark:active:bg-neutral-800/90 active:scale-95 cursor-pointer"
             )}
             title={t("common.image_viewer.next")}
           >
@@ -314,7 +314,7 @@ export function ImageViewerModal({
                     "relative w-14 h-10 sm:w-16 sm:h-11 rounded-lg overflow-hidden shrink-0 transition-all duration-200 cursor-pointer select-none",
                     isActive
                       ? "ring-2 ring-neutral-900 dark:ring-white border-transparent opacity-100"
-                      : "opacity-40 hover:opacity-85"
+                      : "opacity-40 hover:opacity-85 active:opacity-85"
                   )}
                   title={t("common.image_viewer.view_index", { index: (idx + 1).toString() })}
                 >
@@ -341,7 +341,7 @@ export function ImageViewerModal({
                 type="button"
                 className={cn(
                   "w-full min-[300px]:w-auto min-[300px]:flex-1 flex items-center justify-center h-11 px-4 rounded-xl",
-                  "bg-neutral-500/10 hover:bg-neutral-500/20 active:scale-95",
+                  "bg-neutral-500/10 hover:bg-neutral-500/20 active:bg-neutral-500/20 active:scale-95",
                   "border border-neutral-500/20 shadow-sm",
                   "text-neutral-900 dark:text-neutral-100",
                   "transition-all duration-200 cursor-pointer outline-none group gap-2 text-xs font-semibold select-none disabled:opacity-50"
@@ -365,7 +365,7 @@ export function ImageViewerModal({
                 type="button"
                 className={cn(
                   "w-full min-[300px]:w-auto min-[300px]:flex-1 flex items-center justify-center h-11 px-4 rounded-xl",
-                  "bg-red-500/10 hover:bg-red-500/20 active:scale-95",
+                  "bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/20 active:scale-95",
                   "border border-red-500/20 shadow-sm",
                   "text-red-600 dark:text-red-400",
                   "transition-all duration-200 cursor-pointer outline-none group gap-2 text-xs font-semibold select-none disabled:opacity-50"

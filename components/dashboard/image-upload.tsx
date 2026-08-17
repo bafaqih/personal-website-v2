@@ -157,7 +157,7 @@ export function ImageUpload({
                 {!imgLoading && (
                   <div 
                     onClick={() => onViewImage ? onViewImage() : setIsViewerOpen(true)}
-                    className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
+                    className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
                   >
                     <Eye className="h-5 w-5" />
                     <span className="text-[10px] font-medium tracking-wide">{t("common.image_upload.view_image")}</span>
@@ -182,7 +182,7 @@ export function ImageUpload({
                 {!imgLoading && (
                   <div 
                     onClick={() => onViewImage ? onViewImage() : setIsViewerOpen(true)}
-                    className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
+                    className="absolute -inset-px bg-black/65 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white gap-1.5 rounded-lg z-10 cursor-pointer select-none"
                   >
                     <Eye className="h-5 w-5" />
                     <span className="text-[10px] font-medium tracking-wide">{t("common.image_upload.view_image")}</span>
@@ -198,7 +198,7 @@ export function ImageUpload({
                   <button
                     type="button"
                     onClick={() => onViewPdf(preview || value || "")}
-                    className="text-sm font-medium text-neutral-900 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300 cursor-pointer text-left underline-offset-4 hover:underline"
+                    className="text-sm font-medium text-neutral-900 hover:text-neutral-600 active:text-neutral-600 dark:text-white dark:hover:text-neutral-300 dark:active:text-neutral-300 cursor-pointer text-left underline-offset-4 hover:underline active:underline"
                   >
                     {fileName || (value ? value.split("/").pop()?.split("?")[0] : "Document.pdf")}
                   </button>
@@ -207,7 +207,7 @@ export function ImageUpload({
                     href={preview || value}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-neutral-900 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300 cursor-pointer text-left underline-offset-4 hover:underline"
+                    className="text-sm font-medium text-neutral-900 hover:text-neutral-600 active:text-neutral-600 dark:text-white dark:hover:text-neutral-300 dark:active:text-neutral-300 cursor-pointer text-left underline-offset-4 hover:underline active:underline"
                   >
                     {fileName || (value ? value.split("/").pop()?.split("?")[0] : "Document.pdf")}
                   </a>
@@ -222,7 +222,7 @@ export function ImageUpload({
           {!disabled && (
             <button
               onClick={handleRemove}
-              className="absolute -right-2 -top-2 z-20 rounded-full bg-neutral-900 p-1 text-white shadow-sm transition-colors hover:bg-red-600 dark:bg-white dark:text-neutral-900 dark:hover:bg-red-500 dark:hover:text-white"
+              className="absolute -right-2 -top-2 z-20 rounded-full bg-neutral-900 p-1 text-white shadow-sm transition-colors hover:bg-red-600 active:bg-red-600 dark:bg-white dark:text-neutral-900 dark:hover:bg-red-500 dark:hover:text-white dark:active:bg-red-500 dark:active:text-white"
               type="button"
             >
               <X className="h-3 w-3" />
@@ -244,7 +244,7 @@ export function ImageUpload({
             "flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 transition-all",
             dragOver
               ? "border-neutral-900 bg-neutral-50 dark:border-white dark:bg-white/5"
-              : "border-neutral-300 hover:border-neutral-400 dark:border-white/20 dark:hover:border-white/40",
+              : "border-neutral-300 hover:border-neutral-400 active:border-neutral-400 dark:border-white/20 dark:hover:border-white/40 dark:active:border-white/40",
             disabled && "pointer-events-none opacity-50",
             previewClassName
           )}

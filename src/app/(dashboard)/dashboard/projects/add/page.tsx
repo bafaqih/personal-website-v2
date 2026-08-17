@@ -393,14 +393,14 @@ export default function ProjectAddPage() {
                   />
                   <div className="flex justify-between items-center gap-1">
                     <div className="flex gap-1">
-                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 cursor-pointer" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 hover:bg-neutral-100 active:bg-neutral-100 dark:hover:bg-neutral-800 dark:active:bg-neutral-800 cursor-pointer" disabled={index === 0} onClick={() => moveImage(index, 'up')}>
                         <ArrowUp className="h-4 w-4" />
                       </Button>
-                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 cursor-pointer" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 hover:bg-neutral-100 active:bg-neutral-100 dark:hover:bg-neutral-800 dark:active:bg-neutral-800 cursor-pointer" disabled={index === imageSlots.length - 1} onClick={() => moveImage(index, 'down')}>
                         <ArrowDown className="h-4 w-4" />
                       </Button>
                     </div>
-                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 cursor-pointer" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
+                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 active:text-red-600 hover:bg-red-50 active:bg-red-50 dark:hover:bg-red-950/50 dark:active:bg-red-950/50 cursor-pointer" onClick={() => removeImage(slot.id)} disabled={imageSlots.length === 1}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -552,7 +552,7 @@ export default function ProjectAddPage() {
             <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5 cursor-pointer">
               <X className="h-4 w-4" /> {t("common.cancel")}
             </Button>
-            <Button type="submit" disabled={isSubmitting || !isValid} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            <Button type="submit" disabled={isSubmitting || !isValid} className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : (

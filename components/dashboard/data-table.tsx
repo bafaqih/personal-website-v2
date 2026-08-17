@@ -212,8 +212,8 @@ export function DataTable<T>({
               className={cn(
                 "h-9 px-3 gap-2 text-xs font-medium transition-all duration-200 cursor-pointer border",
                 activeFilterCount > 0
-                  ? "bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white hover:bg-neutral-800 dark:hover:bg-neutral-200"
-                  : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200 dark:bg-neutral-950 dark:hover:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800"
+                  ? "bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white hover:bg-neutral-800 active:bg-neutral-800 dark:hover:bg-neutral-200 dark:active:bg-neutral-200"
+                  : "bg-white hover:bg-neutral-50 active:bg-neutral-50 text-neutral-700 border-neutral-200 dark:bg-neutral-950 dark:hover:bg-neutral-900 dark:active:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800"
               )}
             >
               <Filter className="h-3.5 w-3.5" />
@@ -247,7 +247,7 @@ export function DataTable<T>({
                           setIsFilterOpen(false);
                           setPage(1);
                         }}
-                        className="text-[10px] flex items-center gap-1 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
+                        className="text-[10px] flex items-center gap-1 text-neutral-400 hover:text-neutral-900 active:text-neutral-900 dark:hover:text-white dark:active:text-white transition-colors cursor-pointer"
                       >
                         <RotateCcw className="h-3 w-3" />
                         {t("common.clear_all")}
@@ -296,7 +296,7 @@ export function DataTable<T>({
                                     "px-2.5 py-1 text-xs rounded-full border transition-all duration-150 cursor-pointer",
                                     isSelected
                                       ? "bg-neutral-900 text-white border-neutral-900 dark:bg-white dark:text-neutral-900 dark:border-white font-medium"
-                                      : "bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 dark:text-neutral-400 dark:border-white/10"
+                                      : "bg-neutral-50 hover:bg-neutral-100 active:bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-900/50 dark:hover:bg-neutral-900 dark:active:bg-neutral-900 dark:text-neutral-400 dark:border-white/10"
                                   )}
                                 >
                                   {opt.label}
@@ -321,7 +321,7 @@ export function DataTable<T>({
                           setIsFilterOpen(false);
                           setPage(1);
                         }}
-                        className="flex-1 h-8 text-xs bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-700 dark:bg-transparent dark:hover:bg-white/5 dark:border-white/10 dark:text-neutral-300 cursor-pointer"
+                        className="flex-1 h-8 text-xs bg-white hover:bg-neutral-50 active:bg-neutral-50 border-neutral-200 text-neutral-700 dark:bg-transparent dark:hover:bg-white/5 dark:active:bg-white/5 dark:border-white/10 dark:text-neutral-300 cursor-pointer"
                       >
                         {t("common.reset")}
                       </Button>
@@ -332,7 +332,7 @@ export function DataTable<T>({
                           setIsFilterOpen(false);
                           setPage(1);
                         }}
-                        className="flex-1 h-8 text-xs bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 cursor-pointer"
+                        className="flex-1 h-8 text-xs bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 cursor-pointer"
                       >
                         {t("common.apply")}
                       </Button>
@@ -415,7 +415,7 @@ export function DataTable<T>({
               paginatedData.map((item, index) => (
                 <TableRow
                   key={(item as Record<string, unknown>).id as string ?? index}
-                  className="transition-colors border-b border-neutral-100 dark:border-white/5 last:border-none even:bg-neutral-100/60 dark:even:bg-neutral-800/30 hover:bg-neutral-100 dark:hover:bg-neutral-800/60"
+                  className="transition-colors border-b border-neutral-100 dark:border-white/5 last:border-none even:bg-neutral-100/60 dark:even:bg-neutral-800/30 hover:bg-neutral-100 active:bg-neutral-100 dark:hover:bg-neutral-800/60 dark:active:bg-neutral-800/60"
                 >
                   {columns.map((col, colIndex) => {
                     const isPrimary = colIndex === 0 || (colIndex === 1 && (columns[0].key.includes("icon") || columns[0].key.includes("logo")));
@@ -461,7 +461,7 @@ export function DataTable<T>({
               size="icon"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
+              className="h-8 w-8 text-neutral-500 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white disabled:opacity-30 cursor-pointer shrink-0"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -480,7 +480,7 @@ export function DataTable<T>({
               size="icon"
               onClick={() => setPage((p) => Math.min(displayTotalPages, p + 1))}
               disabled={page === displayTotalPages}
-              className="h-8 w-8 text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white disabled:opacity-30 cursor-pointer shrink-0"
+              className="h-8 w-8 text-neutral-500 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white disabled:opacity-30 cursor-pointer shrink-0"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

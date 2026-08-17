@@ -143,7 +143,7 @@ export default function BlogTypesPage() {
           { label: t("projects.types") },
         ]}
         actions={
-          <Button onClick={openAddModal} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+          <Button onClick={openAddModal} className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer">
             <Plus className="h-4 w-4" /> {t("blogs.add_type")}
           </Button>
         }
@@ -235,7 +235,7 @@ export default function BlogTypesPage() {
                     formData.is_active === editingType.is_active
                   : !formData.name_id.trim() || !formData.name_en.trim())
               }
-              className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+              className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
               ) : editingType ? (

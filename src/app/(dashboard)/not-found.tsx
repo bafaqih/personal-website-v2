@@ -22,7 +22,7 @@ export default function DashboardNotFound() {
         <div className="flex items-center justify-center gap-3 pt-2">
           <Button
             asChild
-            className="px-6 h-10 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold shadow-none cursor-pointer"
+            className="px-6 h-10 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 gap-2 font-semibold shadow-none cursor-pointer"
           >
             <Link href="/dashboard">
               <Home className="h-4 w-4" />
@@ -32,7 +32,7 @@ export default function DashboardNotFound() {
           <Button
             onClick={() => window.history.back()}
             variant="outline"
-            className="px-6 h-10 border border-neutral-200 bg-transparent text-neutral-900 hover:bg-neutral-50 dark:border-white/10 dark:text-white dark:hover:bg-neutral-800 gap-2 font-semibold shadow-none cursor-pointer"
+            className="px-6 h-10 border border-neutral-200 bg-transparent text-neutral-900 hover:bg-neutral-50 active:bg-neutral-50 dark:border-white/10 dark:text-white dark:hover:bg-neutral-800 dark:active:bg-neutral-800 gap-2 font-semibold shadow-none cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
             Go Back

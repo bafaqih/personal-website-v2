@@ -95,7 +95,7 @@ export default function EducationsPage() {
         ]}
         actions={
           <Link href="/dashboard/educations/add">
-            <Button className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+            <Button className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer">
               <Plus className="h-4 w-4" /> {t("educations.add_education")}
             </Button>
           </Link>

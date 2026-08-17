@@ -75,7 +75,7 @@ export function ScrollToTop() {
         "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
         "border border-neutral-300 dark:border-neutral-600 shadow-lg",
         "text-neutral-950 dark:text-neutral-50",
-        "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
+        "hover:bg-white/90 active:bg-white/90 dark:hover:bg-neutral-800/90 dark:active:bg-neutral-800/90 active:scale-95",
         "transition-all duration-300 ease-out cursor-pointer outline-none group",
         isVisible 
           ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" 

@@ -336,7 +336,7 @@ export default function CareerEditPage() {
                   <Button type="button" variant="outline" onClick={() => router.back()} className="gap-1.5">
                     <X className="h-4 w-4" /> {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5">
+                  <Button type="submit" disabled={isSubmitting || !isValid || (!isDirty && !isImageChanged)} className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5">
                     {isSubmitting ? (
                       <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                     ) : (

@@ -118,7 +118,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
                   variant="ghost"
                   size="icon"
                   asChild
-                  className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 relative cursor-pointer flex items-center justify-center"
+                  className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 relative cursor-pointer flex items-center justify-center active:bg-neutral-100 dark:active:bg-white/10"
                   aria-label={tError(locale, "switch_lang")}
                   onClick={(e) => {
                     e.currentTarget.blur();
@@ -165,7 +165,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
                       toggleThemeWithTransition(resolvedTheme, setTheme, e);
                       e.currentTarget.blur();
                     }}
-                    className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center"
+                    className="h-9 w-9 rounded-lg border border-neutral-200 dark:border-white/10 cursor-pointer relative flex items-center justify-center active:bg-neutral-100 dark:active:bg-white/10"
                     aria-label={tError(locale, resolvedTheme === "dark" ? "theme_light" : "theme_dark")}
                   >
                     <Moon className="h-4 w-4 text-neutral-600 dark:text-neutral-400 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -220,7 +220,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
           >
             <Button
               onClick={() => reset()}
-              className="flex-1 sm:flex-initial w-auto px-6 h-11 bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-2 font-semibold cursor-pointer shadow-none"
+              className="flex-1 sm:flex-initial w-auto px-6 h-11 bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 gap-2 font-semibold cursor-pointer shadow-none"
             >
               <RefreshCw className="h-4 w-4" />
               {tError(locale, "try_again")}
@@ -229,7 +229,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
             <Button
               asChild
               variant="outline"
-              className="flex-1 sm:flex-initial w-auto px-6 h-11 border border-neutral-200 bg-transparent text-neutral-900 hover:bg-transparent hover:text-neutral-700 hover:border-neutral-300 dark:border-white/10 dark:text-white dark:bg-transparent dark:hover:bg-transparent dark:hover:text-neutral-300 dark:hover:border-white/20 gap-2 font-semibold cursor-pointer shadow-none"
+              className="flex-1 sm:flex-initial w-auto px-6 h-11 border border-neutral-200 bg-transparent text-neutral-900 hover:bg-transparent hover:text-neutral-700 hover:border-neutral-300 active:text-neutral-700 active:border-neutral-300 dark:border-white/10 dark:text-white dark:bg-transparent dark:hover:bg-transparent dark:hover:text-neutral-300 dark:hover:border-white/20 dark:active:text-neutral-300 dark:active:border-white/20 gap-2 font-semibold cursor-pointer shadow-none"
             >
               <Link href={`/`}>
                 <Home className="h-4 w-4" />

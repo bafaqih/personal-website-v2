@@ -74,7 +74,7 @@ export function PdfViewerModal({
             "bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md",
             "border border-neutral-300 dark:border-neutral-600 shadow-lg",
             "text-neutral-950 dark:text-neutral-50",
-            "hover:bg-white/90 dark:hover:bg-neutral-800/90 active:scale-95",
+            "hover:bg-white/90 active:bg-white/90 dark:hover:bg-neutral-800/90 dark:active:bg-neutral-800/90 active:scale-95",
             "transition-all duration-200 cursor-pointer outline-none group"
           )}
           title={t("common.pdf_viewer.close")}
@@ -113,8 +113,8 @@ export function PdfViewerModal({
               rel="noopener noreferrer"
               className={cn(
                 "flex items-center justify-center p-2.5 rounded-xl border transition-all duration-200 cursor-pointer outline-none",
-                "border-neutral-200 hover:bg-neutral-100 text-neutral-600",
-                "dark:border-neutral-800 dark:hover:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+                "border-neutral-200 hover:bg-neutral-100 active:bg-neutral-100 text-neutral-600",
+                "dark:border-neutral-800 dark:hover:bg-neutral-800 dark:active:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200 dark:active:text-neutral-200"
               )}
               title={t("common.pdf_viewer.open_tab")}
             >

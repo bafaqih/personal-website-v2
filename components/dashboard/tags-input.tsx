@@ -71,7 +71,7 @@ export function TagsInput({
     <div className="relative w-full" ref={containerRef}>
       <div
         className={cn(
-          "flex min-h-9 w-full cursor-pointer flex-wrap items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow,background-color] outline-none dark:bg-input/30 dark:hover:bg-input/50"
+          "flex min-h-9 w-full cursor-pointer flex-wrap items-center justify-between gap-1.5 rounded-md border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow,background-color] outline-none dark:bg-input/30 dark:hover:bg-input/50 dark:active:bg-input/50"
         )}
         onClick={() => inputRef.current?.focus()}
       >
@@ -84,7 +84,7 @@ export function TagsInput({
             >
               {tag}
               <div
-                className="ml-1 cursor-pointer rounded-full p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                className="ml-1 cursor-pointer rounded-full p-0.5 hover:bg-neutral-200 active:bg-neutral-200 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   removeTag(e, tag);
@@ -137,7 +137,7 @@ export function TagsInput({
             filteredSuggestions.map((suggestion) => (
               <div
                 key={suggestion}
-                className="relative flex w-full cursor-pointer select-none items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                className="relative flex w-full cursor-pointer select-none items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground active:bg-accent active:text-accent-foreground"
                 onClick={() => {
                   addTag(suggestion);
                   setOpen(false);

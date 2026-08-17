@@ -74,7 +74,7 @@ function SidebarNavItem({
         collapsed ? "lg:w-10 lg:pl-2.5 lg:pr-2.5 lg:gap-0" : "lg:w-full lg:pl-2.5 lg:pr-3 lg:py-2.5 lg:gap-3",
         isActive(item.href)
           ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 active:bg-neutral-100 active:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/10 dark:active:text-white"
       )}
     >
       <item.icon className="shrink-0 h-5 w-5 max-lg:h-[22px] max-lg:w-[22px]" />
@@ -109,7 +109,7 @@ function SidebarNavItem({
         collapsed ? "lg:w-10 lg:pl-2.5 lg:pr-2.5 lg:gap-0" : "lg:w-full lg:pl-2.5 lg:pr-3 lg:py-2.5 lg:gap-3",
         isActive(item.href)
           ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 active:bg-neutral-100 active:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/10 dark:active:text-white"
       )}
     >
       <item.icon className="shrink-0 h-5 w-5 max-lg:h-[22px] max-lg:w-[22px]" />
@@ -149,7 +149,7 @@ function SidebarNavItem({
                   "block rounded-md transition-colors px-3 py-2 text-sm max-lg:px-4 max-lg:py-2.5 max-lg:text-[14px]",
                   isActive(child.href)
                     ? "font-medium text-neutral-900 dark:text-white"
-                    : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                    : "text-neutral-500 hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white"
                 )}
               >
                 {t(`sidebar.${child.title}`)}
@@ -304,7 +304,7 @@ export function DashboardSidebar({
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center w-full text-left rounded-lg hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors cursor-pointer outline-none focus:outline-none p-2 gap-3">
+                  <button className="flex items-center w-full text-left rounded-lg hover:bg-neutral-100 active:bg-neutral-100 dark:hover:bg-white/10 dark:active:bg-white/10 transition-colors cursor-pointer outline-none focus:outline-none p-2 gap-3">
                     {/* Avatar */}
                     <Avatar className="h-9 w-9 border border-neutral-200 dark:border-white/10 rounded-lg shrink-0">
                       <AvatarImage

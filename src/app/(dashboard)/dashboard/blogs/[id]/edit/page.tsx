@@ -343,7 +343,7 @@ export default function BlogEditPage() {
                     </Button>
                     <Button type="submit"
                       disabled={isSaveDisabled}
-                      className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                      className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                       {isSubmitting ? (
                         <><Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving")}</>
                       ) : (

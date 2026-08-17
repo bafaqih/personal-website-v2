@@ -237,7 +237,7 @@ export default function AchievementAddPage() {
                 </Button>
                 <Button type="submit" 
                   disabled={isSubmitting || !isValid} 
-                  className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 gap-1.5 cursor-pointer">
+                  className="bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-200 dark:text-neutral-900 gap-1.5 cursor-pointer">
                   {isSubmitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> {language === "en" ? "Creating..." : "Membuat..."}</>
                   ) : (

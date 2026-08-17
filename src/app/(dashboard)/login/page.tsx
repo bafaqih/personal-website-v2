@@ -142,7 +142,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 active:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 dark:active:text-neutral-200"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -156,7 +156,7 @@ export default function LoginPage() {
               <div className="space-y-6 pt-2">
                 <Button type="submit"
                   disabled={isSubmitting}
-                  className="h-12 w-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 gap-1.5">
+                  className="h-12 w-full bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:active:bg-neutral-200 gap-1.5">
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -173,7 +173,7 @@ export default function LoginPage() {
                 <div className="flex justify-center">
                   <Link
                     href={`/${language}`}
-                    className="flex items-center text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                    className="flex items-center text-sm text-neutral-500 transition-colors hover:text-neutral-900 active:text-neutral-900 dark:text-neutral-400 dark:hover:text-white dark:active:text-white"
                   >
                     <ArrowLeft className="mr-1 h-4 w-4" />
                     {t("login.back_to_home")}

@@ -107,7 +107,7 @@ export function DatePicker({
             "w-full justify-start text-left font-normal",
             "border-input bg-transparent shadow-xs",
             "hover:bg-transparent hover:border-input",
-            "dark:bg-input/30 dark:hover:bg-input/50",
+            "dark:bg-input/30 dark:hover:bg-input/50 dark:active:bg-input/50",
             !selectedDate && "text-muted-foreground",
             className
           )}
@@ -128,7 +128,7 @@ export function DatePicker({
               <Button
                 variant="outline"
                 type="button"
-                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100"
+                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100 active:opacity-100"
                 onClick={handlePrevMonth}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -143,7 +143,7 @@ export function DatePicker({
               <Button
                 variant="outline"
                 type="button"
-                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100"
+                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100 active:opacity-100"
                 onClick={handleNextMonth}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -172,7 +172,7 @@ export function DatePicker({
               <Button
                 variant="outline"
                 type="button"
-                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100"
+                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100 active:opacity-100"
                 onClick={handlePrevYear}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -187,7 +187,7 @@ export function DatePicker({
               <Button
                 variant="outline"
                 type="button"
-                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100"
+                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100 active:opacity-100"
                 onClick={handleNextYear}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -211,10 +211,10 @@ export function DatePicker({
                     className={cn(
                       "text-xs py-2 px-1 text-center rounded-md font-medium transition-all border border-transparent cursor-pointer",
                       isSelected
-                        ? "bg-primary text-primary-foreground hover:bg-primary/95"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/95 active:bg-primary/95"
                         : isActive
                         ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white"
-                        : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:border-neutral-200 dark:hover:border-neutral-700 text-neutral-700 dark:text-neutral-300"
+                        : "hover:bg-neutral-50 active:bg-neutral-50 dark:hover:bg-neutral-800/50 dark:active:bg-neutral-800/50 hover:border-neutral-200 active:border-neutral-200 dark:hover:border-neutral-700 dark:active:border-neutral-700 text-neutral-700 dark:text-neutral-300"
                     )}
                   >
                     {format(new Date(2020, i, 1), "MMMM", { locale: activeLocale }).substring(0, 3)}
@@ -232,7 +232,7 @@ export function DatePicker({
               <Button
                 variant="outline"
                 type="button"
-                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100"
+                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100 active:opacity-100"
                 onClick={handlePrevDecade}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -243,7 +243,7 @@ export function DatePicker({
               <Button
                 variant="outline"
                 type="button"
-                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100"
+                className="h-7 w-7 p-0 flex items-center justify-center opacity-70 hover:opacity-100 active:opacity-100"
                 onClick={handleNextDecade}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -268,10 +268,10 @@ export function DatePicker({
                     className={cn(
                       "text-xs py-2 px-1 text-center rounded-md font-medium transition-all border border-transparent cursor-pointer",
                       isSelected
-                        ? "bg-primary text-primary-foreground hover:bg-primary/95"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/95 active:bg-primary/95"
                         : isActive
                         ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white"
-                        : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:border-neutral-200 dark:hover:border-neutral-700 text-neutral-700 dark:text-neutral-300",
+                        : "hover:bg-neutral-50 active:bg-neutral-50 dark:hover:bg-neutral-800/50 dark:active:bg-neutral-800/50 hover:border-neutral-200 active:border-neutral-200 dark:hover:border-neutral-700 dark:active:border-neutral-700 text-neutral-700 dark:text-neutral-300",
                       isOutside && "opacity-40"
                     )}
                   >
