@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/dashboard/theme-provider";
 import { LanguageProvider } from "@/context/language-context";
 import { DashboardToaster } from "@/components/dashboard/dashboard-toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import NextTopLoader from "nextjs-toploader";
 
 import QueryProvider from "@/src/providers/query-provider";
 
@@ -35,6 +36,7 @@ export default function DashboardRootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader color="var(--foreground)" showSpinner={false} shadow={false} showForHashAnchor={false} />
           <LanguageProvider>
             <QueryProvider>
               <TooltipProvider>
