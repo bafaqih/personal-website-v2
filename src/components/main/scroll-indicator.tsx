@@ -19,7 +19,7 @@ export function ScrollIndicator() {
         className="absolute bottom-0 left-1/2 -translate-x-1/2 lg:translate-y-[34px] translate-y-[12px] flex justify-center cursor-pointer pointer-events-auto"
         onClick={handleScrollToAbout}
       >
-        <div className="w-6 h-10 border-2 border-neutral-300 dark:border-neutral-700 rounded-full flex justify-center p-1">
+        <div className="w-6 h-10 border border-neutral-200 dark:border-white/10 rounded-full flex justify-center p-1">
           <motion.div
             animate={{
               y: [0, 12, 0],
