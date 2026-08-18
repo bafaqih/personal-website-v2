@@ -536,7 +536,7 @@ export function ProjectDetailClient({ project, contact, locale }: ProjectDetailC
           >
             {/* Key Features Card */}
             {project.project_features && project.project_features.length > 0 && (
-              <div className="rounded-xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-neutral-900/50 p-5 text-left space-y-4">
+              <div className="lg:hidden rounded-xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-neutral-900/50 p-5 text-left space-y-4">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-neutral-900 dark:text-white fill-neutral-900 dark:fill-white shrink-0" />
                   <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">
@@ -844,6 +844,36 @@ export function ProjectDetailClient({ project, contact, locale }: ProjectDetailC
               </div>
             </div>
 
+            {/* Key Features Card (Desktop) */}
+            {project.project_features && project.project_features.length > 0 && (
+              <div className="hidden lg:block rounded-xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-neutral-900/50 p-5 text-left space-y-4">
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-neutral-900 dark:text-white fill-neutral-900 dark:fill-white shrink-0" />
+                  <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">
+                    {tMain(locale, "key_features")}
+                  </h3>
+                </div>
+                <div className="space-y-3 pl-1">
+                  {[...project.project_features]
+                    .sort((a, b) => a.sort_order - b.sort_order)
+                    .map((feat) => {
+                      const featTitle = locale === "id" ? feat.title_id : feat.title_en;
+                      const featDesc = locale === "id" ? feat.description_id : feat.description_en;
+                      return (
+                        <div key={feat.id} className="flex items-start gap-2.5 text-xs sm:text-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-neutral-800 dark:bg-neutral-200 mt-[7.5px] shrink-0" />
+                          <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                            <strong className="font-semibold text-neutral-800 dark:text-neutral-200">
+                              {featTitle}
+                            </strong>{" "}
+                            — {featDesc}
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
 
           </motion.div>
         </div>
