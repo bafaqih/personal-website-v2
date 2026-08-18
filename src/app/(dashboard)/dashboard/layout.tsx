@@ -102,7 +102,7 @@ export default function DashboardLayout({
           mobileOpen ? "max-lg:translate-x-[260px]" : ""
         )}
       >
-        <main className="p-6 lg:p-8">
+        <main className="pt-4 pb-3.5 px-3.5">
           {children}
         </main>
       </div>
