@@ -254,7 +254,7 @@ export default function ProjectAddPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         
         {/* Basic Information */}
-        <Card className="overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+        <Card className="relative z-30 overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
             <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Basic Information" : "Informasi Dasar"}</h3>
             <div className="grid gap-6 md:grid-cols-2">
@@ -307,7 +307,7 @@ export default function ProjectAddPage() {
         </Card>
  
         {/* Classification & Links */}
-        <Card className="overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+        <Card className="relative z-20 overflow-visible border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-6">
             <h3 className="font-semibold text-lg border-b pb-2">{language === "en" ? "Classification & Links" : "Klasifikasi & Tautan"}</h3>
             <div className="grid gap-6 md:grid-cols-3">
@@ -357,7 +357,7 @@ export default function ProjectAddPage() {
         </Card>
  
         {/* Gallery */}
-        <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+        <Card className="relative z-10 border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
           <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center border-b pb-2">
               <h3 className="font-semibold text-lg">{language === "en" ? "Project Gallery" : "Galeri Proyek"}</h3>
