@@ -85,7 +85,7 @@ export default function DashboardLayout({
       {/* Mobile backdrop overlay to close sidebar on click outside or when trying to scroll */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-10 cursor-pointer"
+          className="lg:hidden fixed inset-0 z-40 cursor-pointer"
           onClick={() => setMobileOpen(false)}
           onWheel={() => setMobileOpen(false)}
           onTouchMove={() => setMobileOpen(false)}
