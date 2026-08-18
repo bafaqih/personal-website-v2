@@ -26,7 +26,7 @@ export function OverviewStatCard({
   return (
     <Card
       className={cn(
-        "group relative overflow-hidden border border-neutral-200/60 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5",
+        "group relative overflow-hidden border-neutral-200/60 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5",
         "dark:border-white/10 dark:bg-neutral-900/80 dark:hover:shadow-white/5",
         className
       )}

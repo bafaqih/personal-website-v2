@@ -48,7 +48,7 @@ export function ContentStatusChart({
   if (loading) return <Skeleton className="h-[350px] w-full rounded-xl" />;
 
   return (
-    <Card className="border border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
+    <Card className="border-neutral-200/60 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-900/80">
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
           <GitCompareArrows className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
