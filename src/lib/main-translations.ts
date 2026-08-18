@@ -152,6 +152,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     responsibilities_stat: "Key Responsibilities",
     features_stat: "Key Features",
     technologies_stat: "Technologies",
+    scroll_to_top: "Scroll to top",
   },
   id: {
     // Header
@@ -304,6 +305,7 @@ const mainTranslations: Record<MainLocale, Record<string, string>> = {
     responsibilities_stat: "Tanggung Jawab",
     features_stat: "Fitur Utama",
     technologies_stat: "Teknologi",
+    scroll_to_top: "Kembali ke atas",
   },
 };
 
