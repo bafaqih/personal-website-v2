@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { cn } from "@/src/app/lib/utils";
-import { ScrollToTop } from "@/components/scroll-to-top";
 import { AuthService } from "@/src/services/auth.service";
 
 /**
@@ -106,8 +105,6 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
-
-      <ScrollToTop />
     </div>
   );
 }
