@@ -481,13 +481,9 @@ const contentAndSyntaxStyles = `
     color: #171717;
     text-decoration: underline;
     text-underline-offset: 4px;
-    transition: opacity 0.2s;
   }
   .dark .blog-content a {
     color: #ffffff;
-  }
-  .blog-content a:hover {
-    opacity: 0.8;
   }
 
   /* Lists (Unordered) */
@@ -727,20 +723,25 @@ const contentAndSyntaxStyles = `
     color: #ffffff !important;
   }
 
-  /* Inline Code */
+  /* Inline Code (Pill badge matching user mockup) */
   .blog-content code:not(pre code) {
-    background-color: #f5f5f5;
+    background-color: #f0f0f2;
     color: #171717;
-    padding: 0.125rem 0.375rem;
+    padding: 0.15rem 0.45rem;
     border-radius: 0.375rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.75rem;
-    border: 1px solid rgba(229, 229, 229, 0.6);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border: 1px solid #e2e2e5;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: baseline;
+    line-height: 1.4;
   }
   .dark .blog-content code:not(pre code) {
-    background-color: #262626;
-    color: #f5f5f5;
-    border-color: rgba(255, 255, 255, 0.1);
+    background-color: #242428;
+    color: #f4f4f5;
+    border-color: rgba(255, 255, 255, 0.12);
   }
 
   /* Images and Image Wrapper (matching Thumbnail / Featured Image style exactly) */
