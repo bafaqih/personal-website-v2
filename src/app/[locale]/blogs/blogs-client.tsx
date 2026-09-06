@@ -512,7 +512,10 @@ export function BlogsClient({ blogs, types, categories, locale }: BlogsClientPro
 
                       <Link
                         href={`/${locale}/blogs/${blog.slug}`}
-                        onClick={() => trackEvent("blog_click", title)}
+                        onClick={() => {
+                          sessionStorage.setItem("prev_blog_page", "all");
+                          trackEvent("blog_click", title);
+                        }}
                         className="h-10 inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900 px-4 text-xs font-semibold transition-colors duration-200 cursor-pointer"
                       >
                         <span>{tMain(locale, "read_more")}</span>

@@ -23,7 +23,118 @@ export const BlogService = {
       .eq("id", id)
       .single();
     if (error) throw error;
+
+    if (data) {
+      const { data: tagsData } = await supabase
+        .from("blog_tags")
+        .select("tag")
+        .eq("blog_id", data.id);
+      if (tagsData) {
+        data.tags = tagsData.map((t) => t.tag);
+      }
+    }
+
     return data as Blog;
+  },
+
+  async getBySlug(slug: string): Promise<Blog | null> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("blogs")
+      .select("*, type:blog_types(*), category:blog_categories(*), author:profiles(*)")
+      .eq("slug", slug)
+      .single();
+    if (error) {
+      if (error.code === "PGRST116") return null;
+      throw error;
+    }
+
+    if (data) {
+      const { data: tagsData } = await supabase
+        .from("blog_tags")
+        .select("tag")
+        .eq("blog_id", data.id);
+      if (tagsData) {
+        data.tags = tagsData.map((t) => t.tag);
+      }
+    }
+
+    return data as Blog;
+  },
+
+  async incrementViews(id: string) {
+    const supabase = createClient();
+    const { data: blog } = await supabase
+      .from("blogs")
+      .select("views_count")
+      .eq("id", id)
+      .single();
+
+    if (blog) {
+      await supabase
+        .from("blogs")
+        .update({ views_count: (blog.views_count || 0) + 1 })
+        .eq("id", id);
+    }
+  },
+
+  async incrementLikes(id: string, delta: number = 1): Promise<number> {
+    const supabase = createClient();
+    const { data: blog } = await supabase
+      .from("blogs")
+      .select("likes_count")
+      .eq("id", id)
+      .single();
+
+    if (blog) {
+      const newCount = Math.max(0, (blog.likes_count || 0) + delta);
+      await supabase
+        .from("blogs")
+        .update({ likes_count: newCount })
+        .eq("id", id);
+      return newCount;
+    }
+    return 0;
+  },
+
+  async getSidebarBlogs(currentId: string, categoryId?: string | null) {
+    const supabase = createClient();
+
+    const { data: popular } = await supabase
+      .from("blogs")
+      .select("*, type:blog_types(*), category:blog_categories(*), author:profiles(*)")
+      .eq("is_published", true)
+      .neq("id", currentId)
+      .order("views_count", { ascending: false })
+      .limit(3);
+
+    let relatedQuery = supabase
+      .from("blogs")
+      .select("*, type:blog_types(*), category:blog_categories(*), author:profiles(*)")
+      .eq("is_published", true)
+      .neq("id", currentId);
+
+    if (categoryId) {
+      relatedQuery = relatedQuery.eq("category_id", categoryId);
+    }
+
+    const { data: related } = await relatedQuery
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    const { data: latest } = await supabase
+      .from("blogs")
+      .select("*, type:blog_types(*), category:blog_categories(*), author:profiles(*)")
+      .eq("is_published", true)
+      .neq("id", currentId)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    return {
+      popular: (popular || []) as Blog[],
+      related: (related || []) as Blog[],
+      latest: (latest || []) as Blog[],
+    };
   },
 
   async create(payload: Partial<Blog>) {
